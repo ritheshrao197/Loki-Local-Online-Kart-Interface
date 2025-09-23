@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
-import { getProducts } from '@/lib/firebase/firestore'; // Assuming you have a function to get all products for a seller
+import { getProductsBySeller, deleteProduct } from '@/lib/firebase/firestore'; 
 import { Skeleton } from '@/components/ui/skeleton';
 
 const statusVariant = {
@@ -47,9 +47,10 @@ export default function ProductsPage() {
     async function fetchProducts() {
       setLoading(true);
       try {
-        // For now, we fetch all products. In a real app, this would be scoped to the logged-in seller.
-        const allProducts = await getProducts(); 
-        setProducts(allProducts);
+        // In a real app, this would be scoped to the logged-in seller.
+        // We'll use a hardcoded ID for now.
+        const sellerProducts = await getProductsBySeller('seller_1'); 
+        setProducts(sellerProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
         toast({
@@ -66,16 +67,26 @@ export default function ProductsPage() {
   }, []);
 
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!productToDelete) return;
-    // This part would interact with Firestore to delete the product
-    // For now, we'll just optimistically update the UI
-    setProducts(products.filter(p => p.id !== productToDelete.id));
-    toast({
-      title: 'Product Deleted',
-      description: `"${productToDelete.name}" has been successfully deleted.`,
-    });
-    setProductToDelete(null);
+    
+    try {
+      await deleteProduct(productToDelete.id);
+      setProducts(products.filter(p => p.id !== productToDelete.id));
+      toast({
+        title: 'Product Deleted',
+        description: `"${productToDelete.name}" has been successfully deleted.`,
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Could not delete the product. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setProductToDelete(null);
+    }
   };
 
   return (

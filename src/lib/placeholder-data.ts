@@ -50,41 +50,57 @@ export const mockSellers: Seller[] = [
   { id: 'seller_5', name: 'Clay Pot Studio', mobile: '9876543214', pan: 'ABCDE1238J', status: 'rejected' },
 ];
 
+const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images }));
+
 export const mockOrders: Order[] = [
   {
     id: 'order_101',
-    product: mockProducts[0],
+    product: simplifiedProducts[4], // Artisan Leather Sandals
     buyer: { id: 'buyer_1', name: 'Anjali Sharma' },
+    sellerId: 'seller_1',
     quantity: 1,
-    total: 450,
+    total: 1500,
     status: 'delivered',
     orderDate: '2023-10-15',
   },
   {
     id: 'order_102',
-    product: mockProducts[2],
+    product: simplifiedProducts[6], // Traditional Brass Lamp
     buyer: { id: 'buyer_2', name: 'Rohan Mehta' },
-    quantity: 2,
-    total: 1300,
+    sellerId: 'seller_3',
+    quantity: 1,
+    total: 950,
     status: 'dispatched',
     orderDate: '2023-10-28',
   },
   {
     id: 'order_103',
-    product: mockProducts[4],
+    product: simplifiedProducts[1], // Woven Cotton Scarf
     buyer: { id: 'buyer_3', name: 'Priya Singh' },
-    quantity: 1,
-    total: 1500,
+    sellerId: 'seller_2',
+    quantity: 2,
+    total: 1600,
     status: 'confirmed',
     orderDate: '2023-11-01',
   },
   {
     id: 'order_104',
-    product: mockProducts[1],
+    product: simplifiedProducts[11], // Silver Jhumka Earrings
     buyer: { id: 'buyer_1', name: 'Anjali Sharma' },
+    sellerId: 'seller_4',
     quantity: 1,
-    total: 800,
+    total: 2200,
     status: 'pending',
     orderDate: '2023-11-02',
+  },
+    {
+    id: 'order_105',
+    product: simplifiedProducts[0], // Ceramic Vase
+    buyer: { id: 'buyer_4', name: 'Vikram Reddy' },
+    sellerId: 'seller_1',
+    quantity: 1,
+    total: 450,
+    status: 'pending',
+    orderDate: '2023-11-03',
   },
 ];

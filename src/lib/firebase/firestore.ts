@@ -13,7 +13,7 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Seller, Product } from '@/lib/types';
+import type { Seller, Product, Order } from '@/lib/types';
 
 // ================== Seller Functions ==================
 
@@ -25,6 +25,20 @@ export async function getSellers(): Promise<Seller[]> {
   const sellerSnapshot = await getDocs(sellersCol);
   const sellerList = sellerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Seller));
   return sellerList;
+}
+
+/**
+ * Fetches a single seller by its ID from Firestore.
+ */
+export async function getSellerById(sellerId: string): Promise<Seller | null> {
+    const sellerRef = doc(db, 'sellers', sellerId);
+    const sellerSnap = await getDoc(sellerRef);
+
+    if (!sellerSnap.exists()) {
+        return null;
+    }
+
+    return { id: sellerSnap.id, ...sellerSnap.data() } as Seller;
 }
 
 /**
@@ -40,9 +54,9 @@ export async function addSeller(seller: Omit<Seller, 'id'>): Promise<Seller> {
 /**
  * Updates a seller's status in Firestore.
  * @param sellerId - The ID of the seller to update.
- * @param status - The new status ('approved' or 'rejected').
+ * @param status - The new status ('approved', 'rejected', or 'suspended').
  */
-export async function updateSellerStatus(sellerId: string, status: 'approved' | 'rejected'): Promise<void> {
+export async function updateSellerStatus(sellerId: string, status: Seller['status']): Promise<void> {
   const sellerRef = doc(db, 'sellers', sellerId);
   await updateDoc(sellerRef, { status });
 }
@@ -66,6 +80,22 @@ export async function getProducts(status?: 'pending' | 'approved' | 'rejected' |
     });
     return productList;
 }
+
+/**
+ * Fetches all products for a specific seller.
+ * @param sellerId The ID of the seller.
+ */
+export async function getProductsBySeller(sellerId: string): Promise<Product[]> {
+  const productsCol = collection(db, 'products');
+  const q = query(productsCol, where('seller.id', '==', sellerId));
+  const productSnapshot = await getDocs(q);
+  const productList = productSnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  } as Product));
+  return productList;
+}
+
 
 /**
  * Fetches a single product by its ID from Firestore.
@@ -120,4 +150,32 @@ export async function updateProduct(productId: string, productData: Partial<Prod
 export async function deleteProduct(productId: string): Promise<void> {
   const productRef = doc(db, 'products', productId);
   await deleteDoc(productRef);
+}
+
+
+// ================== Order Functions ==================
+
+/**
+ * Fetches all orders for a specific seller.
+ * @param sellerId The ID of the seller whose orders to fetch.
+ */
+export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
+  const ordersCol = collection(db, 'orders');
+  const q = query(ordersCol, where('sellerId', '==', sellerId));
+  const orderSnapshot = await getDocs(q);
+  const orderList = orderSnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  } as Order));
+  return orderList;
+}
+
+/**
+ * Updates an order's status in Firestore.
+ * @param orderId - The ID of the order to update.
+ * @param status - The new status.
+ */
+export async function updateOrderStatus(orderId: string, status: Order['status']): Promise<void> {
+  const orderRef = doc(db, 'orders', orderId);
+  await updateDoc(orderRef, { status });
 }

@@ -21,19 +21,20 @@ export type Seller = {
   name: string;
   mobile: string;
   pan: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
   commissionRate?: number;
 };
 
 export type Order = {
   id: string;
-  product: Product;
+  product: Pick<Product, 'id' | 'name' | 'images'>;
   buyer: {
     id: string;
     name: string;
   };
+  sellerId: string;
   quantity: number;
   total: number;
   status: 'pending' | 'confirmed' | 'dispatched' | 'delivered';
-  orderDate: string;
+  orderDate: string; // Should be ISO string
 };

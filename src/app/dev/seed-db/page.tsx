@@ -4,16 +4,18 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { collection, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
-import { mockProducts } from '@/lib/placeholder-data';
+import { mockProducts, mockSellers, mockOrders } from '@/lib/placeholder-data';
 import Link from 'next/link';
 import { CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+type SeedStatus = 'idle' | 'success' | 'error' | 'already_seeded';
+
 export default function SeedDbPage() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ status: 'success' | 'error' | 'already_seeded'; message: string } | null>(null);
+  const [result, setResult] = useState<{ status: SeedStatus; message: string } | null>(null);
   const { toast } = useToast();
 
   const handleSeed = async () => {
@@ -22,28 +24,46 @@ export default function SeedDbPage() {
 
     try {
       const productsCollection = collection(db, 'products');
+      const sellersCollection = collection(db, 'sellers');
+      const ordersCollection = collection(db, 'orders');
+      
       const existingProducts = await getDocs(productsCollection);
 
       if (!existingProducts.empty) {
         setResult({
           status: 'already_seeded',
-          message: 'Database already contains products. Seeding was skipped.',
+          message: 'Database already contains data. Seeding was skipped.',
         });
         setLoading(false);
         return;
       }
       
       const batch = writeBatch(db);
-      mockProducts.forEach((product) => {
-        const docRef = collection(db, 'products').doc(product.id);
-        const { id, ...productData } = product; // Exclude ID from document data
-        batch.set(docRef, productData);
+
+      // Seed Sellers
+      mockSellers.forEach((seller) => {
+        const docRef = doc(db, 'sellers', seller.id);
+        batch.set(docRef, seller);
       });
+
+      // Seed Products
+      mockProducts.forEach((product) => {
+        const docRef = doc(db, 'products', product.id);
+        batch.set(docRef, product);
+      });
+
+      // Seed Orders
+      mockOrders.forEach((order) => {
+        const docRef = doc(db, 'orders', order.id);
+        batch.set(docRef, order);
+      });
+
       await batch.commit();
       
+      const totalCount = mockProducts.length + mockSellers.length + mockOrders.length;
       setResult({
         status: 'success',
-        message: `Successfully seeded ${mockProducts.length} products.`,
+        message: `Successfully seeded ${totalCount} documents across products, sellers, and orders.`,
       });
 
     } catch (error) {
@@ -69,13 +89,13 @@ export default function SeedDbPage() {
         <CardHeader>
           <CardTitle>Seed Firestore Database</CardTitle>
           <CardDescription>
-            Populate your Firestore 'products' collection with mock data. This is useful for development and testing.
+            Populate your Firestore collections with mock data for products, sellers, and orders.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground text-center">
-              Click the button below to add the sample products from the project's mock data file into your Firestore database.
+              Click the button below to add sample data to your Firestore database. This action will only run if the database is empty.
             </p>
             <Button onClick={handleSeed} disabled={loading}>
               {loading ? (
@@ -84,7 +104,7 @@ export default function SeedDbPage() {
                   Seeding...
                 </>
               ) : (
-                'Seed Products'
+                'Seed Database'
               )}
             </Button>
             {result && (
