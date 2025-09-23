@@ -87,6 +87,9 @@ export async function getProducts(status?: 'pending' | 'approved' | 'rejected' |
         return {
             id: doc.id,
             ...data,
+            // Ensure any potential Timestamp fields are converted to strings for server components
+            manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : data.manufacturingDate,
+            expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : data.expiryDate,
         } as Product;
     });
     return productList;
@@ -119,8 +122,14 @@ export async function getProductById(productId: string): Promise<Product | null>
     if (!productSnap.exists()) {
         return null;
     }
+    const data = productSnap.data();
 
-    return { id: productSnap.id, ...productSnap.data() } as Product;
+    return { 
+        id: productSnap.id, 
+        ...data,
+        manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : data.manufacturingDate,
+        expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : data.expiryDate,
+    } as Product;
 }
 
 
@@ -140,11 +149,7 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  */
 export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
     const productsCol = collection(db, 'products');
-    const docRef = await addDoc(productsCol, {
-      ...product,
-      manufacturingDate: product.manufacturingDate ? new Date(product.manufacturingDate) : null,
-      expiryDate: product.expiryDate ? new Date(product.expiryDate) : null,
-    });
+    const docRef = await addDoc(productsCol, product);
     return { id: docRef.id, ...product };
 }
 
@@ -153,9 +158,13 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<Product>
  * @param productId - The ID of the product to update.
  * @param productData - The partial product data to update.
  */
-export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
+export async function updateProduct(productId: string, productData: Partial<Omit<Product, 'id'>>): Promise<void> {
   const productRef = doc(db, 'products', productId);
-  await updateDoc(productRef, productData);
+  await updateDoc(productRef, {
+      ...productData,
+      manufacturingDate: productData.manufacturingDate ? Timestamp.fromDate(new Date(productData.manufacturingDate)) : null,
+      expiryDate: productData.expiryDate ? Timestamp.fromDate(new Date(productData.expiryDate)) : null,
+  });
 }
 
 /**
@@ -181,7 +190,7 @@ export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
   const orderList = orderSnapshot.docs.map(doc => {
     const data = doc.data();
     // Convert Firestore Timestamp to a serializable format (ISO string)
-    const orderDate = (data.orderDate as Timestamp).toDate().toISOString();
+    const orderDate = data.orderDate instanceof Timestamp ? data.orderDate.toDate().toISOString() : data.orderDate;
     return {
         id: doc.id,
         ...data,

@@ -35,6 +35,8 @@ const formSchema = z.object({
   subcategory: z.string().optional(),
   price: z.coerce.number().positive('Price must be a positive number.'),
   discountPrice: z.coerce.number().optional().refine(
+    (data) => data === undefined || data > 0, { message: 'Discount must be positive' }
+  ).refine(
     (data, ctx) => (data && data > 0) ? data < ctx.parent.price : true,
     { message: 'Discount price must be less than the original price.', path: ['discountPrice'] }
   ),
@@ -85,7 +87,7 @@ export function ProductForm({ product }: ProductFormProps) {
   
   const isEditMode = !!product;
 
-  const defaultValues = isEditMode ? {
+  const defaultValues: Partial<ProductFormValues> = isEditMode ? {
     name: product.name,
     description: product.description,
     category: product.category,
@@ -252,9 +254,11 @@ export function ProductForm({ product }: ProductFormProps) {
       }
         
       if (isEditMode && product) {
-        const updatedProductData = {
+        const updatedProductData: Partial<Product> = {
           ...data,
           images: imageUploads,
+          manufacturingDate: data.manufacturingDate?.toISOString(),
+          expiryDate: data.expiryDate?.toISOString(),
           status: 'pending' as const, // After edit, it should be re-approved.
         };
         await updateProduct(product.id, updatedProductData);
@@ -273,6 +277,8 @@ export function ProductForm({ product }: ProductFormProps) {
           images: imageUploads,
           seller: { id: sellerId, name: seller.name },
           status: 'pending',
+          manufacturingDate: data.manufacturingDate?.toISOString(),
+          expiryDate: data.expiryDate?.toISOString(),
         };
         await addProduct(newProduct as Omit<Product, 'id'>);
         toast({
@@ -347,7 +353,7 @@ export function ProductForm({ product }: ProductFormProps) {
                     <FormField control={form.control} name="subcategory" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Subcategory (Optional)</FormLabel>
-                        <FormControl><Input placeholder="e.g. Coffee Mugs" {...field} /></FormControl>
+                        <FormControl><Input placeholder="e.g. Coffee Mugs" {...field} value={field.value ?? ''} /></FormControl>
                         </FormItem>
                     )}/>
                 </div>
@@ -360,7 +366,7 @@ export function ProductForm({ product }: ProductFormProps) {
                                 Generate with AI
                             </Button>
                         </div>
-                        <FormControl><Textarea rows={6} placeholder="Describe your product in detail..." {...field} /></FormControl>
+                        <FormControl><Textarea rows={6} placeholder="Describe your product in detail..." {...field} value={field.value ?? ''} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
@@ -413,7 +419,7 @@ export function ProductForm({ product }: ProductFormProps) {
                      <FormField control={form.control} name="discountPrice" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Discount Price (₹) (Optional)</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g. 399" {...field}/></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g. 399" {...field} value={field.value ?? ''}/></FormControl>
                          <FormMessage />
                         </FormItem>
                     )}/>
@@ -440,7 +446,7 @@ export function ProductForm({ product }: ProductFormProps) {
                 <FormField control={form.control} name="stockAlert" render={({ field }) => (
                     <FormItem>
                     <FormLabel>Low Stock Alert Threshold (Optional)</FormLabel>
-                    <FormControl><Input type="number" placeholder="e.g. 5" {...field} /></FormControl>
+                    <FormControl><Input type="number" placeholder="e.g. 5" {...field} value={field.value ?? ''} /></FormControl>
                     <FormDescription>Receive a notification when stock falls to this level.</FormDescription>
                     </FormItem>
                 )}/>
@@ -498,7 +504,7 @@ export function ProductForm({ product }: ProductFormProps) {
                          <FormField control={form.control} name="estimatedDelivery" render={({ field }) => (
                             <FormItem>
                             <FormLabel>Estimated Delivery Time (Optional)</FormLabel>
-                            <FormControl><Input placeholder="e.g., 2-4 business days" {...field} /></FormControl>
+                            <FormControl><Input placeholder="e.g., 2-4 business days" {...field} value={field.value ?? ''} /></FormControl>
                             </FormItem>
                         )}/>
                         <FormField control={form.control} name="returnPolicy" render={({ field }) => (
@@ -546,13 +552,13 @@ export function ProductForm({ product }: ProductFormProps) {
                      <FormField control={form.control} name="brand" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Brand Name (Optional)</FormLabel>
-                        <FormControl><Input placeholder="e.g., Loki Originals" {...field} /></FormControl>
+                        <FormControl><Input placeholder="e.g., Loki Originals" {...field} value={field.value ?? ''} /></FormControl>
                         </FormItem>
                     )}/>
                      <FormField control={form.control} name="weight" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Product Weight (grams) (Optional)</FormLabel>
-                        <FormControl><Input type="number" placeholder="e.g., 500" {...field} /></FormControl>
+                        <FormControl><Input type="number" placeholder="e.g., 500" {...field} value={field.value ?? ''} /></FormControl>
                         </FormItem>
                     )}/>
                      <FormField control={form.control} name="manufacturingDate" render={({ field }) => (
@@ -611,7 +617,7 @@ export function ProductForm({ product }: ProductFormProps) {
                      <FormField control={form.control} name="certification" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Certification Details (Optional)</FormLabel>
-                        <FormControl><Input placeholder="e.g., FSSAI, Organic Certified" {...field} /></FormControl>
+                        <FormControl><Input placeholder="e.g., FSSAI, Organic Certified" {...field} value={field.value ?? ''} /></FormControl>
                         </FormItem>
                     )}/>
                 </CardContent>
@@ -623,7 +629,7 @@ export function ProductForm({ product }: ProductFormProps) {
                     <FormField control={form.control} name="keywords" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Keywords/Tags (Optional)</FormLabel>
-                        <FormControl><Input placeholder="e.g. pottery, handmade, coffee" {...field} /></FormControl>
+                        <FormControl><Input placeholder="e.g. pottery, handmade, coffee" {...field} value={field.value ?? ''} /></FormControl>
                         <FormDescription>Comma-separated keywords for better discovery.</FormDescription>
                         <FormMessage />
                         </FormItem>
