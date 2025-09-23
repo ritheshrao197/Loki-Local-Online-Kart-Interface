@@ -167,7 +167,6 @@ export function ProductForm({ product }: ProductFormProps) {
         description: `Your product is ${isEditMode ? 'updated and pending re-approval' : 'pending admin approval'}.`,
       });
       router.push('/dashboard/products');
-      router.refresh();
 
     } catch (error) {
       console.error("Form submission error:", error);
