@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -15,20 +14,56 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
 import { autoCategorizeProduct } from '@/ai/flows/auto-categorize-product';
-import { Loader2, Sparkles, Tags } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { CalendarIcon, Loader2, Sparkles, Tags, Trash2 } from 'lucide-react';
 import type { Product } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { addProduct, updateProduct } from '@/lib/firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Image from 'next/image';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
+
 
 const formSchema = z.object({
-  name: z.string().min(3, 'Product name must be at least 3 characters.'),
-  keywords: z.string().min(3, 'Please provide at least one keyword.'),
-  description: z.string().min(20, 'Description must be at least 20 characters.'),
-  price: z.coerce.number().min(1, 'Price must be greater than 0.'),
+  name: z.string().min(3, 'Product name must be at least 3 characters.').max(100),
+  description: z.string().min(20, 'Description must be at least 20 characters.').optional().or(z.literal('')),
   category: z.string().min(1, 'Please select a category.'),
-  image: z.any().refine(files => files?.length > 0 || typeof files === 'string', 'Image is required.'),
+  subcategory: z.string().optional(),
+  price: z.coerce.number().positive('Price must be a positive number.'),
+  discountPrice: z.coerce.number().optional().refine(
+    (data, ctx) => (data && data > 0) ? data < ctx.parent.price : true,
+    { message: 'Discount price must be less than the original price.', path: ['discountPrice'] }
+  ),
+  stock: z.coerce.number().int().min(0, 'Stock cannot be negative.'),
+  unitOfMeasure: z.enum(['piece', 'kg', 'dozen', 'litre']),
+  stockAlert: z.coerce.number().int().min(0, 'Stock alert must be a non-negative number.').optional(),
+  keywords: z.string().optional(),
+  images: z.any().refine(
+    (files) => (Array.isArray(files) && files.length > 0) || (typeof files === 'string' && files.length > 0),
+    'At least one image is required.'
+  ).refine(
+    (files) => !Array.isArray(files) || files.length <= 5,
+    'You can upload a maximum of 5 images.'
+  ),
+  brand: z.string().optional(),
+  weight: z.coerce.number().positive('Weight must be a positive number.').optional(),
+  dimensions: z.object({
+    length: z.coerce.number().positive().optional(),
+    width: z.coerce.number().positive().optional(),
+    height: z.coerce.number().positive().optional(),
+  }).optional(),
+  manufacturingDate: z.date().optional(),
+  expiryDate: z.date().optional(),
+  isGstRegistered: z.boolean().optional(),
+  certification: z.string().optional(),
+  shippingOptions: z.array(z.string()).optional(),
+  estimatedDelivery: z.string().optional(),
+  returnPolicy: z.enum(['none', '7-day', '15-day']).optional(),
+  isPromoted: z.boolean().optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -44,27 +79,50 @@ export function ProductForm({ product }: ProductFormProps) {
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
   const [suggestedCategories, setSuggestedCategories] = useState<string[]>(product ? [product.category] : []);
-  const [imageDataUri, setImageDataUri] = useState<string | null>(product ? product.images[0].url : null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(product?.images.map(img => img.url) || []);
   
   const isEditMode = !!product;
 
+  const defaultValues = isEditMode ? {
+    name: product.name,
+    description: product.description,
+    category: product.category,
+    subcategory: product.subcategory,
+    price: product.price,
+    discountPrice: product.discountPrice,
+    stock: product.stock,
+    unitOfMeasure: product.unitOfMeasure,
+    stockAlert: product.stockAlert,
+    keywords: product.keywords,
+    images: product.images.map(img => img.url),
+    brand: product.brand,
+    weight: product.weight,
+    dimensions: product.dimensions,
+    manufacturingDate: product.manufacturingDate ? new Date(product.manufacturingDate) : undefined,
+    expiryDate: product.expiryDate ? new Date(product.expiryDate) : undefined,
+    isGstRegistered: product.isGstRegistered,
+    certification: product.certification,
+    shippingOptions: product.shippingOptions,
+    returnPolicy: product.returnPolicy,
+    isPromoted: product.isPromoted,
+  } : {
+    name: '',
+    description: '',
+    category: '',
+    subcategory: '',
+    price: 0,
+    stock: 0,
+    unitOfMeasure: 'piece' as const,
+    keywords: '',
+    images: [],
+    isGstRegistered: false,
+    isPromoted: false,
+  };
+
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEditMode ? {
-        name: product.name,
-        keywords: product.keywords || '',
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        image: product.images[0].url,
-    } : {
-      name: '',
-      keywords: '',
-      description: '',
-      price: 0,
-      category: '',
-      image: undefined,
-    },
+    defaultValues: defaultValues,
   });
 
   const handleGenerateDescription = async () => {
@@ -98,16 +156,30 @@ export function ProductForm({ product }: ProductFormProps) {
   };
   
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      form.setValue('image', event.target.files);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUri = reader.result as string;
-        setImageDataUri(dataUri);
-        handleAutoCategorize(dataUri, form.getValues('description'));
-      };
-      reader.readAsDataURL(file);
+    const files = event.target.files;
+    if (files) {
+        const fileArray = Array.from(files);
+        if (fileArray.length + imagePreviews.length > 5) {
+            toast({ title: "Too many images", description: "You can upload a maximum of 5 images.", variant: "destructive"});
+            return;
+        }
+
+        form.setValue('images', fileArray);
+
+        const dataUris = await Promise.all(fileArray.map(file => {
+            return new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }));
+
+        setImagePreviews(prev => [...prev, ...dataUris]);
+
+        if (dataUris[0]) {
+            handleAutoCategorize(dataUris[0], form.getValues('description') || '');
+        }
     }
   };
   
@@ -128,38 +200,51 @@ export function ProductForm({ product }: ProductFormProps) {
     }
   };
 
+  const removeImage = (index: number) => {
+    const newPreviews = [...imagePreviews];
+    newPreviews.splice(index, 1);
+    setImagePreviews(newPreviews);
+    // This is tricky with FileList, for now we just update previews
+    // A more robust solution might use a library to manage file inputs
+    const currentImages = form.getValues('images');
+    if(Array.isArray(currentImages)) {
+      const newImages = [...currentImages];
+      newImages.splice(index,1);
+      form.setValue('images', newImages.length > 0 ? newImages : []);
+    } else {
+       form.setValue('images', []);
+    }
+  };
+
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
     try {
-      // Use a random placeholder for the image unless one is uploaded
-      const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
-      const image = imageDataUri
-        ? { url: imageDataUri, hint: 'custom image' }
-        : { url: randomImage.imageUrl, hint: randomImage.imageHint };
+      let imageUploads: { url: string; hint: string; }[] = [];
+      if (imagePreviews.length > 0) {
+        imageUploads = imagePreviews.map(url => ({
+          url: url,
+          hint: 'custom image'
+        }));
+      } else {
+        const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+        imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
+      }
         
       if (isEditMode && product) {
-        const updatedProductData: Partial<Product> = {
-          name: data.name,
-          description: data.description,
-          price: data.price,
-          category: data.category,
-          keywords: data.keywords,
-          images: imageDataUri ? [image] : product.images,
-          status: 'pending', // After edit, it should be re-approved.
+        const updatedProductData = {
+          ...data,
+          images: imageUploads,
+          status: 'pending' as const, // After edit, it should be re-approved.
         };
         await updateProduct(product.id, updatedProductData);
       } else {
         const newProduct: Omit<Product, 'id'> = {
-          name: data.name,
-          description: data.description,
-          price: data.price,
-          category: data.category,
-          keywords: data.keywords,
-          images: [image],
+          ...data,
+          images: imageUploads,
           seller: { id: 'seller_1', name: 'Artisan Crafts Co.' }, // Mock seller
           status: 'pending',
         };
-        await addProduct(newProduct);
+        await addProduct(newProduct as Omit<Product, 'id'>);
       }
       
       toast({
@@ -179,47 +264,66 @@ export function ProductForm({ product }: ProductFormProps) {
       setIsSubmitting(false);
     }
   };
+
+  const handleSaveAsDraft = async () => {
+    const data = form.getValues();
+    // Similar logic to onSubmit, but status is 'draft'
+     console.log("Saving as draft:", data);
+     toast({ title: 'Saved as Draft', description: 'Your product has been saved as a draft.'});
+  }
   
   const productCategories = ["Home Decor", "Apparel", "Food & Groceries", "Art", "Footwear", "Bath & Body", "Accessories", "Kitchenware", "Jewelry"];
+  const unitsOfMeasure = [
+    { value: 'piece', label: 'Per Piece' },
+    { value: 'kg', label: 'Per Kg' },
+    { value: 'dozen', label: 'Per Dozen' },
+    { value: 'litre', label: 'Per Litre' },
+  ];
+   const returnPolicies = [
+    { value: 'none', label: 'No Returns' },
+    { value: '7-day', label: '7 Days Return' },
+    { value: '15-day', label: '15 Days Return' },
+  ];
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          
+          {/* Main Column */}
           <div className="lg:col-span-2 space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Product Details</CardTitle>
-                <CardDescription>Enter the name, description, and keywords for your product.</CardDescription>
+                <CardTitle>Product Information</CardTitle>
+                <CardDescription>Enter the basic details for your product.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
+              <CardContent className="space-y-6">
+                <FormField control={form.control} name="name" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Product Name</FormLabel>
                       <FormControl><Input placeholder="e.g. Handcrafted Ceramic Mug" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="keywords"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Keywords</FormLabel>
-                      <FormControl><Input placeholder="e.g. pottery, handmade, coffee" {...field} /></FormControl>
-                      <FormDescription>Comma-separated keywords for better discovery.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
+                )}/>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="category" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger></FormControl>
+                            <SelectContent>{productCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}</SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                    <FormField control={form.control} name="subcategory" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Subcategory (Optional)</FormLabel>
+                        <FormControl><Input placeholder="e.g. Coffee Mugs" {...field} /></FormControl>
+                        </FormItem>
+                    )}/>
+                </div>
+                 <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem>
                         <div className="flex items-center justify-between">
                             <FormLabel>Description</FormLabel>
@@ -228,56 +332,171 @@ export function ProductForm({ product }: ProductFormProps) {
                                 Generate with AI
                             </Button>
                         </div>
-                        <FormControl><Textarea rows={6} placeholder="Describe your product..." {...field} /></FormControl>
+                        <FormControl><Textarea rows={6} placeholder="Describe your product in detail..." {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
-                  )}
-                />
+                )}/>
               </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Images & Media</CardTitle>
+                    <CardDescription>Upload up to 5 images for your product. The first image will be the main one.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                     <FormField control={form.control} name="images" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Product Images</FormLabel>
+                            <FormControl>
+                                <Input type="file" accept="image/*" multiple onChange={handleImageChange} disabled={imagePreviews.length >= 5}/>
+                            </FormControl>
+                            <FormDescription>Recommended dimensions: 800x800px. Max 5 images.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}/>
+                    <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                        {imagePreviews.map((src, index) => (
+                            <div key={index} className="relative group aspect-square">
+                                <Image src={src} alt={`Preview ${index+1}`} fill className="object-cover rounded-md border"/>
+                                <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeImage(index)}>
+                                    <Trash2 className="h-4 w-4"/>
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+
+             <Card>
+              <CardHeader>
+                <CardTitle>Pricing & Stock</CardTitle>
+                <CardDescription>Manage your product's price and inventory.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="price" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Price (₹)</FormLabel>
+                        <FormControl><Input type="number" placeholder="e.g. 499" {...field} /></FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                     <FormField control={form.control} name="discountPrice" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Discount Price (₹) (Optional)</FormLabel>
+                        <FormControl><Input type="number" placeholder="e.g. 399" {...field}/></FormControl>
+                         <FormMessage />
+                        </FormItem>
+                    )}/>
+                </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <FormField control={form.control} name="unitOfMeasure" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Unit of Measure</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger><SelectValue placeholder="Select a unit" /></SelectTrigger></FormControl>
+                            <SelectContent>{unitsOfMeasure.map(u => <SelectItem key={u.value} value={u.value}>{u.label}</SelectItem>)}</SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                    <FormField control={form.control} name="stock" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Stock Quantity</FormLabel>
+                        <FormControl><Input type="number" placeholder="e.g. 50" {...field} /></FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                </div>
+                <FormField control={form.control} name="stockAlert" render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Low Stock Alert Threshold (Optional)</FormLabel>
+                    <FormControl><Input type="number" placeholder="e.g. 5" {...field} /></FormControl>
+                    <FormDescription>Receive a notification when stock falls to this level.</FormDescription>
+                    </FormItem>
+                )}/>
+              </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader><CardTitle>Shipping & Delivery</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                    <FormField control={form.control} name="shippingOptions" render={() => (
+                        <FormItem>
+                            <div className="mb-4">
+                                <FormLabel>Shipping Options Available</FormLabel>
+                                <FormDescription>Select the methods you support for shipping.</FormDescription>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                            {['local', 'courier', 'pickup'].map((item) => (
+                                <FormField
+                                key={item}
+                                control={form.control}
+                                name="shippingOptions"
+                                render={({ field }) => {
+                                    return (
+                                    <FormItem
+                                        key={item}
+                                        className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                        <FormControl>
+                                        <Checkbox
+                                            checked={field.value?.includes(item)}
+                                            onCheckedChange={(checked) => {
+                                            return checked
+                                                ? field.onChange([...(field.value || []), item])
+                                                : field.onChange(
+                                                    field.value?.filter(
+                                                    (value) => value !== item
+                                                    )
+                                                )
+                                            }}
+                                        />
+                                        </FormControl>
+                                        <FormLabel className="font-normal capitalize">
+                                        {item === 'local' ? 'Local Delivery' : item === 'pickup' ? 'Self Pickup' : 'Courier'}
+                                        </FormLabel>
+                                    </FormItem>
+                                    )
+                                }}
+                                />
+                            ))}
+                            </div>
+                            <FormMessage />
+                        </FormItem>
+                    )}/>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <FormField control={form.control} name="estimatedDelivery" render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Estimated Delivery Time (Optional)</FormLabel>
+                            <FormControl><Input placeholder="e.g., 2-4 business days" {...field} /></FormControl>
+                            </FormItem>
+                        )}/>
+                        <FormField control={form.control} name="returnPolicy" render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Return Policy</FormLabel>
+                             <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl><SelectTrigger><SelectValue placeholder="Select a policy" /></SelectTrigger></FormControl>
+                                <SelectContent>{returnPolicies.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}</SelectContent>
+                            </Select>
+                            <FormMessage />
+                            </FormItem>
+                        )}/>
+                    </div>
+                </CardContent>
+            </Card>
+            
           </div>
+
+          {/* Right Sidebar */}
           <div className="space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Image & Category</CardTitle>
+                <CardTitle>AI Suggestions</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <FormField
-                    control={form.control}
-                    name="image"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Product Image</FormLabel>
-                            <FormControl>
-                                <Input type="file" accept="image/*" onChange={handleImageChange} />
-                            </FormControl>
-                             {isEditMode && <FormDescription>Leave blank to keep the current image.</FormDescription>}
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                {imageDataUri && <img src={imageDataUri} alt="Preview" className="rounded-md object-cover aspect-video"/>}
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {productCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="space-y-2">
+              <CardContent>
+                <div className="space-y-4">
                     <FormLabel>AI Suggested Categories</FormLabel>
                     <div className="flex flex-wrap gap-2">
                         {isCategorizing && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -292,28 +511,113 @@ export function ProductForm({ product }: ProductFormProps) {
                 </div>
               </CardContent>
             </Card>
+
             <Card>
-              <CardHeader>
-                <CardTitle>Pricing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price (INR)</FormLabel>
-                      <FormControl><Input type="number" placeholder="e.g. 499" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
+                <CardHeader><CardTitle>Additional Details</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                     <FormField control={form.control} name="brand" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Brand Name (Optional)</FormLabel>
+                        <FormControl><Input placeholder="e.g., Loki Originals" {...field} /></FormControl>
+                        </FormItem>
+                    )}/>
+                     <FormField control={form.control} name="weight" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Product Weight (grams) (Optional)</FormLabel>
+                        <FormControl><Input type="number" placeholder="e.g., 500" {...field} /></FormControl>
+                        </FormItem>
+                    )}/>
+                     <FormField control={form.control} name="manufacturingDate" render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                        <FormLabel>Manufacture Date (Optional)</FormLabel>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <FormControl>
+                                <Button variant={"outline"} className={cn("pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                                {field.value ? (format(field.value, "PPP")) : (<span>Pick a date</span>)}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date("1900-01-01")} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                    <FormField control={form.control} name="expiryDate" render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                        <FormLabel>Expiry Date (Optional)</FormLabel>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <FormControl>
+                                <Button variant={"outline"} className={cn("pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                                {field.value ? (format(field.value, "PPP")) : (<span>Pick a date</span>)}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date < new Date()} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader><CardTitle>Compliance</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                    <FormField control={form.control} name="isGstRegistered" render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <FormLabel>Is GST Registered?</FormLabel>
+                                <FormDescription>Does this product fall under GST?</FormDescription>
+                            </div>
+                            <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                        </FormItem>
+                    )}/>
+                     <FormField control={form.control} name="certification" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Certification Details (Optional)</FormLabel>
+                        <FormControl><Input placeholder="e.g., FSSAI, Organic Certified" {...field} /></FormControl>
+                        </FormItem>
+                    )}/>
+                </CardContent>
+            </Card>
+            
+            <Card>
+                <CardHeader><CardTitle>Marketing</CardTitle></CardHeader>
+                <CardContent className="space-y-6">
+                    <FormField control={form.control} name="keywords" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Keywords/Tags (Optional)</FormLabel>
+                        <FormControl><Input placeholder="e.g. pottery, handmade, coffee" {...field} /></FormControl>
+                        <FormDescription>Comma-separated keywords for better discovery.</FormDescription>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                     <FormField control={form.control} name="isPromoted" render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <FormLabel>Promote Product</FormLabel>
+                                <FormDescription>Mark this for special promotion (requires admin approval).</FormDescription>
+                            </div>
+                            <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                        </FormItem>
+                    )}/>
+                </CardContent>
+            </Card>
+            
           </div>
         </div>
-        <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
+
+        <div className="flex justify-end gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 px-8 -mx-8">
+            <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting}>Clear Form</Button>
+            <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEditMode ? 'Save Changes' : 'Submit for Review'}
