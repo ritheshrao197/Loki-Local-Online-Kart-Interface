@@ -23,6 +23,7 @@ import {
   Landmark,
   BarChart3,
   Gavel,
+  LayoutTemplate,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -69,6 +70,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 <Link href="/admin/commissions">
                   <Landmark />
                   <span>Commissions</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Content">
+                <Link href="/admin/content">
+                  <LayoutTemplate />
+                  <span>Content</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
