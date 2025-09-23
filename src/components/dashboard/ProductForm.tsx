@@ -225,9 +225,11 @@ export function ProductForm({ product }: ProductFormProps) {
           url: url,
           hint: 'custom image'
         }));
-      } else {
+      } else if (!isEditMode) {
         const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
         imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
+      } else if (isEditMode && product?.images) {
+        imageUploads = product.images;
       }
         
       if (isEditMode && product) {
@@ -237,6 +239,11 @@ export function ProductForm({ product }: ProductFormProps) {
           status: 'pending' as const, // After edit, it should be re-approved.
         };
         await updateProduct(product.id, updatedProductData);
+         toast({
+          title: 'Product Updated!',
+          description: `Your product is updated and pending re-approval.`,
+        });
+        router.push('/dashboard/products?updated=true');
       } else {
         const newProduct: Omit<Product, 'id'> = {
           ...data,
@@ -244,14 +251,13 @@ export function ProductForm({ product }: ProductFormProps) {
           seller: { id: 'seller_1', name: 'Artisan Crafts Co.' }, // Mock seller
           status: 'pending',
         };
-        await addProduct(newProduct as Omit<Product, 'id'>);
+        const addedProduct = await addProduct(newProduct as Omit<Product, 'id'>);
+        toast({
+          title: 'Product Submitted!',
+          description: `Your product is pending admin approval.`,
+        });
+        router.push(`/dashboard/products?newProduct=${addedProduct.id}`);
       }
-      
-      toast({
-        title: isEditMode ? 'Product Updated!' : 'Product Submitted!',
-        description: `Your product is ${isEditMode ? 'updated and pending re-approval' : 'pending admin approval'}.`,
-      });
-      router.push('/dashboard/products');
 
     } catch (error) {
       console.error("Form submission error:", error);
@@ -260,8 +266,7 @@ export function ProductForm({ product }: ProductFormProps) {
         description: "There was an error saving the product. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsSubmitting(false);
+       setIsSubmitting(false);
     }
   };
 

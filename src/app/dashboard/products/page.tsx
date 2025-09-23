@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -30,6 +30,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { getProductsBySeller, deleteProduct } from '@/lib/firebase/firestore'; 
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSearchParams } from 'next/navigation';
 
 const statusVariant = {
   pending: 'secondary',
@@ -42,29 +43,36 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      // In a real app, this would be scoped to the logged-in seller.
+      // We'll use a hardcoded ID for now.
+      const sellerProducts = await getProductsBySeller('seller_1'); 
+      setProducts(sellerProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast({
+        title: "Error",
+        description: "Could not fetch products.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
 
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
-      try {
-        // In a real app, this would be scoped to the logged-in seller.
-        // We'll use a hardcoded ID for now.
-        const sellerProducts = await getProductsBySeller('seller_1'); 
-        setProducts(sellerProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        toast({
-          title: "Error",
-          description: "Could not fetch products.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    if (searchParams.has('newProduct') || searchParams.has('updated')) {
+      fetchProducts();
+    }
+  }, [searchParams, fetchProducts]);
 
 
   const handleDelete = async () => {
