@@ -39,7 +39,7 @@ export default function DashboardPage() {
     async function fetchDashboardData() {
       setLoading(true);
       try {
-        const sellerId = 'seller_1'; // Hardcoded for now
+        const sellerId = 'seller_2'; // Hardcoded for now
         const [orders, products] = await Promise.all([
           getOrdersBySeller(sellerId),
           getProductsBySeller(sellerId),

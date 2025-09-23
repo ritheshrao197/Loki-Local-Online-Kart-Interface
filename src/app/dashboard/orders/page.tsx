@@ -38,7 +38,7 @@ export default function OrdersPage() {
       try {
         // We'll use a hardcoded seller ID for now.
         // In a real app, you'd get this from the logged-in user's session.
-        const sellerOrders = await getOrdersBySeller('seller_1');
+        const sellerOrders = await getOrdersBySeller('seller_2');
         setOrders(sellerOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);

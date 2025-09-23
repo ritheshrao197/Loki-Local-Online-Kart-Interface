@@ -89,15 +89,15 @@ export function ProductForm({ product }: ProductFormProps) {
     category: product.category,
     subcategory: product.subcategory || '',
     price: product.price,
-    discountPrice: product.discountPrice,
+    discountPrice: product.discountPrice || undefined,
     stock: product.stock,
     unitOfMeasure: product.unitOfMeasure,
-    stockAlert: product.stockAlert,
+    stockAlert: product.stockAlert || undefined,
     keywords: product.keywords || '',
     images: product.images.map(img => img.url),
     brand: product.brand || '',
-    weight: product.weight,
-    dimensions: product.dimensions,
+    weight: product.weight || undefined,
+    dimensions: product.dimensions || { length: undefined, width: undefined, height: undefined },
     manufacturingDate: product.manufacturingDate ? new Date(product.manufacturingDate) : undefined,
     expiryDate: product.expiryDate ? new Date(product.expiryDate) : undefined,
     isGstRegistered: product.isGstRegistered || false,
@@ -259,7 +259,7 @@ export function ProductForm({ product }: ProductFormProps) {
         const newProduct: Omit<Product, 'id'> = {
           ...data,
           images: imageUploads,
-          seller: { id: 'seller_1', name: 'Artisan Crafts Co.' }, // Mock seller
+          seller: { id: 'seller_2', name: 'Local Weavers Inc.' }, // Mock seller
           status: 'pending',
         };
         const addedProduct = await addProduct(newProduct as Omit<Product, 'id'>);

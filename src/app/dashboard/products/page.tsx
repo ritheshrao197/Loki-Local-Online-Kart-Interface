@@ -50,7 +50,7 @@ export default function ProductsPage() {
     try {
       // In a real app, this would be scoped to the logged-in seller.
       // We'll use a hardcoded ID for now.
-      const sellerProducts = await getProductsBySeller('seller_1'); 
+      const sellerProducts = await getProductsBySeller('seller_2'); 
       setProducts(sellerProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
