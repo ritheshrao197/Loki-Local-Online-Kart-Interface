@@ -1,7 +1,7 @@
 import type { Product, Seller, Order } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
-const sellers: Omit<Seller, 'status' | 'pan' | 'mobile'>[] = [
+const sellers: Omit<Seller, 'status' | 'pan' | 'mobile' | 'commissionRate'>[] = [
   { id: 'seller_1', name: 'Artisan Crafts Co.' },
   { id: 'seller_2', name: 'Local Weavers Inc.' },
   { id: 'seller_3', name: 'Spice Route Goods' },
@@ -25,10 +25,15 @@ const productDetails = [
   { name: 'Block-printed Cotton Kurta', price: 1100, category: 'Apparel', keywords: 'cotton, kurta, apparel, block-print' },
   { name: 'Sun-dried Turmeric Powder', price: 150, category: 'Food & Groceries', keywords: 'turmeric, spice, organic, powder' },
   { name: 'Terracotta Wind Chimes', price: 400, category: 'Home Decor', keywords: 'terracotta, wind-chime, decor, garden' },
+  { name: 'Hand-woven Silk Sari', price: 4500, category: 'Apparel', keywords: 'silk, sari, traditional, ethnic' },
+  { name: 'Spiced Honey Infusion', price: 350, category: 'Food & Groceries', keywords: 'honey, infusion, organic, spice' },
+  { name: 'Brass Pooja Thali Set', price: 1800, category: 'Home Decor', keywords: 'brass, pooja, thali, religious' },
+  { name: 'Madhubani Art Coasters', price: 600, category: 'Art', keywords: 'madhubani, art, coasters, painting' },
 ];
 
 export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
   const detail = productDetails[index % productDetails.length];
+  const sellerInfo = sellers[index % sellers.length];
   return {
     id: img.id,
     name: detail.name,
@@ -37,7 +42,7 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
     images: [{ url: img.imageUrl, hint: img.imageHint }],
     category: detail.category,
     keywords: detail.keywords,
-    seller: sellers[index % sellers.length],
+    seller: sellerInfo,
     status: index < 4 ? 'pending' : 'approved',
   };
 });
@@ -45,12 +50,12 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
 export const mockSellers: Seller[] = [
   { id: 'seller_1', name: 'Artisan Crafts Co.', mobile: '9876543210', pan: 'ABCDE1234F', status: 'approved', commissionRate: 15 },
   { id: 'seller_2', name: 'Local Weavers Inc.', mobile: '9876543211', pan: 'ABCDE1235G', status: 'approved', commissionRate: 12 },
-  { id: 'seller_3', name: 'Spice Route Goods', mobile: '9876543212', pan: 'ABCDE1236H', status: 'pending' },
-  { id: 'seller_4', name: 'Woodworkers Guild', mobile: '9876543213', pan: 'ABCDE1237I', status: 'pending' },
-  { id: 'seller_5', name: 'Clay Pot Studio', mobile: '9876543214', pan: 'ABCDE1238J', status: 'rejected' },
+  { id: 'seller_3', name: 'Spice Route Goods', mobile: '9876543212', pan: 'ABCDE1236H', status: 'pending', commissionRate: 15 },
+  { id: 'seller_4', name: 'Woodworkers Guild', mobile: '9876543213', pan: 'ABCDE1237I', status: 'pending', commissionRate: 15 },
+  { id: 'seller_5', name: 'Clay Pot Studio', mobile: '9876543214', pan: 'ABCDE1238J', status: 'rejected', commissionRate: 15 },
 ];
 
-const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images }));
+const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images, price: p.price }));
 
 export const mockOrders: Order[] = [
   {

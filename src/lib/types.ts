@@ -22,12 +22,12 @@ export type Seller = {
   mobile: string;
   pan: string;
   status: 'pending' | 'approved' | 'rejected' | 'suspended';
-  commissionRate?: number;
+  commissionRate: number;
 };
 
 export type Order = {
   id: string;
-  product: Pick<Product, 'id' | 'name' | 'images'>;
+  product: Pick<Product, 'id' | 'name' | 'images' | 'price'>;
   buyer: {
     id: string;
     name: string;

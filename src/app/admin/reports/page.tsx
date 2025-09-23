@@ -1,11 +1,41 @@
 
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { mockSellers, mockProducts } from "@/lib/placeholder-data";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { Seller } from "@/lib/types";
+import { getSellers } from "@/lib/firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ReportsPage() {
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const approvedSellers = (await getSellers()).filter(s => s.status === 'approved');
+        setSellers(approvedSellers);
+      } catch (error) {
+        console.error("Failed to fetch data for reports:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch data for reports.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [toast]);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -44,14 +74,30 @@ export default function ReportsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockSellers.filter(s => s.status === 'approved').map(seller => (
-                  <TableRow key={seller.id}>
-                    <TableCell className="font-medium">{seller.name}</TableCell>
-                    <TableCell>12</TableCell>
-                    <TableCell>₹{Number(85300).toLocaleString('en-IN')}</TableCell>
-                    <TableCell>₹{Number(12795).toLocaleString('en-IN')}</TableCell>
-                  </TableRow>
-                ))}
+                {loading ? (
+                   Array.from({length: 3}).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-5 w-32"/></TableCell>
+                      <TableCell><Skeleton className="h-5 w-16"/></TableCell>
+                      <TableCell><Skeleton className="h-5 w-24"/></TableCell>
+                      <TableCell><Skeleton className="h-5 w-24"/></TableCell>
+                    </TableRow>
+                   ))
+                ) : (
+                  sellers.map(seller => {
+                    // Mock data for sales and commission for now
+                    const totalSales = 85300; 
+                    const commission = totalSales * (seller.commissionRate / 100);
+                    return (
+                      <TableRow key={seller.id}>
+                        <TableCell className="font-medium">{seller.name}</TableCell>
+                        <TableCell>12</TableCell> {/* This would require counting products */}
+                        <TableCell>₹{Number(totalSales).toLocaleString('en-IN')}</TableCell>
+                        <TableCell>₹{Number(commission).toLocaleString('en-IN')}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
               </TableBody>
             </Table>
           </CardContent>

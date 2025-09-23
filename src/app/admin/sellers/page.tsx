@@ -30,6 +30,7 @@ const statusVariant = {
   pending: 'secondary',
   approved: 'default',
   rejected: 'destructive',
+  suspended: 'destructive',
 } as const;
 
 export default function SellersPage() {
@@ -76,7 +77,7 @@ export default function SellersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  const handleSellerStatusChange = async (sellerId: string, newStatus: 'approved' | 'rejected') => {
+  const handleSellerStatusChange = async (sellerId: string, newStatus: Seller['status']) => {
     try {
       await updateSellerStatus(sellerId, newStatus);
       setSellers(prevSellers =>
@@ -177,7 +178,13 @@ export default function SellersPage() {
                           <DropdownMenuItem asChild>
                             <Link href={`/admin/sellers/${seller.id}`}>View Details</Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>Suspend</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleSellerStatusChange(seller.id, 'suspended')}
+                            className="text-destructive"
+                            disabled={seller.status === 'suspended'}
+                          >
+                            Suspend
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     )}

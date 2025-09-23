@@ -1,23 +1,43 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockSellers } from '@/lib/placeholder-data';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { Seller } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { getSellers, updateSellerCommission } from '@/lib/firebase/firestore';
+import { Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CommissionsPage() {
-  const [sellers, setSellers] = useState<Seller[]>(mockSellers);
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedSeller, setSelectedSeller] = useState<string>('');
   const [commissionRate, setCommissionRate] = useState<string>('');
+  const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
-  const handleUpdateRate = () => {
+  useEffect(() => {
+    async function fetchSellers() {
+      setLoading(true);
+      try {
+        const fetchedSellers = await getSellers();
+        setSellers(fetchedSellers);
+      } catch (error) {
+        console.error("Failed to fetch sellers:", error);
+        toast({ title: 'Error', description: 'Could not fetch sellers.', variant: 'destructive' });
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSellers();
+  }, [toast]);
+
+  const handleUpdateRate = async () => {
     if (!selectedSeller || !commissionRate) {
         toast({
             title: 'Missing Information',
@@ -26,17 +46,28 @@ export default function CommissionsPage() {
         });
         return;
     }
-    setSellers(prevSellers =>
-        prevSellers.map(seller =>
-            seller.id === selectedSeller ? { ...seller, commissionRate: parseFloat(commissionRate) } : seller
-        )
-    );
-    toast({
-        title: 'Commission Rate Updated',
-        description: `Commission for the selected seller has been updated to ${commissionRate}%.`,
-    });
-    setSelectedSeller('');
-    setCommissionRate('');
+    setIsUpdating(true);
+    try {
+        const rate = parseFloat(commissionRate);
+        await updateSellerCommission(selectedSeller, rate);
+        
+        setSellers(prevSellers =>
+            prevSellers.map(seller =>
+                seller.id === selectedSeller ? { ...seller, commissionRate: rate } : seller
+            )
+        );
+        toast({
+            title: 'Commission Rate Updated',
+            description: `Commission for the selected seller has been updated to ${rate}%.`,
+        });
+        setSelectedSeller('');
+        setCommissionRate('');
+    } catch (error) {
+        console.error("Error updating commission:", error);
+        toast({ title: 'Error', description: 'Failed to update commission rate.', variant: 'destructive' });
+    } finally {
+        setIsUpdating(false);
+    }
   };
 
   const approvedSellers = sellers.filter(s => s.status === 'approved');
@@ -54,7 +85,7 @@ export default function CommissionsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="seller-select">Select Seller</Label>
-                <Select value={selectedSeller} onValueChange={setSelectedSeller}>
+                <Select value={selectedSeller} onValueChange={setSelectedSeller} disabled={isUpdating || loading}>
                   <SelectTrigger id="seller-select">
                     <SelectValue placeholder="Select a seller" />
                   </SelectTrigger>
@@ -73,9 +104,13 @@ export default function CommissionsPage() {
                     placeholder="e.g. 15" 
                     value={commissionRate}
                     onChange={(e) => setCommissionRate(e.target.value)}
+                    disabled={isUpdating || loading}
                 />
               </div>
-              <Button className="w-full" onClick={handleUpdateRate}>Update Rate</Button>
+              <Button className="w-full" onClick={handleUpdateRate} disabled={isUpdating || loading}>
+                {isUpdating && <Loader2 className="mr-2 animate-spin"/>}
+                Update Rate
+              </Button>
             </CardContent>
           </Card>
            <Card className="mt-8">
@@ -116,17 +151,27 @@ export default function CommissionsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {approvedSellers.map(seller => (
-                            <TableRow key={seller.id}>
-                                <TableCell className="font-medium">{seller.name}</TableCell>
-                                <TableCell className="text-muted-foreground">
-                                    <Badge variant={seller.status === 'approved' ? 'default' : 'secondary'}>
-                                        {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">{seller.commissionRate ?? 15}%</TableCell>
+                        {loading ? (
+                          Array.from({length: 3}).map((_, i) => (
+                            <TableRow key={i}>
+                              <TableCell><Skeleton className="h-5 w-32"/></TableCell>
+                              <TableCell><Skeleton className="h-6 w-20"/></TableCell>
+                              <TableCell className="text-right"><Skeleton className="h-5 w-10 inline-block"/></TableCell>
                             </TableRow>
-                        ))}
+                          ))
+                        ) : (
+                          sellers.map(seller => (
+                              <TableRow key={seller.id}>
+                                  <TableCell className="font-medium">{seller.name}</TableCell>
+                                  <TableCell className="text-muted-foreground">
+                                      <Badge variant={seller.status === 'approved' ? 'default' : 'secondary'}>
+                                          {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
+                                      </Badge>
+                                  </TableCell>
+                                  <TableCell className="text-right">{seller.commissionRate ?? 15}%</TableCell>
+                              </TableRow>
+                          ))
+                        )}
                     </TableBody>
                 </Table>
              </CardContent>

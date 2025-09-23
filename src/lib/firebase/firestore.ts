@@ -61,6 +61,17 @@ export async function updateSellerStatus(sellerId: string, status: Seller['statu
   await updateDoc(sellerRef, { status });
 }
 
+/**
+ * Updates a seller's commission rate in Firestore.
+ * @param sellerId - The ID of the seller to update.
+ * @param commissionRate - The new commission rate.
+ */
+export async function updateSellerCommission(sellerId: string, commissionRate: number): Promise<void> {
+    const sellerRef = doc(db, 'sellers', sellerId);
+    await updateDoc(sellerRef, { commissionRate });
+}
+
+
 // ================== Product Functions ==================
 
 /**
