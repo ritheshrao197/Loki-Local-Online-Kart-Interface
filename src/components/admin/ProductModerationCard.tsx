@@ -13,6 +13,7 @@ import { Separator } from '../ui/separator';
 
 interface ProductModerationCardProps {
   product: Product;
+  onStatusChange: (productId: string, newStatus: 'approved' | 'rejected') => void;
 }
 
 // Helper to convert image URL to data URI
@@ -28,10 +29,9 @@ async function toDataURL(url: string): Promise<string> {
 }
 
 
-export function ProductModerationCard({ product }: ProductModerationCardProps) {
+export function ProductModerationCard({ product, onStatusChange }: ProductModerationCardProps) {
   const [isReviewing, setIsReviewing] = useState(false);
   const [review, setReview] = useState<AdminReviewProductListingOutput | null>(null);
-  const [status, setStatus] = useState<'pending' | 'approved' | 'rejected'>(product.status);
   const { toast } = useToast();
   
   const handleReview = async () => {
@@ -40,7 +40,6 @@ export function ProductModerationCard({ product }: ProductModerationCardProps) {
     try {
       const imageUrl = product.images[0].url;
       // In a real app, you might need a proxy for cross-origin fetches
-      // For picsum.photos, it should work directly.
       const productImageUrl = await toDataURL(imageUrl);
 
       const result = await adminReviewProductListing({
@@ -64,17 +63,17 @@ export function ProductModerationCard({ product }: ProductModerationCardProps) {
   };
 
   const handleApprove = () => {
-    setStatus('approved');
+    onStatusChange(product.id, 'approved');
     toast({ title: 'Product Approved', description: `"${product.name}" is now live.` });
   };
   
   const handleReject = () => {
-    setStatus('rejected');
+    onStatusChange(product.id, 'rejected');
     toast({ title: 'Product Rejected', description: `"${product.name}" has been rejected.` });
   };
 
 
-  if (status !== 'pending') return null;
+  if (product.status !== 'pending') return null;
 
   return (
     <Card>

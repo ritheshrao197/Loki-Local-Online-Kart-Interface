@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Table,
   TableBody,
@@ -11,6 +13,8 @@ import { MoreHorizontal, Check, X } from 'lucide-react';
 import { mockSellers } from '@/lib/placeholder-data';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import type { Seller } from '@/lib/types';
 
 const statusVariant = {
   pending: 'secondary',
@@ -19,6 +23,16 @@ const statusVariant = {
 } as const;
 
 export default function SellersPage() {
+  const [sellers, setSellers] = useState<Seller[]>(mockSellers);
+
+  const handleSellerStatusChange = (sellerId: string, newStatus: 'approved' | 'rejected') => {
+    setSellers(prevSellers =>
+      prevSellers.map(seller =>
+        seller.id === sellerId ? { ...seller, status: newStatus } : seller
+      )
+    );
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -37,7 +51,7 @@ export default function SellersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockSellers.map((seller) => (
+            {sellers.map((seller) => (
               <TableRow key={seller.id}>
                 <TableCell className="font-medium">{seller.name}</TableCell>
                 <TableCell>
@@ -51,10 +65,10 @@ export default function SellersPage() {
                 <TableCell>
                   {seller.status === 'pending' ? (
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700">
+                        <Button variant="outline" size="sm" className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700" onClick={() => handleSellerStatusChange(seller.id, 'approved')}>
                             <Check className="h-4 w-4 mr-1"/> Approve
                         </Button>
-                        <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700">
+                        <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => handleSellerStatusChange(seller.id, 'rejected')}>
                             <X className="h-4 w-4 mr-1"/> Reject
                         </Button>
                     </div>
