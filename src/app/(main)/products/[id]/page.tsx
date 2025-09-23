@@ -1,23 +1,60 @@
+
+'use client';
+
+import { useState, useEffect } from 'react';
 import { getProductById, getProducts } from '@/lib/firebase/firestore';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { MessageSquare, ShoppingCart, ThumbsUp, Truck, Warehouse, Zap, Share2, Star } from 'lucide-react';
 import { ProductCard } from '@/components/products/ProductCard';
+import type { Product } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = await getProductById(params.id);
+export default function ProductDetailPage() {
+  const params = useParams();
+  const { id } = params;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!product || product.status !== 'approved') {
-    notFound();
+  useEffect(() => {
+    if (!id) return;
+    
+    async function fetchProductData() {
+      try {
+        const fetchedProduct = await getProductById(id as string);
+        if (!fetchedProduct || fetchedProduct.status !== 'approved') {
+          notFound();
+          return;
+        }
+        setProduct(fetchedProduct);
+
+        const allApprovedProducts = await getProducts('approved');
+        const filteredRelated = allApprovedProducts
+          .filter((p) => p.category === fetchedProduct.category && p.id !== fetchedProduct.id)
+          .slice(0, 4);
+        setRelatedProducts(filteredRelated);
+      } catch (error) {
+        console.error("Failed to fetch product data:", error);
+        notFound();
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProductData();
+  }, [id]);
+
+  if (loading) {
+    return <ProductDetailSkeleton />;
   }
 
-  const allApprovedProducts = await getProducts('approved');
-  const relatedProducts = allApprovedProducts
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+  if (!product) {
+    return null; // notFound() would have been called
+  }
 
   return (
     <div className="container py-12">
@@ -112,3 +149,34 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     </div>
   );
 }
+
+
+const ProductDetailSkeleton = () => (
+  <div className="container py-12">
+    <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+      <div>
+        <Skeleton className="aspect-square w-full rounded-lg" />
+      </div>
+      <div className="space-y-6">
+        <Skeleton className="h-6 w-24 rounded-md" />
+        <Skeleton className="h-10 w-3/4 rounded-md" />
+        <Skeleton className="h-5 w-1/2 rounded-md" />
+        <Skeleton className="h-12 w-48 rounded-md" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+        </div>
+        <div className="flex gap-4">
+          <Skeleton className="h-12 flex-1" />
+          <Skeleton className="h-12 flex-1" />
+        </div>
+        <Separator />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+        </div>
+      </div>
+    </div>
+  </div>
+);

@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
 import { ProductCard } from '@/components/products/ProductCard';
 import { ProductFilters } from '@/components/products/ProductFilters';
 import { HeroSlider } from '@/components/home/HeroSlider';
@@ -7,9 +10,26 @@ import { Promotions } from '@/components/home/Promotions';
 import { PopularProducts } from '@/components/home/PopularProducts';
 import { getProducts } from '@/lib/firebase/firestore';
 import Link from 'next/link';
+import type { Product } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function HomePage() {
-  const approvedProducts = await getProducts('approved');
+export default function HomePage() {
+  const [approvedProducts, setApprovedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const products = await getProducts('approved');
+        setApprovedProducts(products);
+      } catch (error) {
+        console.error("Failed to fetch approved products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -34,7 +54,14 @@ export default async function HomePage() {
           <Promotions />
         </div>
         
-        {approvedProducts.length > 0 && (
+        {loading ? (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold font-headline mb-6">Popular Products</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="h-80 w-full" />)}
+            </div>
+          </div>
+        ) : approvedProducts.length > 0 && (
           <div className="mt-12">
               <PopularProducts products={approvedProducts.slice(0,8)} />
           </div>
@@ -42,7 +69,11 @@ export default async function HomePage() {
 
         <div className="mt-20">
           <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
-          {approvedProducts.length > 0 ? (
+          {loading ? (
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({length: 8}).map((_, i) => <Skeleton key={i} className="h-80 w-full" />)}
+            </div>
+          ) : approvedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {approvedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
