@@ -30,19 +30,19 @@ export function Header() {
             <Link href="/login/admin">Sell on Loki</Link>
           </Button>
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/login">
+            <Link href="/profile">
               <User className="h-5 w-5" />
-              <span className="sr-only">Login</span>
+              <span className="sr-only">Profile</span>
             </Link>
           </Button>
           <Button variant="ghost" size="icon" className="relative" asChild>
-            <Link href="#">
+            <Link href="/cart">
               <ShoppingCart className="h-5 w-5" />
               <Badge
                 variant="destructive"
                 className="absolute -right-2 -top-2 h-5 w-5 justify-center p-0"
               >
-                3
+                2
               </Badge>
               <span className="sr-only">Shopping Cart</span>
             </Link>
