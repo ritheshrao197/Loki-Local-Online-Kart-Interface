@@ -17,7 +17,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-headline">Seller Login</CardTitle>
           <CardDescription>
-            Enter your mobile number to access your dashboard
+            Enter your mobile number to access your dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent>
