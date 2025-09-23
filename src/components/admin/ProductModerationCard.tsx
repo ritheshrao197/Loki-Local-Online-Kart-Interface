@@ -16,21 +16,34 @@ interface ProductModerationCardProps {
   onStatusChange: (productId: string, newStatus: 'approved' | 'rejected') => void;
 }
 
-// Helper to convert image URL to data URI
+// Helper to convert image URL to data URI via a proxy if needed
 async function toDataURL(url: string): Promise<string> {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
+    // In a real-world scenario, especially with browser security (CORS),
+    // it's often better to have a server-side endpoint act as a proxy.
+    // For this example, we'll try a direct fetch, which might fail for some URLs.
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+        }
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error("CORS or network error fetching image for AI review:", error);
+        // Fallback or error handling. We'll throw to be caught by the caller.
+        throw new Error("Could not load image for AI review due to browser security restrictions (CORS).");
+    }
 }
 
 
 export function ProductModerationCard({ product, onStatusChange }: ProductModerationCardProps) {
   const [isReviewing, setIsReviewing] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [review, setReview] = useState<AdminReviewProductListingOutput | null>(null);
   const { toast } = useToast();
   
@@ -39,7 +52,6 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
     setReview(null);
     try {
       const imageUrl = product.images[0].url;
-      // In a real app, you might need a proxy for cross-origin fetches
       const productImageUrl = await toDataURL(imageUrl);
 
       const result = await adminReviewProductListing({
@@ -52,9 +64,10 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
       setReview(result);
     } catch (error) {
       console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
       toast({
         title: 'AI Review Failed',
-        description: 'Could not perform AI review. Please check console for errors.',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -62,18 +75,11 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
     }
   };
 
-  const handleApprove = () => {
-    onStatusChange(product.id, 'approved');
-    toast({ title: 'Product Approved', description: `"${product.name}" is now live.` });
+  const handleStatusUpdate = async (newStatus: 'approved' | 'rejected') => {
+    setIsUpdating(true);
+    await onStatusChange(product.id, newStatus);
+    //setIsUpdating(false); // The component will be unmounted, so no need to set state
   };
-  
-  const handleReject = () => {
-    onStatusChange(product.id, 'rejected');
-    toast({ title: 'Product Rejected', description: `"${product.name}" has been rejected.` });
-  };
-
-
-  if (product.status !== 'pending') return null;
 
   return (
     <Card>
@@ -94,7 +100,7 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
         </div>
         <div className="md:col-span-2 space-y-4">
             <p className="text-sm text-muted-foreground leading-6 line-clamp-4">{product.description}</p>
-            <Button onClick={handleReview} disabled={isReviewing}>
+            <Button onClick={handleReview} disabled={isReviewing || isUpdating}>
                 {isReviewing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
                 Run AI Review
             </Button>
@@ -133,11 +139,13 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
         </div>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" className="text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive" onClick={handleReject}>
-            <X className="mr-2 h-4 w-4"/> Reject
+        <Button variant="outline" size="sm" className="text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => handleStatusUpdate('rejected')} disabled={isUpdating}>
+            {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <X className="mr-2 h-4 w-4"/>}
+             Reject
         </Button>
-        <Button size="sm" onClick={handleApprove}>
-            <Check className="mr-2 h-4 w-4"/> Approve
+        <Button size="sm" onClick={() => handleStatusUpdate('approved')} disabled={isUpdating}>
+            {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4"/>}
+             Approve
         </Button>
       </CardFooter>
     </Card>

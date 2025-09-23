@@ -50,11 +50,13 @@ export async function updateSellerStatus(sellerId: string, status: 'approved' | 
 // ================== Product Functions ==================
 
 /**
- * Fetches all products from the 'products' collection in Firestore.
+ * Fetches products from Firestore, optionally filtering by status.
+ * @param status - Optional status to filter products by.
  */
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(status?: 'pending' | 'approved' | 'rejected'): Promise<Product[]> {
     const productsCol = collection(db, 'products');
-    const productSnapshot = await getDocs(productsCol);
+    const q = status ? query(productsCol, where('status', '==', status)) : query(productsCol);
+    const productSnapshot = await getDocs(q);
     const productList = productSnapshot.docs.map(doc => {
         const data = doc.data();
         return {
@@ -63,4 +65,24 @@ export async function getProducts(): Promise<Product[]> {
         } as Product;
     });
     return productList;
+}
+
+/**
+ * Updates a product's status in Firestore.
+ * @param productId - The ID of the product to update.
+ * @param status - The new status ('approved' or 'rejected').
+ */
+export async function updateProductStatus(productId: string, status: 'approved' | 'rejected'): Promise<void> {
+    const productRef = doc(db, 'products', productId);
+    await updateDoc(productRef, { status });
+}
+
+/**
+ * Adds a new product to the 'products' collection in Firestore.
+ * @param product - The product data to add.
+ */
+export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
+    const productsCol = collection(db, 'products');
+    const docRef = await addDoc(productsCol, product);
+    return { id: docRef.id, ...product };
 }

@@ -1,23 +1,62 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProductModerationCard } from "@/components/admin/ProductModerationCard";
-import { mockProducts } from "@/lib/placeholder-data";
 import type { Product } from '@/lib/types';
+import { getProducts, updateProductStatus } from '@/lib/firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const handleProductUpdate = (productId: string, newStatus: 'approved' | 'rejected') => {
-    setProducts(prevProducts =>
-      prevProducts.map(p =>
-        p.id === productId ? { ...p, status: newStatus } : p
-      )
-    );
+  const fetchPendingProducts = async () => {
+    setLoading(true);
+    try {
+      const pendingProducts = await getProducts('pending');
+      setProducts(pendingProducts);
+    } catch (error) {
+      console.error("Error fetching pending products:", error);
+      toast({
+        title: "Error",
+        description: "Could not fetch pending products.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleProductUpdate = async (productId: string, newStatus: 'approved' | 'rejected') => {
+    const originalProducts = [...products];
+    // Immediately update UI for better user experience
+    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+
+    try {
+      await updateProductStatus(productId, newStatus);
+      toast({
+        title: `Product ${newStatus}`,
+        description: `The product has been successfully ${newStatus}.`,
+      });
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      toast({
+        title: 'Update Failed',
+        description: 'Could not update the product status. Please try again.',
+        variant: 'destructive',
+      });
+      // Revert UI change if update fails
+      setProducts(originalProducts);
+    }
   };
   
-  const pendingProducts = products.filter(p => p.status === 'pending');
-
   return (
     <div>
         <div className="mb-6">
@@ -26,8 +65,12 @@ export default function AdminProductsPage() {
         </div>
 
         <div className="space-y-6">
-            {pendingProducts.length > 0 ? (
-                pendingProducts.map(product => (
+            {loading ? (
+              Array.from({ length: 2 }).map((_, i) => (
+                <CardSkeleton key={i} />
+              ))
+            ) : products.length > 0 ? (
+                products.map(product => (
                     <ProductModerationCard 
                         key={product.id} 
                         product={product} 
@@ -44,3 +87,13 @@ export default function AdminProductsPage() {
     </div>
   )
 }
+
+const CardSkeleton = () => (
+  <div className="flex flex-col space-y-3">
+    <Skeleton className="h-[200px] w-full rounded-xl" />
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-[250px]" />
+      <Skeleton className="h-4 w-[200px]" />
+    </div>
+  </div>
+);
