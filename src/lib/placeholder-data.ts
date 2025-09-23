@@ -1,7 +1,6 @@
 
 import type { Product, Seller, Order } from './types';
 import { PlaceHolderImages } from './placeholder-images';
-import { Timestamp } from 'firebase/firestore';
 
 const sellers: Omit<Seller, 'status' | 'pan' | 'mobile' | 'commissionRate'>[] = [
   { id: 'seller_1', name: 'Artisan Crafts Co.' },
@@ -69,7 +68,7 @@ export const mockSellers: Seller[] = [
 
 const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images, price: p.price }));
 
-export const mockOrders: Omit<Order, 'id'>[] = [
+export const mockOrders: Omit<Order, 'id' | 'orderDate'>[] = [
   {
     product: simplifiedProducts[4], // Artisan Leather Sandals
     buyer: { id: 'buyer_1', name: 'Anjali Sharma' },
@@ -77,7 +76,6 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 1,
     total: 1500,
     status: 'delivered',
-    orderDate: Timestamp.fromDate(new Date('2023-10-15')),
   },
   {
     product: simplifiedProducts[6], // Traditional Brass Lamp
@@ -86,7 +84,6 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 1,
     total: 950,
     status: 'dispatched',
-    orderDate: Timestamp.fromDate(new Date('2023-10-28')),
   },
   {
     product: simplifiedProducts[1], // Woven Cotton Scarf
@@ -95,7 +92,6 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 2,
     total: 1600,
     status: 'confirmed',
-    orderDate: Timestamp.fromDate(new Date('2023-11-01')),
   },
   {
     product: simplifiedProducts[11], // Silver Jhumka Earrings
@@ -104,7 +100,6 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 1,
     total: 2200,
     status: 'pending',
-    orderDate: Timestamp.fromDate(new Date('2023-11-02')),
   },
     {
     product: simplifiedProducts[0], // Ceramic Vase
@@ -113,7 +108,6 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 1,
     total: 450,
     status: 'pending',
-    orderDate: Timestamp.fromDate(new Date('2023-11-03')),
   },
   {
     product: simplifiedProducts[8], // Eco-Friendly Jute Bag
@@ -122,7 +116,6 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 3,
     total: 750,
     status: 'delivered',
-    orderDate: Timestamp.fromDate(new Date('2023-10-20')),
   },
   {
     product: simplifiedProducts[9], // Homemade Mango Pickle
@@ -131,6 +124,10 @@ export const mockOrders: Omit<Order, 'id'>[] = [
     quantity: 2,
     total: 400,
     status: 'pending',
-    orderDate: Timestamp.fromDate(new Date('2023-11-04')),
   },
-];
+].map((order, index) => {
+    // Distribute order dates over the last month
+    const date = new Date();
+    date.setDate(date.getDate() - (mockOrders.length - index) * 2);
+    return { ...order, orderDate: date };
+});

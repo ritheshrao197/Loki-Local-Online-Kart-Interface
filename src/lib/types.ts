@@ -1,5 +1,4 @@
 
-import type { Timestamp } from 'firebase/firestore';
 
 export type Product = {
   id: string;
@@ -59,5 +58,6 @@ export type Order = {
   quantity: number;
   total: number;
   status: 'pending' | 'confirmed' | 'dispatched' | 'delivered';
-  orderDate: Timestamp;
+  orderDate: string | Date;
 };
+

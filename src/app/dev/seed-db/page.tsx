@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { mockProducts, mockSellers, mockOrders } from '@/lib/placeholder-data';
 import Link from 'next/link';
@@ -27,7 +27,6 @@ export default function SeedDbPage() {
       setStatus('Checking existing data...');
       const productsCollection = collection(db, 'products');
       const sellersCollection = collection(db, 'sellers');
-      const ordersCollection = collection(db, 'orders');
       
       const existingProducts = await getDocs(productsCollection);
       const existingSellers = await getDocs(sellersCollection);
@@ -44,25 +43,27 @@ export default function SeedDbPage() {
       
       const batch = writeBatch(db);
 
-      // Seed Sellers
       setStatus('Preparing sellers...');
       mockSellers.forEach((seller) => {
         const docRef = doc(db, 'sellers', seller.id);
         batch.set(docRef, seller);
       });
 
-      // Seed Products
       setStatus('Preparing products...');
       mockProducts.forEach((product) => {
         const docRef = doc(db, 'products', product.id);
         batch.set(docRef, product);
       });
 
-      // Seed Orders
       setStatus('Preparing orders...');
+      const ordersCollection = collection(db, 'orders');
       mockOrders.forEach((order) => {
         const docRef = doc(ordersCollection); // Create a new doc with a random ID
-        batch.set(docRef, order);
+        const orderDataWithTimestamp = {
+            ...order,
+            orderDate: Timestamp.fromDate(order.orderDate as Date)
+        };
+        batch.set(docRef, orderDataWithTimestamp);
       });
       
       setStatus('Committing to database...');
