@@ -13,9 +13,10 @@ import { MoreHorizontal, Check, X, PlusCircle } from 'lucide-react';
 import { mockSellers } from '@/lib/placeholder-data';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Seller } from '@/lib/types';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const statusVariant = {
   pending: 'secondary',
@@ -25,6 +26,30 @@ const statusVariant = {
 
 export default function SellersPage() {
   const [sellers, setSellers] = useState<Seller[]>(mockSellers);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const newSellerName = searchParams.get('newSellerName');
+    const newSellerMobile = searchParams.get('newSellerMobile');
+    const newSellerPan = searchParams.get('newSellerPan');
+    const newSellerCommission = searchParams.get('newSellerCommission');
+
+    if (newSellerName && newSellerMobile && newSellerPan && newSellerCommission) {
+        const newSeller: Seller = {
+            id: `seller_${Math.random().toString(36).substring(7)}`,
+            name: newSellerName,
+            mobile: newSellerMobile,
+            pan: newSellerPan,
+            commissionRate: parseFloat(newSellerCommission),
+            status: 'approved',
+        };
+        // Avoid adding duplicate seller if user refreshes the page
+        if (!sellers.some(s => s.pan === newSeller.pan)) {
+            setSellers(prevSellers => [newSeller, ...prevSellers]);
+        }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleSellerStatusChange = (sellerId: string, newStatus: 'approved' | 'rejected') => {
     setSellers(prevSellers =>
