@@ -1,3 +1,4 @@
+
 import { mockProducts } from '@/lib/placeholder-data';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';

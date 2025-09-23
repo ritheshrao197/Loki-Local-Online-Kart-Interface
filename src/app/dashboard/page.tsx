@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -30,7 +31,7 @@ export default function DashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹45,231.89</div>
+            <div className="text-2xl font-bold">₹{Number(45231.89).toLocaleString('en-IN')}</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
             </p>

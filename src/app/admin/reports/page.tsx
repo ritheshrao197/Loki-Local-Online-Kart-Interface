@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mockSellers, mockProducts } from "@/lib/placeholder-data";
@@ -47,8 +48,8 @@ export default function ReportsPage() {
                   <TableRow key={seller.id}>
                     <TableCell className="font-medium">{seller.name}</TableCell>
                     <TableCell>12</TableCell>
-                    <TableCell>₹85,300</TableCell>
-                    <TableCell>₹12,795</TableCell>
+                    <TableCell>₹{Number(85300).toLocaleString('en-IN')}</TableCell>
+                    <TableCell>₹{Number(12795).toLocaleString('en-IN')}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
