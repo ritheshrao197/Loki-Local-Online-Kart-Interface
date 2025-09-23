@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
@@ -28,8 +28,9 @@ export default function SeedDbPage() {
       const ordersCollection = collection(db, 'orders');
       
       const existingProducts = await getDocs(productsCollection);
+      const existingSellers = await getDocs(sellersCollection);
 
-      if (!existingProducts.empty) {
+      if (!existingProducts.empty || !existingSellers.empty) {
         setResult({
           status: 'already_seeded',
           message: 'Database already contains data. Seeding was skipped.',
@@ -95,7 +96,7 @@ export default function SeedDbPage() {
         <CardContent>
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground text-center">
-              Click the button below to add sample data to your Firestore database. This action will only run if the database is empty.
+              Click the button below to add sample data to your Firestore database. This action will only run if the products or sellers collections are empty.
             </p>
             <Button onClick={handleSeed} disabled={loading}>
               {loading ? (

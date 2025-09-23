@@ -23,15 +23,15 @@ export type Product = {
   brand?: string;
   weight?: number;
   dimensions?: {
-    length: number;
-    width: number;
-    height: number;
+    length?: number;
+    width?: number;
+    height?: number;
   };
   expiryDate?: string;
   manufacturingDate?: string;
   isGstRegistered?: boolean;
   certification?: string;
-  shippingOptions?: ('local' | 'courier' | 'pickup')[];
+  shippingOptions?: string[];
   estimatedDelivery?: string;
   returnPolicy?: 'none' | '7-day' | '15-day';
   isPromoted?: boolean;
@@ -59,3 +59,4 @@ export type Order = {
   status: 'pending' | 'confirmed' | 'dispatched' | 'delivered';
   orderDate: string; // Should be ISO string
 };
+

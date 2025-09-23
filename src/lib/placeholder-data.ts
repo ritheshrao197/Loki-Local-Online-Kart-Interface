@@ -1,3 +1,4 @@
+
 import type { Product, Seller, Order } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -9,31 +10,38 @@ const sellers: Omit<Seller, 'status' | 'pan' | 'mobile' | 'commissionRate'>[] = 
 ];
 
 const productDetails = [
-  { name: 'Ceramic Vase', price: 450, category: 'Home Decor', keywords: 'handmade, pottery, decor, vase' },
-  { name: 'Woven Cotton Scarf', price: 800, category: 'Apparel', keywords: 'textile, cotton, handmade, fashion' },
-  { name: 'Aromatic Spice Set', price: 650, category: 'Food & Groceries', keywords: 'spices, organic, local, cooking' },
-  { name: 'Carved Wooden Elephant', price: 1200, category: 'Home Decor', keywords: 'woodwork, craft, statue, decor' },
-  { name: 'Artisan Leather Sandals', price: 1500, category: 'Footwear', keywords: 'leather, handmade, footwear, sandals' },
-  { name: 'Rural Landscape Painting', price: 3500, category: 'Art', keywords: 'painting, art, decor, landscape' },
-  { name: 'Traditional Brass Lamp', price: 950, category: 'Home Decor', keywords: 'brass, lamp, traditional, decor' },
-  { name: 'Organic Handmade Soaps', price: 300, category: 'Bath & Body', keywords: 'soap, organic, handmade, natural' },
-  { name: 'Eco-Friendly Jute Bag', price: 250, category: 'Accessories', keywords: 'jute, bag, eco-friendly, shopping' },
-  { name: 'Homemade Mango Pickle', price: 200, category: 'Food & Groceries', keywords: 'pickle, homemade, food, mango' },
-  { name: 'Earthen Clay Pot', price: 550, category: 'Kitchenware', keywords: 'clay, pot, cooking, kitchen' },
-  { name: 'Silver Jhumka Earrings', price: 2200, category: 'Jewelry', keywords: 'silver, jewelry, earrings, traditional' },
-  { name: 'Hand-painted Wooden Box', price: 750, category: 'Home Decor', keywords: 'wood, box, hand-painted, storage' },
-  { name: 'Block-printed Cotton Kurta', price: 1100, category: 'Apparel', keywords: 'cotton, kurta, apparel, block-print' },
-  { name: 'Sun-dried Turmeric Powder', price: 150, category: 'Food & Groceries', keywords: 'turmeric, spice, organic, powder' },
-  { name: 'Terracotta Wind Chimes', price: 400, category: 'Home Decor', keywords: 'terracotta, wind-chime, decor, garden' },
-  { name: 'Hand-woven Silk Sari', price: 4500, category: 'Apparel', keywords: 'silk, sari, traditional, ethnic' },
-  { name: 'Spiced Honey Infusion', price: 350, category: 'Food & Groceries', keywords: 'honey, infusion, organic, spice' },
-  { name: 'Brass Pooja Thali Set', price: 1800, category: 'Home Decor', keywords: 'brass, pooja, thali, religious' },
-  { name: 'Madhubani Art Coasters', price: 600, category: 'Art', keywords: 'madhubani, art, coasters, painting' },
+  { name: 'Ceramic Vase', price: 450, category: 'Home Decor', keywords: 'handmade, pottery, decor, vase', stock: 15, unit: 'piece' as const },
+  { name: 'Woven Cotton Scarf', price: 800, category: 'Apparel', keywords: 'textile, cotton, handmade, fashion', stock: 30, unit: 'piece' as const },
+  { name: 'Aromatic Spice Set', price: 650, category: 'Food & Groceries', keywords: 'spices, organic, local, cooking', stock: 50, unit: 'kg' as const },
+  { name: 'Carved Wooden Elephant', price: 1200, category: 'Home Decor', keywords: 'woodwork, craft, statue, decor', stock: 10, unit: 'piece' as const },
+  { name: 'Artisan Leather Sandals', price: 1500, category: 'Footwear', keywords: 'leather, handmade, footwear, sandals', stock: 25, unit: 'piece' as const },
+  { name: 'Rural Landscape Painting', price: 3500, category: 'Art', keywords: 'painting, art, decor, landscape', stock: 5, unit: 'piece' as const },
+  { name: 'Traditional Brass Lamp', price: 950, category: 'Home Decor', keywords: 'brass, lamp, traditional, decor', stock: 20, unit: 'piece' as const },
+  { name: 'Organic Handmade Soaps', price: 300, category: 'Bath & Body', keywords: 'soap, organic, handmade, natural', stock: 100, unit: 'piece' as const },
+  { name: 'Eco-Friendly Jute Bag', price: 250, category: 'Accessories', keywords: 'jute, bag, eco-friendly, shopping', stock: 150, unit: 'piece' as const },
+  { name: 'Homemade Mango Pickle', price: 200, category: 'Food & Groceries', keywords: 'pickle, homemade, food, mango', stock: 80, unit: 'kg' as const },
+  { name: 'Earthen Clay Pot', price: 550, category: 'Kitchenware', keywords: 'clay, pot, cooking, kitchen', stock: 40, unit: 'piece' as const },
+  { name: 'Silver Jhumka Earrings', price: 2200, category: 'Jewelry', keywords: 'silver, jewelry, earrings, traditional', stock: 18, unit: 'piece' as const },
+  { name: 'Hand-painted Wooden Box', price: 750, category: 'Home Decor', keywords: 'wood, box, hand-painted, storage', stock: 22, unit: 'piece' as const },
+  { name: 'Block-printed Cotton Kurta', price: 1100, category: 'Apparel', keywords: 'cotton, kurta, apparel, block-print', stock: 60, unit: 'piece' as const },
+  { name: 'Sun-dried Turmeric Powder', price: 150, category: 'Food & Groceries', keywords: 'turmeric, spice, organic, powder', stock: 200, unit: 'kg' as const },
+  { name: 'Terracotta Wind Chimes', price: 400, category: 'Home Decor', keywords: 'terracotta, wind-chime, decor, garden', stock: 35, unit: 'piece' as const },
+  { name: 'Hand-woven Silk Sari', price: 4500, category: 'Apparel', keywords: 'silk, sari, traditional, ethnic', stock: 12, unit: 'piece' as const },
+  { name: 'Spiced Honey Infusion', price: 350, category: 'Food & Groceries', keywords: 'honey, infusion, organic, spice', stock: 45, unit: 'litre' as const },
+  { name: 'Brass Pooja Thali Set', price: 1800, category: 'Home Decor', keywords: 'brass, pooja, thali, religious', stock: 30, unit: 'piece' as const },
+  { name: 'Madhubani Art Coasters', price: 600, category: 'Art', keywords: 'madhubani, art, coasters, painting', stock: 50, unit: 'dozen' as const },
 ];
 
 export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
   const detail = productDetails[index % productDetails.length];
   const sellerInfo = sellers[index % sellers.length];
+  let status: Product['status'] = 'approved';
+  if (index < 2) {
+    status = 'pending';
+  } else if (index === 2 || index === 3) {
+      status = 'rejected';
+  }
+  
   return {
     id: img.id,
     name: detail.name,
@@ -43,7 +51,9 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
     category: detail.category,
     keywords: detail.keywords,
     seller: sellerInfo,
-    status: index < 4 ? 'pending' : 'approved',
+    status: status,
+    stock: detail.stock,
+    unitOfMeasure: detail.unit,
   };
 });
 
@@ -53,6 +63,7 @@ export const mockSellers: Seller[] = [
   { id: 'seller_3', name: 'Spice Route Goods', mobile: '9876543212', pan: 'ABCDE1236H', status: 'pending', commissionRate: 15 },
   { id: 'seller_4', name: 'Woodworkers Guild', mobile: '9876543213', pan: 'ABCDE1237I', status: 'pending', commissionRate: 15 },
   { id: 'seller_5', name: 'Clay Pot Studio', mobile: '9876543214', pan: 'ABCDE1238J', status: 'rejected', commissionRate: 15 },
+  { id: 'seller_6', name: 'Metal Wonders', mobile: '9876543215', pan: 'ABCDE1239K', status: 'suspended', commissionRate: 15 },
 ];
 
 const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images, price: p.price }));
@@ -108,4 +119,25 @@ export const mockOrders: Order[] = [
     status: 'pending',
     orderDate: '2023-11-03',
   },
+  {
+    id: 'order_106',
+    product: simplifiedProducts[8], // Eco-Friendly Jute Bag
+    buyer: { id: 'buyer_5', name: 'Sneha Patil' },
+    sellerId: 'seller_1',
+    quantity: 3,
+    total: 750,
+    status: 'delivered',
+    orderDate: '2023-10-20',
+  },
+  {
+    id: 'order_107',
+    product: simplifiedProducts[9], // Homemade Mango Pickle
+    buyer: { id: 'buyer_2', name: 'Rohan Mehta' },
+    sellerId: 'seller_3',
+    quantity: 2,
+    total: 400,
+    status: 'pending',
+    orderDate: '2023-11-04',
+  },
 ];
+
