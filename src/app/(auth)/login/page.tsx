@@ -23,16 +23,21 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (mobile.toLowerCase() === 'admin') {
+    const user = mobile.toLowerCase();
+
+    if (user === 'admin') {
       toast({ title: 'Admin Login Successful' });
       router.push('/admin');
-    } else if (mobile.toLowerCase() === 'seller') {
+    } else if (user === 'seller') {
       toast({ title: 'Seller Login Successful' });
       router.push('/dashboard');
+    } else if (user === 'buyer') {
+      toast({ title: 'Login Successful' });
+      router.push('/');
     } else {
       toast({
         title: 'Invalid Credentials',
-        description: 'Please use "admin" or "seller" to log in.',
+        description: 'Use "admin", "seller", or "buyer" to log in.',
         variant: 'destructive',
       });
     }
@@ -44,24 +49,24 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-headline">Login</CardTitle>
           <CardDescription>
-            Enter your credentials to access your dashboard.
+            Enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="mobile">Mobile Number</Label>
+              <Label htmlFor="mobile">Username</Label>
               <Input
                 id="mobile"
                 type="text"
-                placeholder="Use 'admin' or 'seller'"
+                placeholder="Use 'admin', 'seller', or 'buyer'"
                 required
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="otp">One-Time Password (OTP)</Label>
+              <Label htmlFor="otp">Password</Label>
               <Input
                 id="otp"
                 type="password"
