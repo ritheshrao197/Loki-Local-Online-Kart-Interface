@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -18,6 +19,8 @@ import { Loader2, Sparkles, Tags } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Product } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { addProduct } from '@/lib/firebase/firestore';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const formSchema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters.'),
@@ -25,7 +28,7 @@ const formSchema = z.object({
   description: z.string().min(20, 'Description must be at least 20 characters.'),
   price: z.coerce.number().min(1, 'Price must be greater than 0.'),
   category: z.string().min(1, 'Please select a category.'),
-  image: z.any().refine(files => files?.length > 0, 'Image is required.'),
+  image: z.any().refine(files => files?.length > 0 || typeof files === 'string', 'Image is required.'),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -37,6 +40,7 @@ interface ProductFormProps {
 export function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
   const [suggestedCategories, setSuggestedCategories] = useState<string[]>(product ? [product.category] : []);
@@ -52,13 +56,14 @@ export function ProductForm({ product }: ProductFormProps) {
         description: product.description,
         price: product.price,
         category: product.category,
-        image: product.images
+        image: product.images[0].url,
     } : {
       name: '',
       keywords: '',
       description: '',
       price: 0,
       category: '',
+      image: undefined,
     },
   });
 
@@ -123,13 +128,44 @@ export function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  const onSubmit = (data: ProductFormValues) => {
-    console.log(data);
-    toast({
-      title: isEditMode ? 'Product Updated!' : 'Product Submitted!',
-      description: `Your product is ${isEditMode ? 'updated' : 'pending admin approval'}.`,
-    });
-    router.push('/dashboard/products');
+  const onSubmit = async (data: ProductFormValues) => {
+    setIsSubmitting(true);
+    try {
+      if (isEditMode) {
+        // Update logic will go here
+        console.log("Updating product:", data);
+      } else {
+        // Create new product
+        const newProduct: Omit<Product, 'id'> = {
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          category: data.category,
+          keywords: data.keywords,
+          // For now, we'll assign a random placeholder image and a mock seller.
+          images: [PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)]],
+          seller: { id: 'seller_1', name: 'Artisan Crafts Co.' }, // Mock seller
+          status: 'pending',
+        };
+        await addProduct(newProduct);
+      }
+      
+      toast({
+        title: isEditMode ? 'Product Updated!' : 'Product Submitted!',
+        description: `Your product is ${isEditMode ? 'updated' : 'pending admin approval'}.`,
+      });
+      router.push('/dashboard/products');
+
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast({
+        title: "Submission Error",
+        description: "There was an error saving the product. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const productCategories = ["Home Decor", "Apparel", "Food & Groceries", "Art", "Footwear", "Bath & Body", "Accessories", "Kitchenware", "Jewelry"];
@@ -265,8 +301,11 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
         </div>
         <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-            <Button type="submit">{isEditMode ? 'Save Changes' : 'Submit for Review'}</Button>
+            <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isEditMode ? 'Save Changes' : 'Submit for Review'}
+            </Button>
         </div>
       </form>
     </Form>

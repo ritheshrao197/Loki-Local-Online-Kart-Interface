@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -12,7 +13,6 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { PlusCircle, MoreHorizontal } from 'lucide-react';
-import { mockProducts } from '@/lib/placeholder-data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -28,6 +28,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
+import { getProducts } from '@/lib/firebase/firestore'; // Assuming you have a function to get all products for a seller
+import { Skeleton } from '@/components/ui/skeleton';
 
 const statusVariant = {
   pending: 'secondary',
@@ -36,12 +38,38 @@ const statusVariant = {
 } as const;
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>(mockProducts.slice(0, 5));
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { toast } = useToast();
 
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      try {
+        // For now, we fetch all products. In a real app, this would be scoped to the logged-in seller.
+        const allProducts = await getProducts(); 
+        setProducts(allProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast({
+          title: "Error",
+          description: "Could not fetch products.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const handleDelete = () => {
     if (!productToDelete) return;
+    // This part would interact with Firestore to delete the product
+    // For now, we'll just optimistically update the UI
     setProducts(products.filter(p => p.id !== productToDelete.id));
     toast({
       title: 'Product Deleted',
@@ -73,7 +101,25 @@ export default function ProductsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-16 w-16 rounded-md" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-16" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                </TableRow>
+              ))
+            ) : products.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  No products found. <Link href="/dashboard/products/new" className="text-primary underline">Add your first product</Link>.
+                </TableCell>
+              </TableRow>
+            ) : (
+              products.map((product) => (
               <TableRow key={product.id}>
                 <TableCell className="hidden sm:table-cell">
                   <Image
@@ -113,7 +159,7 @@ export default function ProductsPage() {
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
-            ))}
+            )))}
           </TableBody>
         </Table>
       </div>
