@@ -31,10 +31,14 @@ export async function getSellers(): Promise<Seller[]> {
  * Fetches a single seller by its ID from Firestore.
  */
 export async function getSellerById(sellerId: string): Promise<Seller | null> {
+    if (!sellerId) {
+        return null;
+    }
     const sellerRef = doc(db, 'sellers', sellerId);
     const sellerSnap = await getDoc(sellerRef);
 
     if (!sellerSnap.exists()) {
+        console.warn(`No seller found with ID: ${sellerId}`);
         return null;
     }
 
