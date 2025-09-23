@@ -10,6 +10,7 @@ import {
   query,
   where,
   Timestamp,
+  deleteDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Seller, Product } from '@/lib/types';
@@ -52,9 +53,9 @@ export async function updateSellerStatus(sellerId: string, status: 'approved' | 
  * Fetches products from Firestore, optionally filtering by status.
  * @param status - Optional status to filter products by.
  */
-export async function getProducts(status?: 'pending' | 'approved' | 'rejected'): Promise<Product[]> {
+export async function getProducts(status?: 'pending' | 'approved' | 'rejected' | 'all'): Promise<Product[]> {
     const productsCol = collection(db, 'products');
-    const q = status ? query(productsCol, where('status', '==', status)) : query(productsCol);
+    const q = status && status !== 'all' ? query(productsCol, where('status', '==', status)) : query(productsCol);
     const productSnapshot = await getDocs(q);
     const productList = productSnapshot.docs.map(doc => {
         const data = doc.data();
@@ -100,4 +101,23 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<Product>
     const productsCol = collection(db, 'products');
     const docRef = await addDoc(productsCol, product);
     return { id: docRef.id, ...product };
+}
+
+/**
+ * Updates an existing product in Firestore.
+ * @param productId - The ID of the product to update.
+ * @param productData - The partial product data to update.
+ */
+export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
+  const productRef = doc(db, 'products', productId);
+  await updateDoc(productRef, productData);
+}
+
+/**
+ * Deletes a product from Firestore.
+ * @param productId - The ID of the product to delete.
+ */
+export async function deleteProduct(productId: string): Promise<void> {
+  const productRef = doc(db, 'products', productId);
+  await deleteDoc(productRef);
 }

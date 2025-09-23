@@ -19,7 +19,7 @@ import { Loader2, Sparkles, Tags } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Product } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addProduct } from '@/lib/firebase/firestore';
+import { addProduct, updateProduct } from '@/lib/firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const formSchema = z.object({
@@ -131,18 +131,26 @@ export function ProductForm({ product }: ProductFormProps) {
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
     try {
-      if (isEditMode) {
-        // Update logic will go here
-        console.log("Updating product:", data);
+      if (isEditMode && product) {
+        const updatedProductData: Partial<Product> = {
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          category: data.category,
+          keywords: data.keywords,
+          // Image handling logic can be more sophisticated, e.g., upload to Firebase Storage
+          // For now, we'll keep the existing image if a new one isn't uploaded
+          images: imageDataUri ? [{ url: imageDataUri, hint: product.images[0].hint }] : product.images,
+          status: 'pending', // After edit, it should be re-approved.
+        };
+        await updateProduct(product.id, updatedProductData);
       } else {
-        // Create new product
         const newProduct: Omit<Product, 'id'> = {
           name: data.name,
           description: data.description,
           price: data.price,
           category: data.category,
           keywords: data.keywords,
-          // For now, we'll assign a random placeholder image and a mock seller.
           images: [PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)]],
           seller: { id: 'seller_1', name: 'Artisan Crafts Co.' }, // Mock seller
           status: 'pending',
@@ -152,9 +160,10 @@ export function ProductForm({ product }: ProductFormProps) {
       
       toast({
         title: isEditMode ? 'Product Updated!' : 'Product Submitted!',
-        description: `Your product is ${isEditMode ? 'updated' : 'pending admin approval'}.`,
+        description: `Your product is ${isEditMode ? 'updated and pending re-approval' : 'pending admin approval'}.`,
       });
       router.push('/dashboard/products');
+      router.refresh();
 
     } catch (error) {
       console.error("Form submission error:", error);
