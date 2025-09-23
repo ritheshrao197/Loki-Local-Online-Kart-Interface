@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getProductById, getProducts } from '@/lib/firebase/firestore';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -25,6 +24,7 @@ export default function ProductDetailPage() {
     
     async function fetchProductData() {
       try {
+        const { getProductById, getProducts } = await import('@/lib/firebase/firestore');
         const fetchedProduct = await getProductById(id as string);
         if (!fetchedProduct || fetchedProduct.status !== 'approved') {
           notFound();

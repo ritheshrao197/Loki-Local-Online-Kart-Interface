@@ -8,7 +8,6 @@ import { HeroSlider } from '@/components/home/HeroSlider';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { Promotions } from '@/components/home/Promotions';
 import { PopularProducts } from '@/components/home/PopularProducts';
-import { getProducts } from '@/lib/firebase/firestore';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,6 +19,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchProducts() {
       try {
+        const { getProducts } = await import('@/lib/firebase/firestore');
         const products = await getProducts('approved');
         setApprovedProducts(products);
       } catch (error) {
