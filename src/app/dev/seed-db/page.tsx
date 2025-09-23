@@ -15,6 +15,7 @@ type SeedStatus = 'idle' | 'success' | 'error' | 'already_seeded';
 
 export default function SeedDbPage() {
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('Idle');
   const [result, setResult] = useState<{ status: SeedStatus; message: string } | null>(null);
   const { toast } = useToast();
 
@@ -23,6 +24,7 @@ export default function SeedDbPage() {
     setResult(null);
 
     try {
+      setStatus('Checking existing data...');
       const productsCollection = collection(db, 'products');
       const sellersCollection = collection(db, 'sellers');
       const ordersCollection = collection(db, 'orders');
@@ -31,6 +33,7 @@ export default function SeedDbPage() {
       const existingSellers = await getDocs(sellersCollection);
 
       if (!existingProducts.empty || !existingSellers.empty) {
+        setStatus('Skipped.');
         setResult({
           status: 'already_seeded',
           message: 'Database already contains data. Seeding was skipped.',
@@ -42,12 +45,14 @@ export default function SeedDbPage() {
       const batch = writeBatch(db);
 
       // Seed Sellers
+      setStatus('Seeding sellers...');
       mockSellers.forEach((seller) => {
         const docRef = doc(db, 'sellers', seller.id);
         batch.set(docRef, seller);
       });
 
       // Seed Products
+      setStatus('Seeding products...');
       mockProducts.forEach((product) => {
         const docRef = doc(db, 'products', product.id);
         batch.set(docRef, product);
@@ -56,19 +61,22 @@ export default function SeedDbPage() {
       await batch.commit();
 
       // Seed Orders separately as they don't have a predefined ID
+      setStatus('Seeding orders...');
       for (const order of mockOrders) {
         await addDoc(ordersCollection, order);
       }
       
+      setStatus('Seeding complete!');
       const totalCount = mockProducts.length + mockSellers.length + mockOrders.length;
       setResult({
         status: 'success',
-        message: `Successfully seeded ${totalCount} documents across products, sellers, and orders.`,
+        message: `Successfully seeded ${totalCount} documents.`,
       });
 
     } catch (error) {
       console.error("Error seeding database:", error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      setStatus('An error occurred.');
       setResult({
         status: 'error',
         message: errorMessage,
@@ -95,24 +103,35 @@ export default function SeedDbPage() {
         <CardContent>
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground text-center">
-              Click the button below to add sample data to your Firestore database. This action will only run if the products or sellers collections are empty.
+              Click the button below to add sample data. This action will only run if the products or sellers collections are empty.
             </p>
             <Button onClick={handleSeed} disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Seeding...
+                  {status}...
                 </>
               ) : (
                 'Seed Database'
               )}
             </Button>
+            
             {result && (
               <div className="mt-4 text-center p-4 rounded-md w-full bg-secondary">
                 {result.status === 'success' && <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-2" />}
                 {result.status === 'error' && <AlertTriangle className="h-8 w-8 mx-auto text-destructive mb-2" />}
                 {result.status === 'already_seeded' && <AlertTriangle className="h-8 w-8 mx-auto text-yellow-600 mb-2" />}
                 <p className="font-semibold">{result.message}</p>
+                 {result.status === 'success' && (
+                    <Button asChild variant="default" className="mt-4">
+                        <Link href="/">View your populated app</Link>
+                    </Button>
+                )}
+              </div>
+            )}
+             {loading && !result && (
+              <div className="mt-4 text-center p-4 rounded-md w-full bg-secondary/50">
+                <p className="text-sm font-medium text-muted-foreground">{status}</p>
               </div>
             )}
           </div>
