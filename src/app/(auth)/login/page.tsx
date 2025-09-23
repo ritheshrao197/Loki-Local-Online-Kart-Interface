@@ -21,7 +21,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
+          <form className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="mobile">Mobile Number</Label>
               <Input
@@ -38,10 +38,10 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" asChild>
                 <Link href="/dashboard">Login</Link>
             </Button>
-          </div>
+          </form>
           <div className="mt-4 text-center text-sm">
             Not a seller yet?{' '}
-            <Link href="/auth/seller-signup" className="underline">
+            <Link href="/seller-signup" className="underline">
               Sign up
             </Link>
           </div>
