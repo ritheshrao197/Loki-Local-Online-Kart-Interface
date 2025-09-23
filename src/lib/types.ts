@@ -59,5 +59,5 @@ export type Order = {
   quantity: number;
   total: number;
   status: 'pending' | 'confirmed' | 'dispatched' | 'delivered';
-  orderDate: Timestamp;
+  orderDate: string;
 };

@@ -42,7 +42,7 @@ export default function OrdersPage() {
       setLoading(true);
       try {
         const sellerOrders = await getOrdersBySeller(sellerId);
-        sellerOrders.sort((a, b) => b.orderDate.toMillis() - a.orderDate.toMillis());
+        sellerOrders.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
         setOrders(sellerOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -149,7 +149,7 @@ export default function OrdersPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">₹{order.total.toLocaleString('en-IN')}</TableCell>
-                <TableCell className="hidden md:table-cell">{format(order.orderDate.toDate(), 'PPP')}</TableCell>
+                <TableCell className="hidden md:table-cell">{format(new Date(order.orderDate), 'PPP')}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

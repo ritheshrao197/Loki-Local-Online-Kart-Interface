@@ -140,7 +140,11 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  */
 export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
     const productsCol = collection(db, 'products');
-    const docRef = await addDoc(productsCol, product);
+    const docRef = await addDoc(productsCol, {
+      ...product,
+      manufacturingDate: product.manufacturingDate ? new Date(product.manufacturingDate) : null,
+      expiryDate: product.expiryDate ? new Date(product.expiryDate) : null,
+    });
     return { id: docRef.id, ...product };
 }
 
@@ -176,10 +180,12 @@ export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
   const orderSnapshot = await getDocs(q);
   const orderList = orderSnapshot.docs.map(doc => {
     const data = doc.data();
+    // Convert Firestore Timestamp to a serializable format (ISO string)
+    const orderDate = (data.orderDate as Timestamp).toDate().toISOString();
     return {
         id: doc.id,
         ...data,
-        orderDate: data.orderDate as Timestamp,
+        orderDate,
     } as Order
   });
   return orderList;

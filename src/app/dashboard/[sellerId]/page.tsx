@@ -49,7 +49,7 @@ export default function DashboardPage() {
         ]);
 
         // Sort orders to get the most recent ones
-        orders.sort((a, b) => b.orderDate.toMillis() - a.orderDate.toMillis());
+        orders.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
         setRecentOrders(orders.slice(0, 5));
 
         const totalRevenue = orders
