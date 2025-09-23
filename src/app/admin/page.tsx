@@ -1,3 +1,5 @@
+
+'use client';
 import {
   Card,
   CardContent,
@@ -8,8 +10,34 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Package, Users, AlertTriangle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { getProducts } from '@/lib/firebase/firestore';
+import { getSellers } from '@/lib/firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminDashboardPage() {
+  const [pendingProductsCount, setPendingProductsCount] = useState(0);
+  const [pendingSellersCount, setPendingSellersCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const [pendingProducts, allSellers] = await Promise.all([
+          getProducts('pending'),
+          getSellers(),
+        ]);
+        setPendingProductsCount(pendingProducts.length);
+        setPendingSellersCount(allSellers.filter(s => s.status === 'pending').length);
+      } catch (error) {
+        console.error("Failed to fetch dashboard counts:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCounts();
+  }, []);
+
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Admin Overview</h1>
@@ -20,7 +48,7 @@ export default function AdminDashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4</div>
+            {loading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{pendingProductsCount}</div>}
             <p className="text-xs text-muted-foreground">
               Awaiting review and approval
             </p>
@@ -32,7 +60,7 @@ export default function AdminDashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2</div>
+             {loading ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{pendingSellersCount}</div>}
             <p className="text-xs text-muted-foreground">
               New sellers to be onboarded
             </p>

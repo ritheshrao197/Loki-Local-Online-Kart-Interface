@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 import { useState, useEffect, useCallback } from 'react';
 import type { Seller } from '@/lib/types';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getSellers, updateSellerStatus } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -39,6 +39,7 @@ export default function SellersPage() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const fetchSellers = useCallback(async () => {
     setLoading(true);
@@ -70,17 +71,29 @@ export default function SellersPage() {
   useEffect(() => {
     if (searchParams.has('newSellerName')) {
       fetchSellers();
+      // Clean up the URL
+      router.replace('/admin/sellers', { scroll: false });
     }
-  }, [searchParams, fetchSellers]);
+  }, [searchParams, fetchSellers, router]);
 
   const handleSellerStatusChange = async (sellerId: string, newStatus: Seller['status']) => {
     try {
       await updateSellerStatus(sellerId, newStatus);
-      setSellers(prevSellers =>
-        prevSellers.map(seller =>
+      
+      // We can either refetch or update the state manually.
+      // Manual update is faster for the UI.
+      setSellers(prevSellers => {
+        const updatedSellers = prevSellers.map(seller =>
           seller.id === sellerId ? { ...seller, status: newStatus } : seller
-        )
-      );
+        );
+         updatedSellers.sort((a, b) => {
+            if (a.status === 'pending' && b.status !== 'pending') return -1;
+            if (a.status !== 'pending' && b.status === 'pending') return 1;
+            return a.name.localeCompare(b.name);
+        });
+        return updatedSellers;
+      });
+
       toast({
         title: 'Status Updated',
         description: `Seller has been ${newStatus}.`,
@@ -129,6 +142,12 @@ export default function SellersPage() {
                   <TableCell><Skeleton className="h-8 w-20" /></TableCell>
                 </TableRow>
               ))
+            ) : sellers.length === 0 ? (
+                <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                        No sellers found. <Link href="/admin/sellers/new" className="text-primary underline">Add the first seller</Link>.
+                    </TableCell>
+                </TableRow>
             ) : (
               sellers.map(seller => (
                 <TableRow key={seller.id}>
@@ -140,7 +159,7 @@ export default function SellersPage() {
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
                   <TableCell className="hidden md:table-cell">{seller.pan}</TableCell>
-                  <TableCell className="hidden md:table-cell">{seller.commissionRate ?? 'N/A'}%</TableCell>
+                  <TableCell className="hidden md:table-cell">{seller.commissionRate ?? '15'}%</TableCell>
                   <TableCell>
                     {seller.status === 'pending' ? (
                       <div className="flex gap-2">
