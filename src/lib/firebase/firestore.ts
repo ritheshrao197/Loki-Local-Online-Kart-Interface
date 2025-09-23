@@ -140,7 +140,7 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  */
 export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
     const productsCol = collection(db, 'products');
-    const docRef = await addDoc(productsCol, {...product, manufacturingDate: new Date(),});
+    const docRef = await addDoc(productsCol, product);
     return { id: docRef.id, ...product };
 }
 
