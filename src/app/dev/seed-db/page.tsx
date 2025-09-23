@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { collection, getDocs, writeBatch, doc, addDoc } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { mockProducts, mockSellers, mockOrders } from '@/lib/placeholder-data';
 import Link from 'next/link';
@@ -45,26 +45,28 @@ export default function SeedDbPage() {
       const batch = writeBatch(db);
 
       // Seed Sellers
-      setStatus('Seeding sellers...');
+      setStatus('Preparing sellers...');
       mockSellers.forEach((seller) => {
         const docRef = doc(db, 'sellers', seller.id);
         batch.set(docRef, seller);
       });
 
       // Seed Products
-      setStatus('Seeding products...');
+      setStatus('Preparing products...');
       mockProducts.forEach((product) => {
         const docRef = doc(db, 'products', product.id);
         batch.set(docRef, product);
       });
 
+      // Seed Orders
+      setStatus('Preparing orders...');
+      mockOrders.forEach((order) => {
+        const docRef = doc(ordersCollection); // Create a new doc with a random ID
+        batch.set(docRef, order);
+      });
+      
+      setStatus('Committing to database...');
       await batch.commit();
-
-      // Seed Orders separately as they don't have a predefined ID
-      setStatus('Seeding orders...');
-      for (const order of mockOrders) {
-        await addDoc(ordersCollection, order);
-      }
       
       setStatus('Seeding complete!');
       const totalCount = mockProducts.length + mockSellers.length + mockOrders.length;
