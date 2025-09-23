@@ -61,7 +61,7 @@ export default function SeedDbPage() {
         const docRef = doc(ordersCollection); // Create a new doc with a random ID
         const orderDataWithTimestamp = {
             ...order,
-            orderDate: Timestamp.fromDate(order.orderDate as Date)
+            orderDate: Timestamp.fromDate(order.orderDate)
         };
         batch.set(docRef, orderDataWithTimestamp);
       });

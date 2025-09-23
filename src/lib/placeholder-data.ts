@@ -1,6 +1,7 @@
 
 import type { Product, Seller, Order } from './types';
 import { PlaceHolderImages } from './placeholder-images';
+import { Timestamp } from 'firebase/firestore';
 
 const sellers: Omit<Seller, 'status' | 'pan' | 'mobile' | 'commissionRate'>[] = [
   { id: 'seller_1', name: 'Artisan Crafts Co.' },
@@ -68,7 +69,7 @@ export const mockSellers: Seller[] = [
 
 const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images, price: p.price }));
 
-export const mockOrders: Omit<Order, 'id' | 'orderDate'>[] = [
+const rawOrders: Omit<Order, 'id' | 'orderDate'>[] = [
   {
     product: simplifiedProducts[4], // Artisan Leather Sandals
     buyer: { id: 'buyer_1', name: 'Anjali Sharma' },
@@ -125,9 +126,11 @@ export const mockOrders: Omit<Order, 'id' | 'orderDate'>[] = [
     total: 400,
     status: 'pending',
   },
-].map((order, index) => {
+];
+
+export const mockOrders: (Omit<Order, 'id' | 'orderDate'> & { orderDate: Date })[] = rawOrders.map((order, index) => {
     // Distribute order dates over the last month
     const date = new Date();
-    date.setDate(date.getDate() - (mockOrders.length - index) * 2);
+    date.setDate(date.getDate() - (rawOrders.length - index) * 2);
     return { ...order, orderDate: date };
 });
