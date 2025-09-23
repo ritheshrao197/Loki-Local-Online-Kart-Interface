@@ -30,7 +30,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { getProductsBySeller, deleteProduct } from '@/lib/firebase/firestore'; 
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSearchParams, useParams } from 'next/navigation';
+import { useSearchParams, useParams, useRouter } from 'next/navigation';
 
 const statusVariant = {
   pending: 'secondary',
@@ -45,6 +45,7 @@ export default function ProductsPage() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const params = useParams();
+  const router = useRouter();
   const sellerId = params.sellerId as string;
 
   const fetchProducts = useCallback(async () => {
@@ -72,8 +73,9 @@ export default function ProductsPage() {
   useEffect(() => {
     if (searchParams.has('newProduct') || searchParams.has('updated')) {
       fetchProducts();
+      router.replace(`/dashboard/${sellerId}/products`, { scroll: false });
     }
-  }, [searchParams, fetchProducts]);
+  }, [searchParams, fetchProducts, sellerId, router]);
 
 
   const handleDelete = async () => {
@@ -157,7 +159,7 @@ export default function ProductsPage() {
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>
-                  <Badge variant={statusVariant[product.status]}>
+                  <Badge variant={product.status as keyof typeof statusVariant}>
                     {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
                   </Badge>
                 </TableCell>

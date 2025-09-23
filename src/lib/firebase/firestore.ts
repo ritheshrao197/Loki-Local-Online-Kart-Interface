@@ -174,10 +174,14 @@ export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
   const ordersCol = collection(db, 'orders');
   const q = query(ordersCol, where('sellerId', '==', sellerId));
   const orderSnapshot = await getDocs(q);
-  const orderList = orderSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Order));
+  const orderList = orderSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+        id: doc.id,
+        ...data,
+        orderDate: data.orderDate as Timestamp,
+    } as Order
+  });
   return orderList;
 }
 
