@@ -22,6 +22,7 @@ export type Seller = {
   mobile: string;
   pan: string;
   status: 'pending' | 'approved' | 'rejected';
+  commissionRate?: number;
 };
 
 export type Order = {

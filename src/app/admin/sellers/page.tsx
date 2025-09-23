@@ -32,6 +32,7 @@ export default function SellersPage() {
               <TableHead>Status</TableHead>
               <TableHead className="hidden md:table-cell">Mobile</TableHead>
               <TableHead className="hidden md:table-cell">PAN</TableHead>
+              <TableHead className="hidden md:table-cell">Commission</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -46,6 +47,7 @@ export default function SellersPage() {
                 </TableCell>
                 <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
                 <TableCell className="hidden md:table-cell">{seller.pan}</TableCell>
+                <TableCell className="hidden md:table-cell">{seller.commissionRate ?? 'N/A'}%</TableCell>
                 <TableCell>
                   {seller.status === 'pending' ? (
                     <div className="flex gap-2">

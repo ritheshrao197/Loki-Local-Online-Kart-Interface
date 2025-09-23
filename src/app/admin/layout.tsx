@@ -20,6 +20,9 @@ import {
   LogOut,
   Store,
   ShieldCheck,
+  Landmark,
+  BarChart3,
+  Gavel,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -58,6 +61,30 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 <Link href="/admin/sellers">
                   <Users />
                   <span>Sellers</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Commissions">
+                <Link href="/admin/commissions">
+                  <Landmark />
+                  <span>Commissions</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Reports">
+                <Link href="/admin/reports">
+                  <BarChart3 />
+                  <span>Reports</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Disputes">
+                <Link href="/admin/disputes">
+                  <Gavel />
+                  <span>Disputes</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

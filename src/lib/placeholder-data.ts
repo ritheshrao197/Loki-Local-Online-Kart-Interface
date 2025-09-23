@@ -39,8 +39,8 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
 });
 
 export const mockSellers: Seller[] = [
-  { id: 'seller_1', name: 'Artisan Crafts Co.', mobile: '9876543210', pan: 'ABCDE1234F', status: 'approved' },
-  { id: 'seller_2', name: 'Local Weavers Inc.', mobile: '9876543211', pan: 'ABCDE1235G', status: 'approved' },
+  { id: 'seller_1', name: 'Artisan Crafts Co.', mobile: '9876543210', pan: 'ABCDE1234F', status: 'approved', commissionRate: 15 },
+  { id: 'seller_2', name: 'Local Weavers Inc.', mobile: '9876543211', pan: 'ABCDE1235G', status: 'approved', commissionRate: 12 },
   { id: 'seller_3', name: 'Spice Route Goods', mobile: '9876543212', pan: 'ABCDE1236H', status: 'pending' },
   { id: 'seller_4', name: 'Woodworkers Guild', mobile: '9876543213', pan: 'ABCDE1237I', status: 'pending' },
   { id: 'seller_5', name: 'Clay Pot Studio', mobile: '9876543214', pan: 'ABCDE1238J', status: 'rejected' },
