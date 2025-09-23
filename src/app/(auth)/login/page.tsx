@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -16,14 +16,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
 import { app } from '@/lib/firebase/firebase';
 import { Loader2 } from 'lucide-react';
 
 declare global {
     interface Window {
         recaptchaVerifier?: RecaptchaVerifier;
-        confirmationResult?: any;
+        confirmationResult?: ConfirmationResult;
     }
 }
 
@@ -36,21 +36,30 @@ export default function BuyerLoginPage() {
   const [otpSent, setOtpSent] = useState(false);
   const auth = getAuth(app);
 
+  useEffect(() => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        'size': 'invisible',
+        'callback': (response: any) => {
+          // reCAPTCHA solved, you can proceed with phone number sign-in.
+        }
+      });
+    }
+  }, [auth]);
+
+
   const handleSendOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
         const phoneNumber = "+91" + mobile;
-        const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible',
-            'callback': (response: any) => {
-                // reCAPTCHA solved, allow signInWithPhoneNumber.
-            }
-        });
-        window.recaptchaVerifier = recaptchaVerifier;
+        const verifier = window.recaptchaVerifier;
+        if (!verifier) {
+            throw new Error("Recaptcha verifier not initialized.");
+        }
         
-        const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+        const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, verifier);
         window.confirmationResult = confirmationResult;
         
         setOtpSent(true);
@@ -63,9 +72,12 @@ export default function BuyerLoginPage() {
             description: error.message || 'Please check the mobile number and try again.',
             variant: 'destructive',
         });
-        // Reset reCAPTCHA if it fails
+        // It's good practice to render a new verifier if it fails
         if (window.recaptchaVerifier) {
-            window.recaptchaVerifier.clear();
+            window.recaptchaVerifier.render().then((widgetId) => {
+                // @ts-ignore
+                window.recaptchaWidgetId = widgetId;
+            });
         }
     } finally {
         setLoading(false);
@@ -76,6 +88,12 @@ export default function BuyerLoginPage() {
     e.preventDefault();
     setLoading(true);
     
+    if (!window.confirmationResult) {
+        toast({ title: 'Error', description: 'No OTP confirmation result found.', variant: 'destructive'});
+        setLoading(false);
+        return;
+    }
+
     try {
         await window.confirmationResult.confirm(otp);
         toast({ title: 'Login Successful', description: 'Welcome back!' });
