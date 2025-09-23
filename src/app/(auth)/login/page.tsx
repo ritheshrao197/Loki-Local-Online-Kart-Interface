@@ -18,12 +18,12 @@ import { useToast } from '@/hooks/use-toast';
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [mobile, setMobile] = useState('');
-  const [otp, setOtp] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const user = mobile.toLowerCase();
+    const user = username.toLowerCase();
 
     if (user === 'admin') {
       toast({ title: 'Admin Login Successful' });
@@ -31,13 +31,10 @@ export default function LoginPage() {
     } else if (user === 'seller') {
       toast({ title: 'Seller Login Successful' });
       router.push('/dashboard');
-    } else if (user === 'buyer') {
-      toast({ title: 'Login Successful' });
-      router.push('/');
     } else {
       toast({
         title: 'Invalid Credentials',
-        description: 'Use "admin", "seller", or "buyer" to log in.',
+        description: 'Use "admin" or "seller" to log in.',
         variant: 'destructive',
       });
     }
@@ -49,29 +46,29 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-headline">Login</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account.
+            Enter your credentials to access your account. Buyers can browse without logging in.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="mobile">Username</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="mobile"
+                id="username"
                 type="text"
-                placeholder="Use 'admin', 'seller', or 'buyer'"
+                placeholder="Use 'admin' or 'seller'"
                 required
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="otp">Password</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
-                id="otp"
+                id="password"
                 type="password"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Can be left blank for now"
               />
             </div>
