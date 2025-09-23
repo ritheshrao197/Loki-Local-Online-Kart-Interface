@@ -1,3 +1,76 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "prod_001",
+      "description": "Handcrafted ceramic vase with intricate blue patterns.",
+      "imageUrl": "https://images.unsplash.com/photo-1675604587136-f91dc1a4473b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoYW5kbWFkZSUyMHBvdHRlcnl8ZW58MHx8fHwxNzU4NjIwNjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "handmade pottery"
+    },
+    {
+      "id": "prod_002",
+      "description": "A vibrant, hand-woven cotton scarf with traditional motifs.",
+      "imageUrl": "https://images.unsplash.com/photo-1640747669771-b82a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful textile"
+    },
+    {
+      "id": "prod_003",
+      "description": "A set of aromatic, locally sourced spices in small clay pots.",
+      "imageUrl": "https://images.unsplash.com/photo-1534159335360-c1e0e116c444?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxsb2NhbCUyMHNwaWNlc3xlbnwwfHx8fDE3NTg2NjA1Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "local spices"
+    },
+    {
+      "id": "prod_004",
+      "description": "Carved wooden elephant figurine with detailed craftsmanship.",
+      "imageUrl": "https://images.unsplash.com/photo-1694523637865-f41f9608dbfc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx3b29kZW4lMjBjcmFmdHxlbnwwfHx8fDE3NTg2NjA1Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wooden craft"
+    },
+    {
+      "id": "prod_005",
+      "description": "Elegant leather sandals with a comfortable sole.",
+      "imageUrl": "https://images.unsplash.com/photo-1673332655640-d97338b1c6b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsZWF0aGVyJTIwZm9vdHdlYXJ8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather footwear"
+    },
+    {
+      "id": "prod_006",
+      "description": "A beautiful painting depicting a rural landscape.",
+      "imageUrl": "https://images.unsplash.com/photo-1672252508024-c80ac06f960c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsb2NhbCUyMGFydHxlbnwwfHx8fDE3NTg2NjA1Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "local art"
+    },
+    {
+      "id": "prod_007",
+      "description": "Brass oil lamp with a traditional design.",
+      "imageUrl": "https://images.unsplash.com/photo-1732637281427-1c19e3e12f79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxicmFzc3dhcmUlMjBkZWNvcnxlbnwwfHx8fDE3NTg2NjA1Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "brassware decor"
+    },
+    {
+      "id": "prod_008",
+      "description": "Set of 3 organic, handmade soaps with natural fragrances.",
+      "imageUrl": "https://images.unsplash.com/photo-1607006344380-b6775a0824a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxoYW5kbWFkZSUyMHNvYXB8ZW58MHx8fHwxNzU4NjQyOTM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "handmade soap"
+    },
+    {
+      "id": "prod_009",
+      "description": "A sturdy jute bag perfect for shopping.",
+      "imageUrl": "https://images.unsplash.com/photo-1506094222795-f04d8e06ed23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxqdXRlJTIwYmFnfGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "jute bag"
+    },
+    {
+      "id": "prod_010",
+      "description": "Authentic pickles made with a secret family recipe.",
+      "imageUrl": "https://images.unsplash.com/photo-1632239108217-f6268b8d2622?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxob21lbWFkZSUyMHBpY2tsZXN8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "homemade pickles"
+    },
+    {
+      "id": "prod_011",
+      "description": "Clay cooking pot for slow and even cooking.",
+      "imageUrl": "https://images.unsplash.com/photo-1673339064408-874582612845?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjbGF5JTIwY29va3dhcmV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "clay cookware"
+    },
+    {
+      "id": "prod_012",
+      "description": "Intricately designed silver earrings.",
+      "imageUrl": "https://images.unsplash.com/photo-1605884878538-6468614df578?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzaWx2ZXIlMjBqZXdlbHJ5fGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "silver jewelry"
+    }
+  ]
 }
