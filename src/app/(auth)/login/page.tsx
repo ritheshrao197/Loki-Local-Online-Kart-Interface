@@ -14,29 +14,26 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
-export default function LoginPage() {
+export default function BuyerLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [otp, setOtp] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const user = username.toLowerCase();
-
-    if (user === 'admin') {
-      toast({ title: 'Admin Login Successful' });
-      router.push('/admin');
-    } else if (user === 'seller') {
-      toast({ title: 'Seller Login Successful' });
-      router.push('/dashboard');
+    // Basic validation for demonstration
+    if (mobile.length === 10 && otp === '1234') {
+        toast({ title: 'Login Successful', description: 'Welcome back!' });
+        router.push('/');
     } else {
-      toast({
-        title: 'Invalid Credentials',
-        description: 'Use "admin" or "seller" to log in.',
-        variant: 'destructive',
-      });
+        toast({
+            title: 'Login Failed',
+            description: 'Please enter a valid mobile number and OTP. Use 1234 as OTP for now.',
+            variant: 'destructive',
+        });
     }
   };
 
@@ -44,44 +41,46 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl font-headline">Login</CardTitle>
+          <CardTitle className="text-2xl font-headline">Buyer Login</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account. Buyers can browse without logging in.
+            Enter your mobile number to log in or create an account.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="grid gap-4">
+          <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="mobile">Mobile Number</Label>
               <Input
-                id="username"
-                type="text"
-                placeholder="Use 'admin' or 'seller'"
+                id="mobile"
+                type="tel"
+                placeholder="10-digit mobile number"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="otp">OTP</Label>
               <Input
-                id="password"
+                id="otp"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Can be left blank for now"
+                required
+                placeholder="Enter OTP (use 1234)"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
               />
             </div>
             <Button type="submit" className="w-full">
               Login
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            Not a seller yet?{' '}
-            <Link href="/seller-signup" className="underline">
-              Sign up
-            </Link>
-          </div>
+           <Separator className="my-6" />
+            <div className="text-center text-sm">
+                Are you a seller or admin?{' '}
+                <Link href="/login/admin" className="underline font-medium">
+                    Login here
+                </Link>
+            </div>
         </CardContent>
       </Card>
     </div>

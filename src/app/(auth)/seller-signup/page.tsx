@@ -56,7 +56,7 @@ export default function SellerSignupPage() {
             </p>
             <div className="text-sm">
                 Already have an account?{' '}
-                <Link href="/login" className="underline font-medium">
+                <Link href="/login/admin" className="underline font-medium">
                     Log In
                 </Link>
             </div>
