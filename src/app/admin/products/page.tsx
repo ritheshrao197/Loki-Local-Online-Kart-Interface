@@ -8,6 +8,7 @@ import { getProducts, updateProductStatus } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
 
 type ProductStatus = 'pending' | 'approved' | 'rejected';
 
