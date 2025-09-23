@@ -1,40 +1,40 @@
+
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
-
-const slides = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1542435503-956c469947f6?q=80&w=1974&auto=format&fit=crop',
-    title: 'Featured Handcrafted Pottery',
-    description: 'Unique designs from local artisans.',
-    cta: 'Shop Now',
-    link: '#',
-    hint: 'handcrafted pottery'
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1523381294911-8d3cead13475?q=80&w=2070&auto=format&fit=crop',
-    title: 'New Arrivals: Summer Apparel',
-    description: 'Light and breezy fabrics for the season.',
-    cta: 'Explore Collection',
-    link: '#',
-    hint: 'summer apparel'
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1576989462838-83c34089a597?q=80&w=2070&auto=format&fit=crop',
-    title: 'Limited Time Offer',
-    description: 'Get 20% off on all home decor items.',
-    cta: 'View Deals',
-    link: '#',
-    hint: 'home decor'
-  },
-];
+import { useEffect, useState } from 'react';
+import type { Product } from '@/lib/types';
+import { Skeleton } from '../ui/skeleton';
 
 export function HeroSlider() {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { getProducts } = await import('@/lib/firebase/firestore');
+        const products = await getProducts('approved');
+        setFeaturedProducts(products.slice(0, 3)); // Take first 3 approved products
+      } catch (error) {
+        console.error("Failed to fetch products for hero slider:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />;
+  }
+  
+  if (featuredProducts.length === 0) {
+    return null; // Don't show slider if no products
+  }
+
   return (
     <section className="w-full">
       <Carousel
@@ -44,25 +44,25 @@ export function HeroSlider() {
         }}
       >
         <CarouselContent>
-          {slides.map((slide) => (
-            <CarouselItem key={slide.id}>
+          {featuredProducts.map((product) => (
+            <CarouselItem key={product.id}>
               <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full">
                 <Image
-                  src={slide.image}
-                  alt={slide.title}
+                  src={product.images[0].url}
+                  alt={product.name}
                   fill
                   className="object-cover"
-                  data-ai-hint={slide.hint}
+                  data-ai-hint={product.images[0].hint}
                 />
                 <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline">
-                    {slide.title}
+                    {product.name}
                   </h2>
                   <p className="mt-2 md:mt-4 max-w-lg text-lg">
-                    {slide.description}
+                    {product.description.substring(0, 100)}...
                   </p>
                   <Button asChild className="mt-6 md:mt-8" size="lg">
-                    <Link href={slide.link}>{slide.cta}</Link>
+                    <Link href={`/products/${product.id}`}>View Product</Link>
                   </Button>
                 </div>
               </div>
