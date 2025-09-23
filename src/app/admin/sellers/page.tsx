@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import type { Seller } from '@/lib/types';
+import Link from 'next/link';
 
 const statusVariant = {
   pending: 'secondary',
@@ -82,7 +83,9 @@ export default function SellersPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={`/admin/sellers/${seller.id}`}>View Details</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Suspend</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
