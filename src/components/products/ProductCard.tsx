@@ -1,18 +1,34 @@
+
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Product } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '../ui/button';
+import { ShoppingCart, Eye } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { toast } = useToast();
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent navigating to product page
+    toast({
+        title: "Added to Cart",
+        description: `${product.name} has been added to your cart.`,
+    });
+    // Here you would typically dispatch an action to add the item to a global state (e.g., Redux, Zustand, or Context)
+  }
+
   return (
-    <Link href={`/products/${product.id}`} className="group">
-      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
-        <CardContent className="p-0">
+    <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 flex flex-col group">
+        <CardContent className="p-0 flex flex-col flex-grow">
+        <Link href={`/products/${product.id}`} className="block">
           <div className="relative aspect-square w-full">
             <Image
               src={product.images[0].url}
@@ -24,19 +40,42 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.status === 'pending' && (
               <Badge variant="secondary" className="absolute top-2 left-2">Pending</Badge>
             )}
+             {product.discountPrice && (
+                 <Badge variant="destructive" className="absolute top-2 right-2">SALE</Badge>
+            )}
           </div>
-          <div className="p-4">
+          <div className="p-4 flex-grow">
             <p className="text-sm text-muted-foreground">{product.category}</p>
-            <h3 className="mt-1 font-headline font-semibold text-lg truncate">{product.name}</h3>
-            <p className="mt-2 text-xl font-bold text-primary">
-              ₹{product.price.toLocaleString('en-IN')}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <h3 className="mt-1 font-headline font-semibold text-lg truncate group-hover:text-primary">{product.name}</h3>
+             <p className="mt-1 text-xs text-muted-foreground">
               by {product.seller.name}
             </p>
           </div>
+        </Link>
+        <div className="p-4 pt-0 mt-auto">
+             <div className="flex items-center gap-2">
+                <p className={`text-xl font-bold text-primary ${product.discountPrice ? 'text-destructive' : 'text-primary'}`}>
+                    ₹{product.discountPrice ? product.discountPrice.toLocaleString('en-IN') : product.price.toLocaleString('en-IN')}
+                </p>
+                {product.discountPrice && (
+                    <p className="text-sm text-muted-foreground line-through">
+                        ₹{product.price.toLocaleString('en-IN')}
+                    </p>
+                )}
+            </div>
+
+            <div className="mt-4 flex gap-2">
+                <Button size="sm" className="flex-1" onClick={handleAddToCart}>
+                    <ShoppingCart className="mr-2"/>
+                    Add to Cart
+                </Button>
+                <Button size="sm" variant="outline">
+                    <Eye className="mr-2"/>
+                    Quick View
+                </Button>
+            </div>
+        </div>
         </CardContent>
-      </Card>
-    </Link>
+    </Card>
   );
 }
