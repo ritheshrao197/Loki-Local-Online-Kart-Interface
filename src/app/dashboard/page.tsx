@@ -1,12 +1,25 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { DollarSign, ListOrdered, Package, Users } from 'lucide-react';
+import { mockOrders } from '@/lib/placeholder-data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+
+const statusVariant = {
+  pending: 'secondary',
+  confirmed: 'default',
+  dispatched: 'outline',
+  delivered: 'destructive',
+} as const;
+
 
 export default function DashboardPage() {
+  const recentOrders = mockOrders.slice(0, 5);
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Dashboard</h1>
@@ -68,10 +81,33 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
+            <CardDescription>A list of your 5 most recent orders.</CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Placeholder for recent orders table */}
-            <p className="text-muted-foreground">Recent orders will be displayed here.</p>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentOrders.map((order) => (
+                    <TableRow key={order.id}>
+                      <TableCell>{order.buyer.name}</TableCell>
+                      <TableCell>{order.product.name}</TableCell>
+                      <TableCell>
+                         <Badge variant={statusVariant[order.status]}>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>₹{order.total.toLocaleString('en-IN')}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
           </CardContent>
         </Card>
       </div>

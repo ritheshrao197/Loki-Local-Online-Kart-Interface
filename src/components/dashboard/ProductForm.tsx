@@ -16,32 +16,49 @@ import { generateProductDescription } from '@/ai/flows/generate-product-descript
 import { autoCategorizeProduct } from '@/ai/flows/auto-categorize-product';
 import { Loader2, Sparkles, Tags } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import type { Product } from '@/lib/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters.'),
   keywords: z.string().min(3, 'Please provide at least one keyword.'),
   description: z.string().min(20, 'Description must be at least 20 characters.'),
   price: z.coerce.number().min(1, 'Price must be greater than 0.'),
-  image: z.any().refine(files => files?.length === 1, 'Image is required.'),
+  category: z.string().min(1, 'Please select a category.'),
+  image: z.any().refine(files => files?.length > 0, 'Image is required.'),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
 
-export function ProductForm() {
+interface ProductFormProps {
+  product?: Product;
+}
+
+export function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
-  const [suggestedCategories, setSuggestedCategories] = useState<string[]>([]);
-  const [imageDataUri, setImageDataUri] = useState<string | null>(null);
+  const [suggestedCategories, setSuggestedCategories] = useState<string[]>(product ? [product.category] : []);
+  const [imageDataUri, setImageDataUri] = useState<string | null>(product ? product.images[0].url : null);
+  
+  const isEditMode = !!product;
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: isEditMode ? {
+        name: product.name,
+        keywords: product.keywords || '',
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        image: product.images
+    } : {
       name: '',
       keywords: '',
       description: '',
       price: 0,
+      category: '',
     },
   });
 
@@ -95,6 +112,9 @@ export function ProductForm() {
     try {
       const result = await autoCategorizeProduct({ photoDataUri, description });
       setSuggestedCategories(result.suggestedCategories);
+      if(result.suggestedCategories.length > 0 && !form.getValues('category')) {
+        form.setValue('category', result.suggestedCategories[0]);
+      }
     } catch (error) {
         console.error(error);
         toast({ title: 'Categorization Failed', description: 'Could not suggest categories.', variant: 'destructive' });
@@ -106,11 +126,13 @@ export function ProductForm() {
   const onSubmit = (data: ProductFormValues) => {
     console.log(data);
     toast({
-      title: 'Product Submitted!',
-      description: 'Your new product is pending admin approval.',
+      title: isEditMode ? 'Product Updated!' : 'Product Submitted!',
+      description: `Your product is ${isEditMode ? 'updated' : 'pending admin approval'}.`,
     });
     router.push('/dashboard/products');
   };
+  
+  const productCategories = ["Home Decor", "Apparel", "Food & Groceries", "Art", "Footwear", "Bath & Body", "Accessories", "Kitchenware", "Jewelry"];
 
   return (
     <Form {...form}>
@@ -181,17 +203,42 @@ export function ProductForm() {
                             <FormControl>
                                 <Input type="file" accept="image/*" onChange={handleImageChange} />
                             </FormControl>
+                             {isEditMode && <FormDescription>Leave blank to keep the current image.</FormDescription>}
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 {imageDataUri && <img src={imageDataUri} alt="Preview" className="rounded-md object-cover aspect-video"/>}
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {productCategories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="space-y-2">
                     <FormLabel>AI Suggested Categories</FormLabel>
                     <div className="flex flex-wrap gap-2">
                         {isCategorizing && <Loader2 className="h-4 w-4 animate-spin" />}
                         {suggestedCategories.length > 0 ? (
-                            suggestedCategories.map(cat => <Badge key={cat} variant="secondary">{cat}</Badge>)
+                            suggestedCategories.map(cat => (
+                              <Button key={cat} type="button" size="sm" variant="outline" onClick={() => form.setValue('category', cat, {shouldValidate: true})}>
+                                {cat}
+                              </Button>
+                            ))
                         ) : !isCategorizing && <p className="text-sm text-muted-foreground">Upload an image and add a description to see suggestions.</p>}
                     </div>
                 </div>
@@ -219,7 +266,7 @@ export function ProductForm() {
         </div>
         <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-            <Button type="submit">Save Product</Button>
+            <Button type="submit">{isEditMode ? 'Save Changes' : 'Submit for Review'}</Button>
         </div>
       </form>
     </Form>

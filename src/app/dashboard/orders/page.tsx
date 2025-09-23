@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -9,8 +12,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal } from 'lucide-react';
 import { mockOrders } from '@/lib/placeholder-data';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import type { Order } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 const statusVariant = {
   pending: 'secondary',
@@ -20,6 +25,21 @@ const statusVariant = {
 } as const;
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const { toast } = useToast();
+
+  const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === orderId ? { ...order, status: newStatus } : order
+      )
+    );
+    toast({
+      title: 'Order Status Updated',
+      description: `Order ${orderId} is now ${newStatus}.`,
+    });
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -39,7 +59,7 @@ export default function OrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockOrders.map((order) => (
+            {orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">{order.id}</TableCell>
                 <TableCell>{order.buyer.name}</TableCell>
@@ -62,7 +82,14 @@ export default function OrdersPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem>View Details</DropdownMenuItem>
-                      <DropdownMenuItem>Update Status</DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent>
+                            <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'confirmed')}>Confirmed</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'dispatched')}>Dispatched</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'delivered')}>Delivered</DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
