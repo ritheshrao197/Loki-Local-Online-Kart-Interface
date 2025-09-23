@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -18,11 +19,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Seller } from '@/lib/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { getSellers, addSeller, updateSellerStatus } from '@/lib/firebase/firestore';
+import { getSellers, updateSellerStatus } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -39,7 +40,7 @@ export default function SellersPage() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
 
-  async function fetchSellers() {
+  const fetchSellers = useCallback(async () => {
     setLoading(true);
     try {
       const fetchedSellers = await getSellers();
@@ -60,22 +61,17 @@ export default function SellersPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [toast]);
 
   useEffect(() => {
     fetchSellers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchSellers]);
 
   useEffect(() => {
-    const newSellerName = searchParams.get('newSellerName');
-    if (newSellerName) {
-      // Refetch sellers list when a new seller is added.
-      // The new seller is identified by the query param.
+    if (searchParams.has('newSellerName')) {
       fetchSellers();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams, fetchSellers]);
 
   const handleSellerStatusChange = async (sellerId: string, newStatus: Seller['status']) => {
     try {

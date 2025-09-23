@@ -49,10 +49,7 @@ export default function NewSellerPage() {
       });
 
       // Redirect with a query param to trigger a refetch on the sellers page.
-      const params = new URLSearchParams({
-        newSellerName: name,
-      });
-      router.push(`/admin/sellers?${params.toString()}`);
+      router.push(`/admin/sellers?newSellerName=${encodeURIComponent(name)}`);
 
     } catch (error) {
       console.error("Error adding seller: ", error);
