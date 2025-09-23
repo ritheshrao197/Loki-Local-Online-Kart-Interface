@@ -21,6 +21,10 @@ const productDetails = [
   { name: 'Homemade Mango Pickle', price: 200, category: 'Food & Groceries', keywords: 'pickle, homemade, food, mango' },
   { name: 'Earthen Clay Pot', price: 550, category: 'Kitchenware', keywords: 'clay, pot, cooking, kitchen' },
   { name: 'Silver Jhumka Earrings', price: 2200, category: 'Jewelry', keywords: 'silver, jewelry, earrings, traditional' },
+  { name: 'Hand-painted Wooden Box', price: 750, category: 'Home Decor', keywords: 'wood, box, hand-painted, storage' },
+  { name: 'Block-printed Cotton Kurta', price: 1100, category: 'Apparel', keywords: 'cotton, kurta, apparel, block-print' },
+  { name: 'Sun-dried Turmeric Powder', price: 150, category: 'Food & Groceries', keywords: 'turmeric, spice, organic, powder' },
+  { name: 'Terracotta Wind Chimes', price: 400, category: 'Home Decor', keywords: 'terracotta, wind-chime, decor, garden' },
 ];
 
 export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {

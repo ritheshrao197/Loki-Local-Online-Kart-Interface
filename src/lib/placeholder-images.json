@@ -71,6 +71,30 @@
       "description": "Intricately designed silver earrings.",
       "imageUrl": "https://images.unsplash.com/photo-1605884878538-6468614df578?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzaWx2ZXIlMjBqZXdlbHJ5fGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "silver jewelry"
+    },
+    {
+      "id": "prod_013",
+      "description": "A beautiful hand-painted wooden box for storing trinkets.",
+      "imageUrl": "https://images.unsplash.com/photo-1618762490924-c16c8e847d9f?q=80&w=870&auto=format&fit=crop",
+      "imageHint": "painted box"
+    },
+    {
+      "id": "prod_014",
+      "description": "Comfortable and stylish block-printed cotton kurta for men.",
+      "imageUrl": "https://images.unsplash.com/photo-1621335829175-95f363883515?q=80&w=870&auto=format&fit=crop",
+      "imageHint": "cotton kurta"
+    },
+    {
+      "id": "prod_015",
+      "description": "Organic sun-dried turmeric powder, rich in color and flavor.",
+      "imageUrl": "https://images.unsplash.com/photo-1596039166270-3e8266746816?q=80&w=774&auto=format&fit=crop",
+      "imageHint": "turmeric powder"
+    },
+    {
+      "id": "prod_016",
+      "description": "Handmade terracotta wind chimes that create a soothing sound.",
+      "imageUrl": "https://images.unsplash.com/photo-1590112153697-3932a338c949?q=80&w=870&auto=format&fit=crop",
+      "imageHint": "terracotta chimes"
     }
   ]
 }
