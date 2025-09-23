@@ -75,7 +75,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <SidebarMenu>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/auth/login">
+                <Link href="/login">
                   <LogOut />
                   <span>Logout</span>
                 </Link>

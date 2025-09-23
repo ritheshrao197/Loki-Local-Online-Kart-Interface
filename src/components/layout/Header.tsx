@@ -29,7 +29,7 @@ export function Header() {
             <Link href="/dashboard/products">Sell on Loki</Link>
           </Button>
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/auth/login">
+            <Link href="/login">
               <User className="h-5 w-5" />
               <span className="sr-only">Login</span>
             </Link>

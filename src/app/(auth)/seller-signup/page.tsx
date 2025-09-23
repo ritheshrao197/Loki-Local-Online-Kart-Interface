@@ -36,7 +36,7 @@ export default function SellerSignupPage() {
               <Input id="pan" placeholder="e.g. ABCDE1234F" required />
             </div>
             <Button type="submit" className="w-full" asChild>
-                <Link href="/auth/pending-approval">Register</Link>
+                <Link href="/pending-approval">Register</Link>
             </Button>
           </form>
         </CardContent>
@@ -46,7 +46,7 @@ export default function SellerSignupPage() {
             </p>
             <div className="text-sm">
                 Already have an account?{' '}
-                <Link href="/auth/login" className="underline font-medium">
+                <Link href="/login" className="underline font-medium">
                     Log In
                 </Link>
             </div>
