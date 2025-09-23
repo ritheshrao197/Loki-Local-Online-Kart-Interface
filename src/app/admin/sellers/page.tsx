@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Check, X } from 'lucide-react';
+import { MoreHorizontal, Check, X, PlusCircle } from 'lucide-react';
 import { mockSellers } from '@/lib/placeholder-data';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,11 @@ export default function SellersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-headline">Seller Management</h1>
+        <Button asChild>
+          <Link href="/admin/sellers/new">
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Seller
+          </Link>
+        </Button>
       </div>
       <div className="border rounded-lg">
         <Table>
