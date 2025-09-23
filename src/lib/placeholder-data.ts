@@ -1,6 +1,7 @@
 
 import type { Product, Seller, Order } from './types';
 import { PlaceHolderImages } from './placeholder-images';
+import { Timestamp } from 'firebase/firestore';
 
 const sellers: Omit<Seller, 'status' | 'pan' | 'mobile' | 'commissionRate'>[] = [
   { id: 'seller_1', name: 'Artisan Crafts Co.' },
@@ -68,76 +69,68 @@ export const mockSellers: Seller[] = [
 
 const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images, price: p.price }));
 
-export const mockOrders: Order[] = [
+export const mockOrders: Omit<Order, 'id'>[] = [
   {
-    id: 'order_101',
     product: simplifiedProducts[4], // Artisan Leather Sandals
     buyer: { id: 'buyer_1', name: 'Anjali Sharma' },
     sellerId: 'seller_1',
     quantity: 1,
     total: 1500,
     status: 'delivered',
-    orderDate: '2023-10-15',
+    orderDate: Timestamp.fromDate(new Date('2023-10-15')),
   },
   {
-    id: 'order_102',
     product: simplifiedProducts[6], // Traditional Brass Lamp
     buyer: { id: 'buyer_2', name: 'Rohan Mehta' },
     sellerId: 'seller_3',
     quantity: 1,
     total: 950,
     status: 'dispatched',
-    orderDate: '2023-10-28',
+    orderDate: Timestamp.fromDate(new Date('2023-10-28')),
   },
   {
-    id: 'order_103',
     product: simplifiedProducts[1], // Woven Cotton Scarf
     buyer: { id: 'buyer_3', name: 'Priya Singh' },
     sellerId: 'seller_2',
     quantity: 2,
     total: 1600,
     status: 'confirmed',
-    orderDate: '2023-11-01',
+    orderDate: Timestamp.fromDate(new Date('2023-11-01')),
   },
   {
-    id: 'order_104',
     product: simplifiedProducts[11], // Silver Jhumka Earrings
     buyer: { id: 'buyer_1', name: 'Anjali Sharma' },
-    sellerId: 'seller_4',
+    sellerId: 'seller_2',
     quantity: 1,
     total: 2200,
     status: 'pending',
-    orderDate: '2023-11-02',
+    orderDate: Timestamp.fromDate(new Date('2023-11-02')),
   },
     {
-    id: 'order_105',
     product: simplifiedProducts[0], // Ceramic Vase
     buyer: { id: 'buyer_4', name: 'Vikram Reddy' },
     sellerId: 'seller_1',
     quantity: 1,
     total: 450,
     status: 'pending',
-    orderDate: '2023-11-03',
+    orderDate: Timestamp.fromDate(new Date('2023-11-03')),
   },
   {
-    id: 'order_106',
     product: simplifiedProducts[8], // Eco-Friendly Jute Bag
     buyer: { id: 'buyer_5', name: 'Sneha Patil' },
-    sellerId: 'seller_1',
+    sellerId: 'seller_2',
     quantity: 3,
     total: 750,
     status: 'delivered',
-    orderDate: '2023-10-20',
+    orderDate: Timestamp.fromDate(new Date('2023-10-20')),
   },
   {
-    id: 'order_107',
     product: simplifiedProducts[9], // Homemade Mango Pickle
     buyer: { id: 'buyer_2', name: 'Rohan Mehta' },
-    sellerId: 'seller_3',
+    sellerId: 'seller_2',
     quantity: 2,
     total: 400,
     status: 'pending',
-    orderDate: '2023-11-04',
+    orderDate: Timestamp.fromDate(new Date('2023-11-04')),
   },
 ];
-

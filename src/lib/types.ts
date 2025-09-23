@@ -1,4 +1,6 @@
 
+import type { Timestamp } from 'firebase/firestore';
+
 export type Product = {
   id: string;
   name: string;
@@ -57,6 +59,5 @@ export type Order = {
   quantity: number;
   total: number;
   status: 'pending' | 'confirmed' | 'dispatched' | 'delivered';
-  orderDate: string; // Should be ISO string
+  orderDate: Timestamp;
 };
-

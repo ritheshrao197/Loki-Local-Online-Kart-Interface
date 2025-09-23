@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getOrdersBySeller, updateOrderStatus } from '@/lib/firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
+import { format } from 'date-fns';
 
 const statusVariant = {
   pending: 'secondary',
@@ -39,6 +40,7 @@ export default function OrdersPage() {
         // We'll use a hardcoded seller ID for now.
         // In a real app, you'd get this from the logged-in user's session.
         const sellerOrders = await getOrdersBySeller('seller_2');
+        sellerOrders.sort((a, b) => b.orderDate.toMillis() - a.orderDate.toMillis());
         setOrders(sellerOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -145,7 +147,7 @@ export default function OrdersPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">₹{order.total.toLocaleString('en-IN')}</TableCell>
-                <TableCell className="hidden md:table-cell">{order.orderDate}</TableCell>
+                <TableCell className="hidden md:table-cell">{format(order.orderDate.toDate(), 'PPP')}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

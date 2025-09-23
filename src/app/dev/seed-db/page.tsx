@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { mockProducts, mockSellers, mockOrders } from '@/lib/placeholder-data';
 import Link from 'next/link';
@@ -53,13 +53,12 @@ export default function SeedDbPage() {
         batch.set(docRef, product);
       });
 
-      // Seed Orders
-      mockOrders.forEach((order) => {
-        const docRef = doc(db, 'orders', order.id);
-        batch.set(docRef, order);
-      });
-
       await batch.commit();
+
+      // Seed Orders separately as they don't have a predefined ID
+      for (const order of mockOrders) {
+        await addDoc(ordersCollection, order);
+      }
       
       const totalCount = mockProducts.length + mockSellers.length + mockOrders.length;
       setResult({

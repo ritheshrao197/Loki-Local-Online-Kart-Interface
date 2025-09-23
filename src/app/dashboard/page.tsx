@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { getOrdersBySeller, getProductsBySeller } from '@/lib/firebase/firestore';
 import type { Order, Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { format } from 'date-fns';
 
 const statusVariant = {
   pending: 'secondary',
@@ -46,7 +47,7 @@ export default function DashboardPage() {
         ]);
 
         // Sort orders to get the most recent ones
-        orders.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+        orders.sort((a, b) => b.orderDate.toMillis() - a.orderDate.toMillis());
         setRecentOrders(orders.slice(0, 5));
 
         const totalRevenue = orders
