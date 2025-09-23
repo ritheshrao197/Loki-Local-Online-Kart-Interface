@@ -1,3 +1,5 @@
+
+'use client';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +12,16 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
 
 export default function SellerSignupPage() {
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push('/pending-approval');
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md">
@@ -22,7 +32,7 @@ export default function SellerSignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-2">
               <Label htmlFor="name">Full Name / Company Name</Label>
               <Input id="name" placeholder="e.g. Acme Crafts" required />
@@ -35,8 +45,8 @@ export default function SellerSignupPage() {
               <Label htmlFor="pan">PAN Number</Label>
               <Input id="pan" placeholder="e.g. ABCDE1234F" required />
             </div>
-            <Button type="submit" className="w-full" asChild>
-                <Link href="/pending-approval">Register</Link>
+            <Button type="submit" className="w-full">
+                Register
             </Button>
           </form>
         </CardContent>

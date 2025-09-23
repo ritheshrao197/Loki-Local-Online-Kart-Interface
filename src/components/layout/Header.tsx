@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -26,7 +27,7 @@ export function Header() {
         </div>
         <nav className="ml-6 flex items-center space-x-2 sm:space-x-4">
           <Button variant="ghost" asChild>
-            <Link href="/dashboard/products">Sell on Loki</Link>
+            <Link href="/seller-signup">Sell on Loki</Link>
           </Button>
           <Button variant="ghost" size="icon" asChild>
             <Link href="/login">
