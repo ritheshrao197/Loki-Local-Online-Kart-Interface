@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { collection, getDocs, writeBatch, doc, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc, Timestamp, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { mockProducts, mockSellers, mockOrders } from '@/lib/placeholder-data';
 import Link from 'next/link';
@@ -24,56 +24,53 @@ export default function SeedDbPage() {
     setResult(null);
 
     try {
-      setStatus('Checking existing data...');
-      const productsCollection = collection(db, 'products');
-      const sellersCollection = collection(db, 'sellers');
-      
-      const existingProducts = await getDocs(productsCollection);
-      const existingSellers = await getDocs(sellersCollection);
+      const collectionsToDelete = ['products', 'sellers', 'orders'];
+      setStatus('Clearing existing data...');
 
-      if (!existingProducts.empty || !existingSellers.empty) {
-        setStatus('Skipped.');
-        setResult({
-          status: 'already_seeded',
-          message: 'Database already contains data. Seeding was skipped.',
+      for (const col of collectionsToDelete) {
+        const collectionRef = collection(db, col);
+        const snapshot = await getDocs(collectionRef);
+        const deleteBatch = writeBatch(db);
+        snapshot.docs.forEach(doc => {
+          deleteBatch.delete(doc.ref);
         });
-        setLoading(false);
-        return;
+        await deleteBatch.commit();
       }
-      
-      const batch = writeBatch(db);
+
+      setStatus('Existing data cleared.');
+
+      const seedBatch = writeBatch(db);
 
       setStatus('Preparing sellers...');
       mockSellers.forEach((seller) => {
         const docRef = doc(db, 'sellers', seller.id);
-        batch.set(docRef, seller);
+        seedBatch.set(docRef, seller);
       });
 
       setStatus('Preparing products...');
       mockProducts.forEach((product) => {
         const docRef = doc(db, 'products', product.id);
-        batch.set(docRef, product);
+        seedBatch.set(docRef, product);
       });
 
       setStatus('Preparing orders...');
-      const ordersCollection = collection(db, 'orders');
       mockOrders.forEach((order) => {
-        const docRef = doc(ordersCollection); // Create a new doc with a random ID
+        const docRef = doc(collection(db, 'orders')); // Create a new doc with a random ID
         const orderDataWithTimestamp = {
             ...order,
             orderDate: Timestamp.fromDate(order.orderDate)
         };
-        batch.set(docRef, orderDataWithTimestamp);
+        seedBatch.set(docRef, orderDataWithTimestamp);
       });
       
       setStatus('Committing to database...');
-      await batch.commit();
+      await seedBatch.commit();
       
       setStatus('Seeding complete!');
       const totalCount = mockProducts.length + mockSellers.length + mockOrders.length;
       setResult({
         status: 'success',
-        message: `Successfully seeded ${totalCount} documents.`,
+        message: `Successfully cleared and seeded ${totalCount} documents.`,
       });
 
     } catch (error) {
@@ -106,16 +103,16 @@ export default function SeedDbPage() {
         <CardContent>
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground text-center">
-              Click the button below to add sample data. This action will only run if the products or sellers collections are empty.
+              Clicking the button will first <span className="font-bold text-destructive">delete all data</span> in the products, sellers, and orders collections, then re-populate them with fresh mock data.
             </p>
-            <Button onClick={handleSeed} disabled={loading}>
+            <Button onClick={handleSeed} disabled={loading} variant="destructive">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {status}...
                 </>
               ) : (
-                'Seed Database'
+                'Clear and Seed Database'
               )}
             </Button>
             
