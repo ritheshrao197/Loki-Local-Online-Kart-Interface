@@ -10,13 +10,21 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, Check, X, PlusCircle } from 'lucide-react';
-import { mockSellers } from '@/lib/placeholder-data';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import type { Seller } from '@/lib/types';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { getSellers, addSeller, updateSellerStatus } from '@/lib/firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const statusVariant = {
   pending: 'secondary',
@@ -25,38 +33,69 @@ const statusVariant = {
 } as const;
 
 export default function SellersPage() {
-  const [sellers, setSellers] = useState<Seller[]>(mockSellers);
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
   const searchParams = useSearchParams();
+
+  async function fetchSellers() {
+    setLoading(true);
+    try {
+      const fetchedSellers = await getSellers();
+      // Sort sellers: pending first, then by name
+      fetchedSellers.sort((a, b) => {
+        if (a.status === 'pending' && b.status !== 'pending') return -1;
+        if (a.status !== 'pending' && b.status === 'pending') return 1;
+        return a.name.localeCompare(b.name);
+      });
+      setSellers(fetchedSellers);
+    } catch (error) {
+      console.error('Error fetching sellers:', error);
+      toast({
+        title: 'Error',
+        description: 'Could not fetch sellers.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchSellers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const newSellerName = searchParams.get('newSellerName');
-    const newSellerMobile = searchParams.get('newSellerMobile');
-    const newSellerPan = searchParams.get('newSellerPan');
-    const newSellerCommission = searchParams.get('newSellerCommission');
-
-    if (newSellerName && newSellerMobile && newSellerPan && newSellerCommission) {
-        const newSeller: Seller = {
-            id: `seller_${Math.random().toString(36).substring(7)}`,
-            name: newSellerName,
-            mobile: newSellerMobile,
-            pan: newSellerPan,
-            commissionRate: parseFloat(newSellerCommission),
-            status: 'approved',
-        };
-        // Avoid adding duplicate seller if user refreshes the page
-        if (!sellers.some(s => s.pan === newSeller.pan)) {
-            setSellers(prevSellers => [newSeller, ...prevSellers]);
-        }
+    if (newSellerName) {
+      // Refetch sellers list when a new seller is added.
+      // The new seller is identified by the query param.
+      fetchSellers();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  const handleSellerStatusChange = (sellerId: string, newStatus: 'approved' | 'rejected') => {
-    setSellers(prevSellers =>
-      prevSellers.map(seller =>
-        seller.id === sellerId ? { ...seller, status: newStatus } : seller
-      )
-    );
+  const handleSellerStatusChange = async (sellerId: string, newStatus: 'approved' | 'rejected') => {
+    try {
+      await updateSellerStatus(sellerId, newStatus);
+      setSellers(prevSellers =>
+        prevSellers.map(seller =>
+          seller.id === sellerId ? { ...seller, status: newStatus } : seller
+        )
+      );
+      toast({
+        title: 'Status Updated',
+        description: `Seller has been ${newStatus}.`,
+      });
+    } catch (error) {
+      console.error('Error updating seller status:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update seller status.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -82,47 +121,70 @@ export default function SellersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sellers.map((seller) => (
-              <TableRow key={seller.id}>
-                <TableCell className="font-medium">{seller.name}</TableCell>
-                <TableCell>
-                  <Badge variant={statusVariant[seller.status]}>
-                    {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
-                <TableCell className="hidden md:table-cell">{seller.pan}</TableCell>
-                <TableCell className="hidden md:table-cell">{seller.commissionRate ?? 'N/A'}%</TableCell>
-                <TableCell>
-                  {seller.status === 'pending' ? (
-                    <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700" onClick={() => handleSellerStatusChange(seller.id, 'approved')}>
-                            <Check className="h-4 w-4 mr-1"/> Approve
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-12" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-20" /></TableCell>
+                </TableRow>
+              ))
+            ) : (
+              sellers.map(seller => (
+                <TableRow key={seller.id}>
+                  <TableCell className="font-medium">{seller.name}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant[seller.status]}>
+                      {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
+                  <TableCell className="hidden md:table-cell">{seller.pan}</TableCell>
+                  <TableCell className="hidden md:table-cell">{seller.commissionRate ?? 'N/A'}%</TableCell>
+                  <TableCell>
+                    {seller.status === 'pending' ? (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700"
+                          onClick={() => handleSellerStatusChange(seller.id, 'approved')}
+                        >
+                          <Check className="h-4 w-4 mr-1" /> Approve
                         </Button>
-                        <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700" onClick={() => handleSellerStatusChange(seller.id, 'rejected')}>
-                            <X className="h-4 w-4 mr-1"/> Reject
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700"
+                          onClick={() => handleSellerStatusChange(seller.id, 'rejected')}
+                        >
+                          <X className="h-4 w-4 mr-1" /> Reject
                         </Button>
-                    </div>
-                  ) : (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
+                      </div>
+                    ) : (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem asChild>
                             <Link href={`/admin/sellers/${seller.id}`}>View Details</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>Suspend</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>Suspend</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

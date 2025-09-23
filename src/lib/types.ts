@@ -9,7 +9,7 @@ export type Product = {
   }[];
   category: string;
   seller: {
-    id: string;
+    id:string;
     name: string;
   };
   status: 'pending' | 'approved' | 'rejected';
