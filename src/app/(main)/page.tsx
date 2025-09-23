@@ -1,13 +1,13 @@
 import { ProductCard } from '@/components/products/ProductCard';
 import { ProductFilters } from '@/components/products/ProductFilters';
-import { mockProducts } from '@/lib/placeholder-data';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { Promotions } from '@/components/home/Promotions';
 import { PopularProducts } from '@/components/home/PopularProducts';
+import { getProducts } from '@/lib/firebase/firestore';
 
-export default function HomePage() {
-  const approvedProducts = mockProducts.filter(p => p.status === 'approved');
+export default async function HomePage() {
+  const approvedProducts = await getProducts('approved');
 
   return (
     <div className="flex flex-col">

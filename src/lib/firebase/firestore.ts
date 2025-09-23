@@ -1,4 +1,3 @@
-'use client';
 
 import {
   collection,
@@ -66,6 +65,22 @@ export async function getProducts(status?: 'pending' | 'approved' | 'rejected'):
     });
     return productList;
 }
+
+/**
+ * Fetches a single product by its ID from Firestore.
+ * @param productId The ID of the product to fetch.
+ */
+export async function getProductById(productId: string): Promise<Product | null> {
+    const productRef = doc(db, 'products', productId);
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists()) {
+        return null;
+    }
+
+    return { id: productSnap.id, ...productSnap.data() } as Product;
+}
+
 
 /**
  * Updates a product's status in Firestore.

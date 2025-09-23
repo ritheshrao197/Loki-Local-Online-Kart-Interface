@@ -1,5 +1,4 @@
-
-import { mockProducts } from '@/lib/placeholder-data';
+import { getProductById, getProducts } from '@/lib/firebase/firestore';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -8,15 +7,16 @@ import { Separator } from '@/components/ui/separator';
 import { MessageSquare, ShoppingCart, ThumbsUp, Truck, Warehouse, Zap, Share2, Star } from 'lucide-react';
 import { ProductCard } from '@/components/products/ProductCard';
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = mockProducts.find((p) => p.id === params.id);
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+  const product = await getProductById(params.id);
 
-  if (!product) {
+  if (!product || product.status !== 'approved') {
     notFound();
   }
 
-  const relatedProducts = mockProducts
-    .filter((p) => p.category === product.category && p.id !== product.id && p.status === 'approved')
+  const allApprovedProducts = await getProducts('approved');
+  const relatedProducts = allApprovedProducts
+    .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
   return (
