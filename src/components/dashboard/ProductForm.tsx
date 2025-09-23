@@ -131,6 +131,12 @@ export function ProductForm({ product }: ProductFormProps) {
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
     try {
+      // Use a random placeholder for the image unless one is uploaded
+      const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+      const image = imageDataUri
+        ? { url: imageDataUri, hint: 'custom image' }
+        : { url: randomImage.imageUrl, hint: randomImage.imageHint };
+        
       if (isEditMode && product) {
         const updatedProductData: Partial<Product> = {
           name: data.name,
@@ -138,9 +144,7 @@ export function ProductForm({ product }: ProductFormProps) {
           price: data.price,
           category: data.category,
           keywords: data.keywords,
-          // Image handling logic can be more sophisticated, e.g., upload to Firebase Storage
-          // For now, we'll keep the existing image if a new one isn't uploaded
-          images: imageDataUri ? [{ url: imageDataUri, hint: product.images[0].hint }] : product.images,
+          images: imageDataUri ? [image] : product.images,
           status: 'pending', // After edit, it should be re-approved.
         };
         await updateProduct(product.id, updatedProductData);
@@ -151,7 +155,7 @@ export function ProductForm({ product }: ProductFormProps) {
           price: data.price,
           category: data.category,
           keywords: data.keywords,
-          images: [PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)]],
+          images: [image],
           seller: { id: 'seller_1', name: 'Artisan Crafts Co.' }, // Mock seller
           status: 'pending',
         };
