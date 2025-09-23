@@ -1,3 +1,5 @@
+
+'use client';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import {
@@ -23,8 +25,22 @@ import {
   Wallet,
   Settings,
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { getSellerById } from '@/lib/firebase/firestore';
+import { useEffect, useState } from 'react';
+import type { Seller } from '@/lib/types';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const params = useParams();
+  const sellerId = params.sellerId as string;
+  const [seller, setSeller] = useState<Seller | null>(null);
+
+  useEffect(() => {
+    if (sellerId) {
+      getSellerById(sellerId).then(setSeller);
+    }
+  }, [sellerId]);
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -41,7 +57,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Dashboard">
-                <Link href="/dashboard">
+                <Link href={`/dashboard/${sellerId}`}>
                   <LayoutDashboard />
                   <span>Dashboard</span>
                 </Link>
@@ -49,7 +65,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Products">
-                <Link href="/dashboard/products">
+                <Link href={`/dashboard/${sellerId}/products`}>
                   <Package />
                   <span>Products</span>
                 </Link>
@@ -57,7 +73,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Orders">
-                <Link href="/dashboard/orders">
+                <Link href={`/dashboard/${sellerId}/orders`}>
                   <ListOrdered />
                   <span>Orders</span>
                 </Link>
@@ -102,10 +118,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <SidebarMenuItem>
               <SidebarMenuButton>
                 <Avatar className="size-7">
-                  <AvatarImage src="https://picsum.photos/seed/avatar1/100/100" />
-                  <AvatarFallback>AC</AvatarFallback>
+                  <AvatarImage src={`https://picsum.photos/seed/${sellerId}/100/100`} />
+                  <AvatarFallback>{seller?.name.charAt(0) || 'S'}</AvatarFallback>
                 </Avatar>
-                <span className="truncate">Artisan Crafts Co.</span>
+                <span className="truncate">{seller?.name || 'Seller'}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

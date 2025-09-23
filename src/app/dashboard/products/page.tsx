@@ -30,7 +30,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { getProductsBySeller, deleteProduct } from '@/lib/firebase/firestore'; 
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useParams } from 'next/navigation';
 
 const statusVariant = {
   pending: 'secondary',
@@ -44,13 +44,14 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const params = useParams();
+  const sellerId = params.sellerId as string;
 
   const fetchProducts = useCallback(async () => {
+    if (!sellerId) return;
     setLoading(true);
     try {
-      // In a real app, this would be scoped to the logged-in seller.
-      // We'll use a hardcoded ID for now.
-      const sellerProducts = await getProductsBySeller('seller_2'); 
+      const sellerProducts = await getProductsBySeller(sellerId); 
       setProducts(sellerProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -62,7 +63,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [sellerId, toast]);
 
   useEffect(() => {
     fetchProducts();
@@ -97,12 +98,16 @@ export default function ProductsPage() {
     }
   };
 
+  if (!sellerId) {
+    return <div>Loading...</div>; // Or some other placeholder
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-headline">My Products</h1>
         <Button asChild>
-          <Link href="/dashboard/products/new">
+          <Link href={`/dashboard/${sellerId}/products/new`}>
             <PlusCircle className="mr-2 h-4 w-4" /> Add Product
           </Link>
         </Button>
@@ -134,7 +139,7 @@ export default function ProductsPage() {
             ) : products.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  No products found. <Link href="/dashboard/products/new" className="text-primary underline">Add your first product</Link>.
+                  No products found. <Link href={`/dashboard/${sellerId}/products/new`} className="text-primary underline">Add your first product</Link>.
                 </TableCell>
               </TableRow>
             ) : (
@@ -169,7 +174,7 @@ export default function ProductsPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem asChild>
-                        <Link href={`/dashboard/products/edit/${product.id}`}>Edit</Link>
+                        <Link href={`/dashboard/${sellerId}/products/edit/${product.id}`}>Edit</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setProductToDelete(product)} className="text-destructive">
                         Delete

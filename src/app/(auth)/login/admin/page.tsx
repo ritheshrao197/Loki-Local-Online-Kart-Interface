@@ -29,13 +29,14 @@ export default function SellerAdminLoginPage() {
     if (user === 'admin') {
       toast({ title: 'Admin Login Successful' });
       router.push('/admin');
-    } else if (user === 'seller') {
+    } else if (user) {
+      // Assume any other username is a seller ID for testing
       toast({ title: 'Seller Login Successful' });
-      router.push('/dashboard');
+      router.push(`/dashboard/${user}`);
     } else {
       toast({
         title: 'Invalid Credentials',
-        description: 'Use "admin" or "seller" to log in.',
+        description: 'Use "admin" or a valid seller ID to log in.',
         variant: 'destructive',
       });
     }
@@ -57,7 +58,7 @@ export default function SellerAdminLoginPage() {
               <Input
                 id="username"
                 type="text"
-                placeholder="Use 'admin' or 'seller'"
+                placeholder="Use 'admin' or a seller ID"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}

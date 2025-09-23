@@ -6,19 +6,22 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProductById } from "@/lib/firebase/firestore";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Product } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default function EditProductPage() {
+  const params = useParams();
+  const sellerId = params.sellerId as string;
+  const productId = params.id as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const fetchedProduct = await getProductById(params.id);
+        const fetchedProduct = await getProductById(productId);
         if (!fetchedProduct) {
           notFound();
         } else {
@@ -32,13 +35,17 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
       }
     }
     fetchProduct();
-  }, [params.id]);
+  }, [productId]);
+
+  if (!sellerId) {
+    return null; // Or a loading/error state
+  }
 
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
         <Button variant="outline" size="icon" className="h-7 w-7" asChild>
-          <Link href="/dashboard/products">
+          <Link href={`/dashboard/${sellerId}/products`}>
             <ChevronLeft className="h-4 w-4" />
             <span className="sr-only">Back</span>
           </Link>

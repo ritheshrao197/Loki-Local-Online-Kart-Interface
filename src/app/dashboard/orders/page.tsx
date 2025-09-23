@@ -20,6 +20,7 @@ import { getOrdersBySeller, updateOrderStatus } from '@/lib/firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { useParams } from 'next/navigation';
 
 const statusVariant = {
   pending: 'secondary',
@@ -32,14 +33,15 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const params = useParams();
+  const sellerId = params.sellerId as string;
 
   useEffect(() => {
     async function fetchOrders() {
+      if (!sellerId) return;
       setLoading(true);
       try {
-        // We'll use a hardcoded seller ID for now.
-        // In a real app, you'd get this from the logged-in user's session.
-        const sellerOrders = await getOrdersBySeller('seller_2');
+        const sellerOrders = await getOrdersBySeller(sellerId);
         sellerOrders.sort((a, b) => b.orderDate.toMillis() - a.orderDate.toMillis());
         setOrders(sellerOrders);
       } catch (error) {
@@ -54,7 +56,7 @@ export default function OrdersPage() {
       }
     }
     fetchOrders();
-  }, [toast]);
+  }, [sellerId, toast]);
 
   const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
     const originalOrders = [...orders];

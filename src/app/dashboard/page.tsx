@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { getOrdersBySeller, getProductsBySeller } from '@/lib/firebase/firestore';
 import type { Order, Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { format } from 'date-fns';
+import { useParams } from 'next/navigation';
 
 const statusVariant = {
   pending: 'secondary',
@@ -35,12 +35,14 @@ export default function DashboardPage() {
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const params = useParams();
+  const sellerId = params.sellerId as string;
 
   useEffect(() => {
     async function fetchDashboardData() {
+      if (!sellerId) return;
       setLoading(true);
       try {
-        const sellerId = 'seller_2'; // Hardcoded for now
         const [orders, products] = await Promise.all([
           getOrdersBySeller(sellerId),
           getProductsBySeller(sellerId),
@@ -74,7 +76,7 @@ export default function DashboardPage() {
       }
     }
     fetchDashboardData();
-  }, []);
+  }, [sellerId]);
 
   return (
     <div>

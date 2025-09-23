@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,10 +14,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
 import { autoCategorizeProduct } from '@/ai/flows/auto-categorize-product';
-import { CalendarIcon, Loader2, Sparkles, Tags, Trash2 } from 'lucide-react';
+import { CalendarIcon, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import type { Product } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addProduct, updateProduct } from '@/lib/firebase/firestore';
+import { addProduct, updateProduct, getSellerById } from '@/lib/firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -74,6 +74,8 @@ interface ProductFormProps {
 
 export function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
+  const params = useParams();
+  const sellerId = params.sellerId as string;
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
@@ -229,6 +231,12 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
+    if (!sellerId) {
+      toast({ title: "Error", description: "Seller not identified.", variant: "destructive" });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       let imageUploads: { url: string; hint: string; }[] = [];
       if (imagePreviews.length > 0) {
@@ -254,20 +262,24 @@ export function ProductForm({ product }: ProductFormProps) {
           title: 'Product Updated!',
           description: `Your product is updated and pending re-approval.`,
         });
-        router.push('/dashboard/products?updated=true');
+        router.push(`/dashboard/${sellerId}/products?updated=true`);
       } else {
+        const seller = await getSellerById(sellerId);
+        if (!seller) {
+            throw new Error("Could not find seller details.");
+        }
         const newProduct: Omit<Product, 'id'> = {
           ...data,
           images: imageUploads,
-          seller: { id: 'seller_2', name: 'Local Weavers Inc.' }, // Mock seller
+          seller: { id: sellerId, name: seller.name },
           status: 'pending',
         };
-        const addedProduct = await addProduct(newProduct as Omit<Product, 'id'>);
+        await addProduct(newProduct as Omit<Product, 'id'>);
         toast({
           title: 'Product Submitted!',
           description: `Your product is pending admin approval.`,
         });
-        router.push(`/dashboard/products?newProduct=true`);
+        router.push(`/dashboard/${sellerId}/products?newProduct=true`);
       }
 
     } catch (error) {
