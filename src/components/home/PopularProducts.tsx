@@ -1,3 +1,5 @@
+
+'use client';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ProductCard } from '@/components/products/ProductCard';
 import type { Product } from '@/lib/types';
