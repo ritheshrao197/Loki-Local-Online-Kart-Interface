@@ -104,10 +104,10 @@ export function HeroSliderManager() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      form.setValue('imageUrl', event.target.files, { shouldValidate: true });
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        form.setValue('imageUrl', event.target.files);
       };
       reader.readAsDataURL(file);
     }
@@ -193,7 +193,7 @@ export function HeroSliderManager() {
                 <FormField
                   control={form.control}
                   name="imageUrl"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Image</FormLabel>
                        <FormControl>
