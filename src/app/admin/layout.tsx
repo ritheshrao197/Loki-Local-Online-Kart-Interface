@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     try {
       await signOut(auth);
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
-      router.push('/login/admin');
+      router.push('/login');
     } catch (error) {
       console.error("Logout error:", error);
       toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
@@ -101,6 +101,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 <Link href="/admin/commissions">
                   <Landmark />
                   <span>Commissions</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Content">
+                <Link href="/admin/content">
+                  <LayoutTemplate />
+                  <span>Content</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
