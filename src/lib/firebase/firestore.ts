@@ -1,6 +1,7 @@
 
 
 
+
 import {
   collection,
   doc,
@@ -315,9 +316,11 @@ export async function deleteBlog(blogId: string): Promise<void> {
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
   const slidesCol = collection(db, 'heroSlides');
-  const q = query(slidesCol, where('isActive', '==', true), orderBy('order', 'asc'));
+  const q = query(slidesCol, where('isActive', '==', true));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HeroSlide));
+  const slides = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HeroSlide));
+  slides.sort((a, b) => a.order - b.order);
+  return slides;
 }
 
 export async function getAllHeroSlides(): Promise<HeroSlide[]> {
