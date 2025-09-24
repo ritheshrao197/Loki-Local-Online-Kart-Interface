@@ -25,7 +25,6 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
-import { uploadImage } from '@/lib/firebase/storage';
 
 
 const formSchema = z.object({
@@ -79,7 +78,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [suggestedCategories, setSuggestedCategories] = useState<string[]>(product ? [product.category] : []);
   
   const isEditMode = !!product;
@@ -179,41 +178,40 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
       return;
     }
 
-    setIsUploading(true);
+    setIsProcessingImages(true);
     try {
-      const uploadPromises = Array.from(files).map(file => 
-        uploadImage(file, `products/${sellerId}/`)
-      );
+      const imagePromises = Array.from(files).map(file => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
       
-      const newImageUrls = await Promise.all(uploadPromises);
-      
-      const newImages = newImageUrls.map(url => ({ url, hint: 'product image' }));
+      const newImageDataUris = await Promise.all(imagePromises);
+      const newImages = newImageDataUris.map(uri => ({ url: uri, hint: 'product image' }));
       
       const updatedImages = [...currentImages, ...newImages];
       form.setValue('images', updatedImages, { shouldValidate: true });
 
-      toast({ title: `${newImageUrls.length} image(s) uploaded.` });
-
+      toast({ title: `${newImageDataUris.length} image(s) added.` });
+      
       // Trigger auto-categorization with the first new image
-      if (newImageUrls[0]) {
-         const reader = new FileReader();
-         reader.onloadend = async () => {
-             await handleAutoCategorize(reader.result as string, form.getValues('description') || '');
-         }
-         // We need a data URI for Genkit, so we read the first file
-         reader.readAsDataURL(files[0]);
+      if (newImageDataUris[0]) {
+        await handleAutoCategorize(newImageDataUris[0], form.getValues('description') || '');
       }
 
     } catch (error) {
       console.error(error);
-      toast({ title: 'Image Upload Failed', description: 'Could not upload images to storage.', variant: 'destructive' });
+      toast({ title: 'Image Processing Failed', description: 'Could not process images.', variant: 'destructive' });
     } finally {
-      setIsUploading(false);
+      setIsProcessingImages(false);
     }
   };
   
   const handleAutoCategorize = async (photoDataUri: string, description: string) => {
-    if (!photoDataUri || !description) return;
+    if (!photoDataUri) return; // Description can be optional for categorization
     setIsCategorizing(true);
     try {
       const result = await autoCategorizeProduct({ photoDataUri, description });
@@ -233,8 +231,6 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     const currentImages = form.getValues('images');
     const updatedImages = currentImages.filter((_, i) => i !== index);
     form.setValue('images', updatedImages, { shouldValidate: true });
-    // Note: This does not delete the image from Firebase Storage.
-    // A more robust implementation would do that.
   };
 
   const onSubmit = async (data: ProductFormValues) => {
@@ -434,8 +430,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                                 <Input type="file" id="image-upload" accept="image/*" multiple onChange={handleImageChange} className="hidden"/>
                                 <Button asChild variant="outline" size="sm">
                                   <label htmlFor="image-upload" className="cursor-pointer">
-                                      {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
-                                      {isUploading ? 'Uploading...' : 'Upload Images'}
+                                      {isProcessingImages ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
+                                      {isProcessingImages ? 'Processing...' : 'Add Images'}
                                   </label>
                                 </Button>
                                 </div>
@@ -595,7 +591,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                                 {cat}
                               </Button>
                             ))
-                        ) : !isCategorizing && <p className="text-sm text-muted-foreground">Upload an image and add a description to see suggestions.</p>}
+                        ) : !isCategorizing && <p className="text-sm text-muted-foreground">Add an image to see suggestions.</p>}
                     </div>
                 </div>
               </CardContent>
@@ -716,8 +712,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         <div className="flex justify-end gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 px-8 -mx-8">
             <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting}>Clear Form</Button>
             {!isAdmin && <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>}
-            <Button type="submit" disabled={isSubmitting || isUploading}>
-              {(isSubmitting || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isSubmitting || isProcessingImages}>
+              {(isSubmitting || isProcessingImages) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEditMode ? 'Save Changes' : 'Submit for Review'}
             </Button>
         </div>
