@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { SlidersHorizontal, Star, UploadCloud } from "lucide-react";
+import { Star, UploadCloud } from "lucide-react";
 import { HeroSliderManager } from "@/components/admin/HeroSliderManager";
 
 export default function AdminContentPage() {
