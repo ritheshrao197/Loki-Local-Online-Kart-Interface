@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { Product } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '../ui/button';
-import { ShoppingCart, Eye } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
@@ -65,13 +65,9 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
 
             <div className="mt-4 flex gap-2">
-                <Button size="sm" className="flex-1" onClick={handleAddToCart}>
+                <Button size="sm" className="w-full" onClick={handleAddToCart}>
                     <ShoppingCart className="mr-2"/>
                     Add to Cart
-                </Button>
-                <Button size="sm" variant="outline">
-                    <Eye className="mr-2"/>
-                    Quick View
                 </Button>
             </div>
         </div>

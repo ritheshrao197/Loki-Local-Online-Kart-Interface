@@ -11,6 +11,7 @@ import { MessageSquare, ShoppingCart, ThumbsUp, Truck, Warehouse, Zap, Share2, S
 import { ProductCard } from '@/components/products/ProductCard';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!id) return;
@@ -47,6 +49,14 @@ export default function ProductDetailPage() {
 
     fetchProductData();
   }, [id]);
+
+  const handleAddToCart = () => {
+      if (!product) return;
+      toast({
+          title: "Added to Cart",
+          description: `${product.name} has been added to your cart.`,
+      });
+  }
 
   if (loading) {
     return <ProductDetailSkeleton />;
@@ -93,10 +103,10 @@ export default function ProductDetailPage() {
             <p className="text-foreground/80 leading-relaxed">{product.description}</p>
             
             <div className="flex flex-col sm:flex-row gap-3">
-                <Button size="lg" className="flex-1">
+                <Button size="lg" className="flex-1" onClick={handleAddToCart}>
                     <ShoppingCart className="mr-2" /> Add to Cart
                 </Button>
-                <Button size="lg" variant="outline" className="flex-1 bg-primary/10 border-primary/50 text-primary hover:bg-primary/20 hover:text-primary">
+                <Button size="lg" variant="outline" className="flex-1 bg-primary/10 border-primary/50 text-primary hover:bg-primary/20 hover:text-primary" onClick={handleAddToCart}>
                     <Zap className="mr-2" /> Buy Now (UPI)
                 </Button>
             </div>

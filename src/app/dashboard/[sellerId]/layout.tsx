@@ -80,19 +80,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Payments">
-                    <Link href="#">
-                        <Wallet />
-                        <span>Payments</span>
-                    </Link>
+                <SidebarMenuButton tooltip="Payments" disabled>
+                    <Wallet />
+                    <span>Payments</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Chat">
-                <Link href="#">
-                  <MessageSquare />
-                  <span>Chat</span>
-                </Link>
+              <SidebarMenuButton tooltip="Chat" disabled>
+                <MessageSquare />
+                <span>Chat</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -100,11 +96,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings">
-                    <Link href="#">
-                        <Settings />
-                        <span>Settings</span>
-                    </Link>
+                <SidebarMenuButton tooltip="Settings" disabled>
+                    <Settings />
+                    <span>Settings</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
