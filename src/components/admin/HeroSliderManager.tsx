@@ -10,7 +10,7 @@ import type { HeroSlide } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { Loader2, Plus, Trash2, Edit } from 'lucide-react';
+import { Loader2, Plus, Trash2, Edit, Upload } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -29,7 +29,9 @@ import { Skeleton } from '../ui/skeleton';
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
   subtitle: z.string().min(1, 'Subtitle is required.'),
-  imageUrl: z.string().url('A valid image URL is required.'),
+  imageUrl: z.any().refine(val => (typeof val === 'string' && val.length > 0) || (val instanceof FileList && val.length > 0), {
+    message: 'An image is required.',
+  }),
   ctaText: z.string().min(1, 'CTA text is required.'),
   ctaLink: z.string().min(1, 'CTA link is required.'),
   order: z.coerce.number().int(),
@@ -44,6 +46,7 @@ export function HeroSliderManager() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -77,13 +80,18 @@ export function HeroSliderManager() {
 
   const handleDialogOpen = (slide: HeroSlide | null = null) => {
     setEditingSlide(slide);
+    setImagePreview(null);
     if (slide) {
-      form.reset(slide);
+      form.reset({
+        ...slide,
+        imageUrl: slide.imageUrl
+      });
+      setImagePreview(slide.imageUrl);
     } else {
       form.reset({
         title: '',
         subtitle: '',
-        imageUrl: '',
+        imageUrl: undefined,
         ctaText: 'Shop Now',
         ctaLink: '/',
         order: slides.length,
@@ -92,15 +100,41 @@ export function HeroSliderManager() {
     }
     setIsDialogOpen(true);
   };
+  
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        form.setValue('imageUrl', event.target.files);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
+      let imageUrl = '';
+      if (typeof data.imageUrl === 'string') {
+        imageUrl = data.imageUrl;
+      } else if (data.imageUrl instanceof FileList && data.imageUrl.length > 0) {
+        imageUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(data.imageUrl[0]);
+        });
+      }
+
+      const slideData = { ...data, imageUrl };
+      
       if (editingSlide) {
-        await updateHeroSlide(editingSlide.id, data);
+        await updateHeroSlide(editingSlide.id, slideData);
         toast({ title: 'Slide Updated' });
       } else {
-        await addHeroSlide(data);
+        await addHeroSlide(slideData);
         toast({ title: 'Slide Added' });
       }
       await fetchSlides();
@@ -159,11 +193,18 @@ export function HeroSliderManager() {
                 <FormField
                   control={form.control}
                   name="imageUrl"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
-                      <FormLabel>Image URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/image.png" {...field} />
+                      <FormLabel>Image</FormLabel>
+                       <FormControl>
+                        <div className="flex items-center gap-4">
+                          <div className="w-32 h-20 bg-muted rounded-md flex items-center justify-center relative">
+                            {imagePreview ? 
+                              <Image src={imagePreview} alt="Preview" fill className="object-cover rounded-md"/> : 
+                              <Upload className="h-6 w-6 text-muted-foreground"/>}
+                          </div>
+                           <Input type="file" accept="image/*" onChange={handleImageChange} className="max-w-xs"/>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -311,3 +352,5 @@ export function HeroSliderManager() {
     </Card>
   );
 }
+
+    
