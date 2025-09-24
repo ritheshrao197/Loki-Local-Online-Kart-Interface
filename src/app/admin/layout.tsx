@@ -83,14 +83,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Content">
-                <Link href="/admin/content">
-                  <LayoutTemplate />
-                  <span>Content</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Reports">
                 <Link href="/admin/reports">
@@ -113,7 +105,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <SidebarMenu>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/login/admin">
+                <Link href="/login">
                   <LogOut />
                   <span>Logout</span>
                 </Link>

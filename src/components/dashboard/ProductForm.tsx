@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -66,6 +67,7 @@ const formSchema = z.object({
   estimatedDelivery: z.string().optional(),
   returnPolicy: z.enum(['none', '7-day', '15-day']).optional(),
   isPromoted: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -111,6 +113,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     shippingOptions: product.shippingOptions || [],
     returnPolicy: product.returnPolicy || 'none',
     isPromoted: product.isPromoted || false,
+    isFeatured: product.isFeatured || false,
   } : {
     name: '',
     description: '',
@@ -134,6 +137,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     estimatedDelivery: '',
     returnPolicy: 'none' as const,
     isPromoted: false,
+    isFeatured: false,
   };
 
 
@@ -644,7 +648,16 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                                 <FormLabel>Promote Product</FormLabel>
-                                <FormDescription>Mark this for special promotion (requires admin approval).</FormDescription>
+                                <FormDescription>Mark for special promotion (admin approval).</FormDescription>
+                            </div>
+                            <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                        </FormItem>
+                    )}/>
+                     <FormField control={form.control} name="isFeatured" render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <FormLabel>Feature on Homepage</FormLabel>
+                                <FormDescription>Display this in the main hero slider (admin approval).</FormDescription>
                             </div>
                             <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
                         </FormItem>

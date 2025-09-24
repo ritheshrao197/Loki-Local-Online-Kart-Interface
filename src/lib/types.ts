@@ -36,6 +36,7 @@ export type Product = {
   estimatedDelivery?: string;
   returnPolicy?: 'none' | '7-day' | '15-day';
   isPromoted?: boolean;
+  isFeatured?: boolean;
 };
 
 export type Seller = {

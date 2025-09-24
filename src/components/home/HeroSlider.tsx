@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
+import { getFeaturedProducts } from '@/lib/firebase/firestore';
 
 export function HeroSlider() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -15,9 +16,8 @@ export function HeroSlider() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { getProducts } = await import('@/lib/firebase/firestore');
-        const products = await getProducts('approved');
-        setFeaturedProducts(products.slice(0, 3)); // Take first 3 approved products
+        const products = await getFeaturedProducts();
+        setFeaturedProducts(products); 
       } catch (error) {
         console.error("Failed to fetch products for hero slider:", error);
       } finally {

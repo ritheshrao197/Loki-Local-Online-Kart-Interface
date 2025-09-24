@@ -101,6 +101,25 @@ export async function getProducts(status?: 'pending' | 'approved' | 'rejected' |
 }
 
 /**
+ * Fetches featured products from Firestore.
+ */
+export async function getFeaturedProducts(): Promise<Product[]> {
+    const productsCol = collection(db, 'products');
+    const q = query(productsCol, where('isFeatured', '==', true), where('status', '==', 'approved'));
+    const productSnapshot = await getDocs(q);
+    const productList = productSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
+            expiryDate: data.expiryDate?.toDate().toISOString(),
+        } as Product;
+    });
+    return productList;
+}
+
+/**
  * Fetches all products for a specific seller.
  * @param sellerId The ID of the seller.
  */
