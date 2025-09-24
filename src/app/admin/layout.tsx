@@ -1,4 +1,6 @@
 
+'use client';
+
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import {
@@ -27,8 +29,27 @@ import {
   LayoutTemplate,
   Newspaper,
 } from 'lucide-react';
+import { getAuth, signOut } from 'firebase/auth';
+import { app } from '@/lib/firebase/firebase';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const auth = getAuth(app);
+  
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+      router.push('/login/admin');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
+    }
+  };
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -104,11 +125,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <SidebarFooter>
           <SidebarMenu>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/login">
-                  <LogOut />
-                  <span>Logout</span>
-                </Link>
+              <SidebarMenuButton onClick={handleLogout}>
+                <LogOut />
+                <span>Logout</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>

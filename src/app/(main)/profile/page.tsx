@@ -1,12 +1,22 @@
 
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListOrdered, MapPin, User, Mail, LogOut } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { getAuth, signOut } from "firebase/auth";
+import { app } from "@/lib/firebase/firebase";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ProfilePage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const auth = getAuth(app);
+
   const user = {
     name: 'Anjali Sharma',
     email: 'anjali.s@example.com',
@@ -14,6 +24,24 @@ export default function ProfilePage() {
     fallback: 'AS',
     address: '123, Rose Villa, Mumbai, Maharashtra'
   };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+      router.push('/login');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
+    }
+  };
+
+  const handleEditProfile = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "You'll be able to edit your profile in a future update.",
+    });
+  }
 
   return (
     <div className="container py-12">
@@ -48,8 +76,8 @@ export default function ProfilePage() {
                     <span>{user.address}</span>
                </div>
                 <Separator className="my-4"/>
-                <Button variant="outline" className="w-full">Edit Profile</Button>
-                <Button variant="ghost" className="w-full text-destructive hover:text-destructive">
+                <Button variant="outline" className="w-full" onClick={handleEditProfile}>Edit Profile</Button>
+                <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" /> Logout
                 </Button>
             </CardContent>

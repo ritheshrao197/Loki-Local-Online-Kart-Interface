@@ -26,13 +26,20 @@ import {
   Settings,
   Newspaper,
 } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { getSellerById } from '@/lib/firebase/firestore';
 import { useEffect, useState } from 'react';
 import type { Seller } from '@/lib/types';
+import { getAuth, signOut } from 'firebase/auth';
+import { app } from '@/lib/firebase/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const params = useParams();
+  const router = useRouter();
+  const { toast } = useToast();
+  const auth = getAuth(app);
+  
   const sellerId = params.sellerId as string;
   const [seller, setSeller] = useState<Seller | null>(null);
 
@@ -41,6 +48,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       getSellerById(sellerId).then(setSeller);
     }
   }, [sellerId]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+      router.push('/login/admin');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -111,11 +129,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/login">
-                  <LogOut />
-                  <span>Logout</span>
-                </Link>
+              <SidebarMenuButton onClick={handleLogout}>
+                <LogOut />
+                <span>Logout</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
