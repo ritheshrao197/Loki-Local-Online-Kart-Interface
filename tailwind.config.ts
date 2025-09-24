@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'Poppins', 'Nunito', 'sans-serif'],
-        headline: ['var(--font-headline)', 'Montserrat', 'sans-serif'],
+        sans: ['var(--font-sans)'],
+        headline: ['var(--font-headline)'],
       },
       colors: {
         background: 'hsl(var(--background))',

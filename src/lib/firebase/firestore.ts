@@ -16,7 +16,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Seller, Product, Order, Blog, HeroSlide, BannerAd, BrandingSettings } from '@/lib/types';
+import type { Seller, Product, Order, Blog, HeroSlide, BannerAd } from '@/lib/types';
 
 // ================== Seller Functions ==================
 

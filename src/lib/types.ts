@@ -98,7 +98,3 @@ export type BannerAd = {
   isActive: boolean;
   placement: 'homepage_top' | 'homepage_middle' | 'homepage_bottom';
 };
-
-export type BrandingSettings = {
-  logoUrl: string;
-};
