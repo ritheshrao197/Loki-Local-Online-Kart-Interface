@@ -80,6 +80,12 @@ export function LogoManager() {
         });
       }
 
+      if (!newLogoUrl) {
+        toast({ title: 'No logo image provided', variant: 'destructive' });
+        setIsSubmitting(false);
+        return;
+      }
+
       await updateBrandingSettings({ logoUrl: newLogoUrl });
       toast({ title: 'Logo Updated Successfully' });
     } catch (error) {
@@ -115,7 +121,7 @@ export function LogoManager() {
                           </div>
                         }
                       </div>
-                       <Input type="file" accept="image/*" onChange={handleImageChange} className="max-w-xs"/>
+                       <Input id="logo-upload" type="file" accept="image/*" onChange={handleImageChange} className="max-w-xs"/>
                     </div>
                   </FormControl>
                   <FormMessage />
