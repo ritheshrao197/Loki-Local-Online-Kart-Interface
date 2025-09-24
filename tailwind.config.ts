@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Roboto', 'Lato', 'sans-serif'],
-        body: ['Roboto', 'sans-serif'],
+        sans: ['Poppins', 'sans-serif'],
+        body: ['Poppins', 'sans-serif'],
         headline: ['Montserrat', 'sans-serif'],
         code: ['monospace'],
       },

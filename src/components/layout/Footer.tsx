@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Store } from 'lucide-react';
+import Logo from '@/components/common/logo';
 
 export function Footer() {
   return (
@@ -9,8 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center space-x-2">
-              <Store className="h-6 w-6 text-primary" />
-              <span className="font-bold font-headline text-lg">Loki</span>
+              <Logo className="h-8 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground">
               Connecting local manufacturers with buyers across India.
