@@ -6,39 +6,55 @@ import { Promotions } from '@/components/home/Promotions';
 import { PopularProducts } from '@/components/home/PopularProducts';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { BannerAds } from '@/components/home/BannerAds';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
+  // This state is used to ensure the component is client-side rendered.
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   return (
     <div className="flex flex-col">
-      <HeroSlider />
-      <div className="container py-8">
-        <section className="text-center mb-12">
-          <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
-            Discover Local Treasures
-          </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-            Explore unique, handcrafted products from local artisans and manufacturers near you.
-          </p>
-        </section>
+      {isClient ? (
+        <>
+          <HeroSlider />
+          <div className="container py-8">
+            <section className="text-center mb-12">
+              <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
+                Discover Local Treasures
+              </h1>
+              <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+                Explore unique, handcrafted products from local artisans and manufacturers near you.
+              </p>
+            </section>
 
-        <BannerAds placement="homepage_top" />
+            <BannerAds placement="homepage_top" />
 
-        <FeaturedCategories />
+            <FeaturedCategories />
 
-        <div className="mt-12">
-          <Promotions />
+            <div className="mt-12">
+              <Promotions />
+            </div>
+            
+            <div className="mt-12">
+                <PopularProducts />
+            </div>
+
+            <div className="mt-20">
+              <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
+              <ProductGrid />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="container py-8">
+          {/* You can put skeleton loaders here for a better initial loading experience */}
+          <p>Loading...</p>
         </div>
-        
-        <div className="mt-12">
-            <PopularProducts />
-        </div>
-
-        <div className="mt-20">
-          <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
-          <ProductGrid />
-        </div>
-      </div>
+      )}
     </div>
   );
 }
-
