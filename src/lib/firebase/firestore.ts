@@ -1,5 +1,6 @@
 
 
+
 import {
   collection,
   doc,
@@ -122,7 +123,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
 }
 
 /**
- * Fetches all products for a specific seller, including drafts.
+ * Fetches all products for a specific seller.
  * @param sellerId The ID of the seller.
  */
 export async function getProductsBySeller(sellerId: string): Promise<Product[]> {
