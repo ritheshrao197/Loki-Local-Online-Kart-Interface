@@ -21,23 +21,23 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm hover:text-primary transition-colors">Home</Link></li>
               <li><Link href="/seller-signup" className="text-sm hover:text-primary transition-colors">Sell on Loki</Link></li>
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">About Us</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold font-headline mb-4">Support</h3>
             <ul className="space-y-2">
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">Contact Us</Link></li>
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">Contact Us</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold font-headline mb-4">Connect</h3>
             <ul className="space-y-2">
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">Facebook</Link></li>
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">Instagram</Link></li>
-              <li><Link href="#" className="text-sm hover:text-primary transition-colors">Twitter</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">Facebook</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">Instagram</Link></li>
+              <li><Link href="/" className="text-sm hover:text-primary transition-colors">Twitter</Link></li>
             </ul>
           </div>
         </div>

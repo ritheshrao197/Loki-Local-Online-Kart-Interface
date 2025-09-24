@@ -58,6 +58,21 @@ export default function ProductDetailPage() {
       });
   }
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Link Copied!",
+      description: "Product link copied to your clipboard.",
+    });
+  };
+  
+  const handleChat = () => {
+     toast({
+      title: "Coming Soon!",
+      description: "The chat with seller feature is under development.",
+    });
+  }
+
   if (loading) {
     return <ProductDetailSkeleton />;
   }
@@ -112,10 +127,10 @@ export default function ProductDetailPage() {
             </div>
 
              <div className="flex items-center justify-between gap-4 text-sm">
-                <Button variant="ghost" className="text-muted-foreground">
+                <Button variant="ghost" className="text-muted-foreground" onClick={handleChat}>
                     <MessageSquare className="mr-2 h-4 w-4" /> Chat with Seller
                 </Button>
-                 <Button variant="ghost" className="text-muted-foreground">
+                 <Button variant="ghost" className="text-muted-foreground" onClick={handleShare}>
                     <Share2 className="mr-2 h-4 w-4" /> Share
                 </Button>
             </div>

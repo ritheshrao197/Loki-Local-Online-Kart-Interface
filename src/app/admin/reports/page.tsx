@@ -36,11 +36,18 @@ export default function ReportsPage() {
     fetchData();
   }, [toast]);
 
+  const handleExport = () => {
+    toast({
+        title: "Generating Report...",
+        description: "Your data export will be available shortly."
+    })
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-headline">Reports</h1>
-        <Button>
+        <Button onClick={handleExport}>
           <Download className="mr-2 h-4 w-4" />
           Export All Data
         </Button>

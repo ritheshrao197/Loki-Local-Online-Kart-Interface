@@ -83,6 +83,13 @@ export default function OrdersPage() {
     }
   };
 
+  const handleViewDetails = () => {
+    toast({
+        title: "Coming Soon!",
+        description: "Order detail view is under development."
+    })
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -160,7 +167,7 @@ export default function OrdersPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>View Details</DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleViewDetails}>View Details</DropdownMenuItem>
                       <DropdownMenuSub>
                         <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
                         <DropdownMenuSubContent>

@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -72,6 +73,13 @@ export default function CommissionsPage() {
 
   const approvedSellers = sellers.filter(s => s.status === 'approved');
 
+  const handleEditSlabs = () => {
+    toast({
+        title: 'Feature Coming Soon',
+        description: 'The ability to edit commission slabs is under development.'
+    });
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Commission Management</h1>
@@ -131,7 +139,7 @@ export default function CommissionsPage() {
                     <span>Sales &gt; ₹1,00,000</span>
                     <Badge variant="secondary">10%</Badge>
                 </div>
-                <Button variant="outline" className="w-full">Edit Slabs</Button>
+                <Button variant="outline" className="w-full" onClick={handleEditSlabs}>Edit Slabs</Button>
             </CardContent>
           </Card>
         </div>

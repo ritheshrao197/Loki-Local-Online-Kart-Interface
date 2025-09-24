@@ -54,7 +54,7 @@ export function FeaturedCategories() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {categories.map((category) => (
-            <Link href="#" key={category.name} className="group">
+            <Link href="/" key={category.name} className="group">
               <Card className="overflow-hidden">
                 <div className="relative aspect-square">
                   <Image
