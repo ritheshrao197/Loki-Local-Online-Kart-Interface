@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import {
@@ -103,7 +104,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <SidebarMenu>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/login">
+                <Link href="/login/admin">
                   <LogOut />
                   <span>Logout</span>
                 </Link>
