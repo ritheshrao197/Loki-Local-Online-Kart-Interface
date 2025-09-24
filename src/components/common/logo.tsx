@@ -1,4 +1,11 @@
-export default function Logo({ className }: { className?: string }) {
+
+'use client';
+
+import { getBrandingSettings } from '@/lib/firebase/firestore';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+function DefaultLogo({ className }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -32,7 +39,7 @@ export default function Logo({ className }: { className?: string }) {
           ></path>
           <path
             d="M77.0827 38.6818C76.3407 38.6818 75.7387 38.0798 75.7387 37.3378C75.7387 36.5958 76.3407 35.9938 77.0827 35.9938C77.8247 35.9938 78.4267 36.5958 78.4267 37.3378C78.4267 38.0798 77.8247 38.6818 77.0827 38.6818Z"
-bill="#2563EB"
+            fill="#2563EB"
           ></path>
           <path
             d="M59.9827 24.5818C59.5017 24.5818 59.1027 24.9808 59.1027 25.4618V26.8258C59.1027 27.3068 59.5017 27.7058 59.9827 27.7058H80.5027C80.9837 27.7058 81.3827 27.3068 81.3827 26.8258V25.4618C81.3827 24.9808 80.9837 24.5818 80.5027 24.5818H59.9827Z"
@@ -44,17 +51,6 @@ bill="#2563EB"
           ></path>
         </g>
       </g>
-      <text
-        x="0"
-        y="65"
-        fontFamily="Montserrat, sans-serif"
-        fontSize="10"
-        fontWeight="bold"
-        fill="#374151"
-        style={{ letterSpacing: '0.05em' }}
-      >
-        UNLOCK YOUR NEIGHBORHOOD
-      </text>
       <defs>
         <clipPath id="clip0_303_2">
           <rect width="200" height="60.88" fill="white"></rect>
@@ -70,4 +66,39 @@ bill="#2563EB"
       </defs>
     </svg>
   );
+}
+
+export default function Logo({ className }: { className?: string }) {
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchLogo() {
+      try {
+        const settings = await getBrandingSettings();
+        if (settings?.logoUrl) {
+          setLogoUrl(settings.logoUrl);
+        }
+      } catch (error) {
+        console.error("Failed to fetch branding settings:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLogo();
+  }, []);
+
+  if (loading) {
+    return <div className={className} style={{ width: 100, height: 33 }} />; // Placeholder with similar dimensions
+  }
+
+  if (logoUrl) {
+    return (
+      <div className={className} style={{ position: 'relative', width: 100, height: 33 }}>
+        <Image src={logoUrl} alt="Loki Logo" layout="fill" objectFit="contain" />
+      </div>
+    );
+  }
+
+  return <DefaultLogo className={className} />;
 }

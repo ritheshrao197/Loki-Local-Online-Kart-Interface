@@ -1,17 +1,20 @@
 
 
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Star, UploadCloud } from "lucide-react";
 import { HeroSliderManager } from "@/components/admin/HeroSliderManager";
 import { BannerAdsManager } from "@/components/admin/BannerAdsManager";
+import { LogoManager } from "@/components/admin/LogoManager";
 
 export default function AdminContentPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Homepage Content Management</h1>
       <div className="grid gap-8">
+        <LogoManager />
         <HeroSliderManager />
         <BannerAdsManager />
         <Card>

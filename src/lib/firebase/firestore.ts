@@ -1,4 +1,5 @@
 
+
 import {
   collection,
   doc,
@@ -15,7 +16,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Seller, Product, Order, Blog, HeroSlide, BannerAd } from '@/lib/types';
+import type { Seller, Product, Order, Blog, HeroSlide, BannerAd, BrandingSettings } from '@/lib/types';
 
 // ================== Seller Functions ==================
 
@@ -366,4 +367,22 @@ export async function updateBannerAd(adId: string, adData: Partial<Omit<BannerAd
 
 export async function deleteBannerAd(adId: string): Promise<void> {
   await deleteDoc(doc(db, 'bannerAds', adId));
+}
+
+// ================== Branding Settings Functions ==================
+const SETTINGS_COLLECTION = 'settings';
+const BRANDING_DOC_ID = 'branding';
+
+export async function getBrandingSettings(): Promise<BrandingSettings | null> {
+    const docRef = doc(db, SETTINGS_COLLECTION, BRANDING_DOC_ID);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return docSnap.data() as BrandingSettings;
+    }
+    return null;
+}
+
+export async function updateBrandingSettings(settings: BrandingSettings): Promise<void> {
+    const docRef = doc(db, SETTINGS_COLLECTION, BRANDING_DOC_ID);
+    await setDoc(docRef, settings, { merge: true });
 }
