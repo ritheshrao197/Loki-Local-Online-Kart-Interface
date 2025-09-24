@@ -89,3 +89,12 @@ export type HeroSlide = {
   order: number;
   isActive: boolean;
 };
+
+export type BannerAd = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  linkUrl: string;
+  isActive: boolean;
+  placement: 'homepage_top' | 'homepage_middle' | 'homepage_bottom';
+};

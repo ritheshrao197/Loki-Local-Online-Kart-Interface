@@ -9,6 +9,7 @@ import { getProducts } from '@/lib/firebase/firestore';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { BannerAds } from '@/components/home/BannerAds';
 
 export default function HomePage() {
   const [approvedProducts, setApprovedProducts] = useState<Product[]>([]);
@@ -60,6 +61,8 @@ export default function HomePage() {
             Explore unique, handcrafted products from local artisans and manufacturers near you.
           </p>
         </section>
+
+        <BannerAds placement="homepage_top" />
 
         <FeaturedCategories products={approvedProducts} />
 

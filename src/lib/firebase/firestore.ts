@@ -16,7 +16,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Seller, Product, Order, Blog, HeroSlide } from '@/lib/types';
+import type { Seller, Product, Order, Blog, HeroSlide, BannerAd } from '@/lib/types';
 
 // ================== Seller Functions ==================
 
@@ -332,4 +332,34 @@ export async function updateHeroSlide(slideId: string, slideData: Partial<Omit<H
 
 export async function deleteHeroSlide(slideId: string): Promise<void> {
   await deleteDoc(doc(db, 'heroSlides', slideId));
+}
+
+// ================== Banner Ad Functions ==================
+
+export async function getBannerAds(placement?: BannerAd['placement']): Promise<BannerAd[]> {
+  const adsCol = collection(db, 'bannerAds');
+  const q = placement 
+    ? query(adsCol, where('isActive', '==', true), where('placement', '==', placement))
+    : query(adsCol, where('isActive', '==', true));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BannerAd));
+}
+
+export async function getAllBannerAds(): Promise<BannerAd[]> {
+  const adsCol = collection(db, 'bannerAds');
+  const snapshot = await getDocs(query(adsCol));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BannerAd));
+}
+
+export async function addBannerAd(ad: Omit<BannerAd, 'id'>): Promise<string> {
+  const docRef = await addDoc(collection(db, 'bannerAds'), ad);
+  return docRef.id;
+}
+
+export async function updateBannerAd(adId: string, adData: Partial<Omit<BannerAd, 'id'>>): Promise<void> {
+  await updateDoc(doc(db, 'bannerAds', adId), adData);
+}
+
+export async function deleteBannerAd(adId: string): Promise<void> {
+  await deleteDoc(doc(db, 'bannerAds', adId));
 }

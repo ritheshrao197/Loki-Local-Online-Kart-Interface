@@ -1,9 +1,11 @@
 
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Star, UploadCloud } from "lucide-react";
 import { HeroSliderManager } from "@/components/admin/HeroSliderManager";
+import { BannerAdsManager } from "@/components/admin/BannerAdsManager";
 
 export default function AdminContentPage() {
   return (
@@ -11,6 +13,7 @@ export default function AdminContentPage() {
       <h1 className="text-3xl font-bold font-headline mb-6">Homepage Content Management</h1>
       <div className="grid gap-8">
         <HeroSliderManager />
+        <BannerAdsManager />
         <Card>
           <CardHeader>
             <CardTitle>Other Homepage Sections</CardTitle>
@@ -25,14 +28,6 @@ export default function AdminContentPage() {
                      <Button variant="outline" asChild>
                         <Link href="/admin/products">Go to Products</Link>
                     </Button>
-                </div>
-            </div>
-             <div className="flex items-start gap-4 p-4 border rounded-lg bg-secondary/50">
-                <UploadCloud className="h-8 w-8 text-muted-foreground mt-1"/>
-                <div>
-                    <h3 className="font-semibold text-lg">Homepage Banner Ads</h3>
-                    <p className="text-muted-foreground text-sm mt-1 mb-3">Functionality to upload and manage banner advertisements for monetization or announcements is coming soon.</p>
-                    <Button variant="secondary" disabled>Manage Banners (Soon)</Button>
                 </div>
             </div>
           </CardContent>
