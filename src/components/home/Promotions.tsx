@@ -1,21 +1,35 @@
 
 'use client';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
+import { getProducts } from '@/lib/firebase/firestore';
 
 
-interface PromotionsProps {
-    products: Product[];
-}
+export function Promotions() {
+    const [promotedProducts, setPromotedProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export function Promotions({ products }: PromotionsProps) {
-  const promotedProducts = products.filter(p => p.isPromoted).slice(0, 2);
+    useEffect(() => {
+        async function fetchPromotions() {
+            try {
+                const products = await getProducts('approved');
+                const filtered = products.filter(p => p.isPromoted).slice(0, 2);
+                setPromotedProducts(filtered);
+            } catch (error) {
+                console.error("Failed to fetch promoted products:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchPromotions();
+    }, []);
 
-  if (products.length === 0) {
+  if (loading) {
       return (
           <section className="grid md:grid-cols-2 gap-6">
               <Skeleton className="h-64" />

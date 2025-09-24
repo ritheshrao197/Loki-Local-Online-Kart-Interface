@@ -1,20 +1,33 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import { ProductFilters } from '@/components/products/ProductFilters';
 import { ProductCard } from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getProducts } from '@/lib/firebase/firestore';
 
-interface ProductGridProps {
-  products: Product[];
-}
-
-export function ProductGrid({ products: initialProducts }: ProductGridProps) {
+export function ProductGrid() {
+  const [initialProducts, setInitialProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortOption, setSortOption] = useState('featured');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState(10000);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const products = await getProducts('approved');
+        setInitialProducts(products);
+      } catch (error) {
+        console.error("Failed to fetch products for grid:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   const filteredAndSortedProducts = useMemo(() => {
     let products = [...initialProducts];
@@ -33,15 +46,33 @@ export function ProductGrid({ products: initialProducts }: ProductGridProps) {
         products.sort((a, b) => b.price - a.price);
         break;
       case 'newest':
+        // Assuming ID is sortable by date, which is not guaranteed.
+        // A 'createdAt' timestamp is better.
         products.sort((a, b) => b.id.localeCompare(a.id));
         break;
       case 'featured':
       default:
+        // No default sorting for 'featured' without an explicit order field
         break;
     }
 
     return products;
   }, [initialProducts, sortOption, selectedCategory, priceRange]);
+
+  if (loading) {
+    return (
+       <div className="space-y-8">
+        <div className="flex gap-4">
+            <Skeleton className="h-10 w-[180px]" />
+            <Skeleton className="h-10 w-[180px]" />
+            <Skeleton className="h-10 flex-1" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({length: 8}).map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
+        </div>
+       </div>
+    );
+  }
 
   return (
     <>

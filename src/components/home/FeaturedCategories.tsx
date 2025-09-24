@@ -1,10 +1,12 @@
 
 'use client';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
+import { getProducts } from '@/lib/firebase/firestore';
 
 type CategoryWithImage = {
   name: string;
@@ -12,26 +14,35 @@ type CategoryWithImage = {
   hint: string;
 };
 
-interface FeaturedCategoriesProps {
-    products: Product[];
-}
+export function FeaturedCategories() {
+  const [categories, setCategories] = useState<CategoryWithImage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export function FeaturedCategories({ products }: FeaturedCategoriesProps) {
-  
-  const uniqueCategories = products.reduce((acc, product) => {
-    if (!acc.find(c => c.name === product.category)) {
-      acc.push({
-        name: product.category,
-        image: product.images[0].url,
-        hint: product.images[0].hint,
-      });
+  useEffect(() => {
+    async function fetchFeaturedCategories() {
+      try {
+        const products = await getProducts('approved');
+        const uniqueCategories = products.reduce((acc, product) => {
+          if (!acc.find(c => c.name === product.category)) {
+            acc.push({
+              name: product.category,
+              image: product.images[0].url,
+              hint: product.images[0].hint,
+            });
+          }
+          return acc;
+        }, [] as CategoryWithImage[]);
+        setCategories(uniqueCategories.slice(0, 4));
+      } catch (error) {
+        console.error("Failed to fetch products for categories:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-    return acc;
-  }, [] as CategoryWithImage[]);
+    fetchFeaturedCategories();
+  }, []);
 
-  const categories = uniqueCategories.slice(0, 4);
-
-  if (products.length === 0) {
+  if (loading) {
     return (
         <section className="mt-12">
             <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
@@ -40,6 +51,10 @@ export function FeaturedCategories({ products }: FeaturedCategoriesProps) {
             </div>
         </section>
     )
+  }
+
+  if (categories.length === 0) {
+      return null;
   }
 
   return (

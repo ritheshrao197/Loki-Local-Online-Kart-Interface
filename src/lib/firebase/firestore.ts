@@ -1,5 +1,4 @@
 
-
 import {
   collection,
   doc,
@@ -85,7 +84,7 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
  * Fetches products from Firestore, optionally filtering by status.
  * @param status - Optional status to filter products by.
  */
-export async function getProducts(status?: 'pending' | 'approved' | 'rejected' | 'all'): Promise<Product[]> {
+export async function getProducts(status?: Product['status'] | 'all'): Promise<Product[]> {
     const productsCol = collection(db, 'products');
     const q = status && status !== 'all' ? query(productsCol, where('status', '==', status)) : query(productsCol);
     const productSnapshot = await getDocs(q);
@@ -94,8 +93,9 @@ export async function getProducts(status?: 'pending' | 'approved' | 'rejected' |
         return {
             id: doc.id,
             ...data,
-            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
-            expiryDate: data.expiryDate?.toDate().toISOString(),
+            // Convert Timestamps to ISO strings if they exist
+            manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : undefined,
+            expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : undefined,
         } as Product;
     });
     return productList;
@@ -113,15 +113,15 @@ export async function getFeaturedProducts(): Promise<Product[]> {
         return {
             id: doc.id,
             ...data,
-            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
-            expiryDate: data.expiryDate?.toDate().toISOString(),
+            manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : undefined,
+            expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : undefined,
         } as Product;
     });
     return productList;
 }
 
 /**
- * Fetches all products for a specific seller.
+ * Fetches all products for a specific seller, including drafts.
  * @param sellerId The ID of the seller.
  */
 export async function getProductsBySeller(sellerId: string): Promise<Product[]> {
@@ -152,8 +152,8 @@ export async function getProductById(productId: string): Promise<Product | null>
     return { 
         id: productSnap.id, 
         ...data,
-        manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
-        expiryDate: data.expiryDate?.toDate().toISOString(),
+        manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : undefined,
+        expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : undefined,
     } as Product;
 }
 
@@ -175,11 +175,14 @@ export async function updateProductStatus(productId: string, status: 'approved' 
 export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
     const productsCol = collection(db, 'products');
     
-    const productData = {
-        ...product,
-        manufacturingDate: product.manufacturingDate ? Timestamp.fromDate(new Date(product.manufacturingDate)) : null,
-        expiryDate: product.expiryDate ? Timestamp.fromDate(new Date(product.expiryDate)) : null,
-    };
+    const productData: { [key: string]: any } = { ...product };
+    
+    if (product.manufacturingDate) {
+        productData.manufacturingDate = Timestamp.fromDate(new Date(product.manufacturingDate));
+    }
+    if (product.expiryDate) {
+        productData.expiryDate = Timestamp.fromDate(new Date(product.expiryDate));
+    }
 
     const docRef = await addDoc(productsCol, productData);
     return { id: docRef.id, ...product };
@@ -230,7 +233,7 @@ export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
     return {
         id: doc.id,
         ...data,
-        orderDate: data.orderDate.toDate().toISOString(),
+        orderDate: (data.orderDate as Timestamp).toDate().toISOString(),
     } as Order
   });
   return orderList;
@@ -253,8 +256,8 @@ const blogToClient = (doc: any): Blog => {
   return {
     id: doc.id,
     ...data,
-    createdAt: data.createdAt?.toDate().toISOString(),
-    updatedAt: data.updatedAt?.toDate().toISOString(),
+    createdAt: (data.createdAt as Timestamp)?.toDate().toISOString(),
+    updatedAt: (data.updatedAt as Timestamp)?.toDate().toISOString(),
   } as Blog;
 };
 
@@ -278,7 +281,7 @@ export async function getBlogsBySeller(sellerId: string): Promise<Blog[]> {
   return snapshot.docs.map(blogToClient);
 }
 
-export async function addBlog(blogData: Omit<Blog, 'id' | 'createdAt'>): Promise<string> {
+export async function addBlog(blogData: Omit<Blog, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
   const blogWithTimestamps = {
     ...blogData,
     createdAt: serverTimestamp(),
@@ -292,6 +295,7 @@ export async function updateBlog(blogId: string, blogData: Partial<Omit<Blog, 'i
   const blogRef = doc(db, 'blogs', blogId);
   await updateDoc(blogRef, {
     ...blogData,
+    status: 'pending', // Reset status on update
     updatedAt: serverTimestamp(),
   });
 }

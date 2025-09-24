@@ -60,7 +60,6 @@ export function BlogForm({ blog, sellerId }: BlogFormProps) {
         title: data.title,
         content: data.content,
         author: { id: sellerId, name: seller.name },
-        status: 'pending' as const,
         ...(data.featuredImageUrl && { 
             featuredImage: { url: data.featuredImageUrl, hint: 'blog post' } 
         }),
@@ -70,7 +69,7 @@ export function BlogForm({ blog, sellerId }: BlogFormProps) {
         await updateBlog(blog.id, blogData);
         toast({ title: 'Blog Post Updated', description: 'Your changes are pending re-approval.' });
       } else {
-        await addBlog(blogData);
+        await addBlog({ ...blogData, status: 'pending' });
         toast({ title: 'Blog Post Submitted', description: 'Your post is pending admin approval.' });
       }
       router.push(`/dashboard/${sellerId}/blogs`);
