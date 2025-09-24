@@ -95,8 +95,8 @@ export async function getProducts(status?: Product['status'] | 'all'): Promise<P
             id: doc.id,
             ...data,
             // Convert Timestamps to ISO strings if they exist
-            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
-            expiryDate: data.expiryDate?.toDate().toISOString(),
+            manufacturingDate: data.manufacturingDate?.toDate ? data.manufacturingDate.toDate().toISOString() : undefined,
+            expiryDate: data.expiryDate?.toDate ? data.expiryDate.toDate().toISOString() : undefined,
         } as Product;
     });
     return productList;
@@ -114,8 +114,8 @@ export async function getFeaturedProducts(): Promise<Product[]> {
         return {
             id: doc.id,
             ...data,
-            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
-            expiryDate: data.expiryDate?.toDate().toISOString(),
+            manufacturingDate: data.manufacturingDate?.toDate ? data.manufacturingDate.toDate().toISOString() : undefined,
+            expiryDate: data.expiryDate?.toDate ? data.expiryDate.toDate().toISOString() : undefined,
         } as Product;
     });
     return productList;
@@ -153,8 +153,8 @@ export async function getProductById(productId: string): Promise<Product | null>
     return { 
         id: productSnap.id, 
         ...data,
-        manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
-        expiryDate: data.expiryDate?.toDate().toISOString(),
+        manufacturingDate: data.manufacturingDate?.toDate ? data.manufacturingDate.toDate().toISOString() : undefined,
+        expiryDate: data.expiryDate?.toDate ? data.expiryDate.toDate().toISOString() : undefined,
     } as Product;
 }
 
@@ -367,22 +367,4 @@ export async function updateBannerAd(adId: string, adData: Partial<Omit<BannerAd
 
 export async function deleteBannerAd(adId: string): Promise<void> {
   await deleteDoc(doc(db, 'bannerAds', adId));
-}
-
-// ================== Branding Settings Functions ==================
-const SETTINGS_COLLECTION = 'settings';
-const BRANDING_DOC_ID = 'branding';
-
-export async function getBrandingSettings(): Promise<BrandingSettings | null> {
-    const docRef = doc(db, SETTINGS_COLLECTION, BRANDING_DOC_ID);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        return docSnap.data() as BrandingSettings;
-    }
-    return null;
-}
-
-export async function updateBrandingSettings(settings: BrandingSettings): Promise<void> {
-    const docRef = doc(db, SETTINGS_COLLECTION, BRANDING_DOC_ID);
-    await setDoc(docRef, settings, { merge: true });
 }

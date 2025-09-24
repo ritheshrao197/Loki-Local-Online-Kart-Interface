@@ -1,0 +1,29 @@
+<svg
+  width="200"
+  height="66"
+  viewBox="0 0 200 66"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <text
+    x="5"
+    y="55"
+    font-family="Montserrat, sans-serif"
+    font-size="60"
+    font-weight="bold"
+    fill="#2563EB"
+  >
+    L
+  </text>
+  <circle cx="95" cy="33" r="28" fill="#FFD655" />
+  <text
+    x="125"
+    y="55"
+    font-family="Montserrat, sans-serif"
+    font-size="60"
+    font-weight="bold"
+    fill="#2563EB"
+  >
+    KI
+  </text>
+</svg>
