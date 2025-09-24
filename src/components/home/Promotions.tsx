@@ -1,13 +1,29 @@
 
+
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getProducts } from '@/lib/firebase/firestore';
+import type { Product } from '@/lib/types';
+import { Skeleton } from '../ui/skeleton';
 
-export async function Promotions() {
-  const allProducts = await getProducts('approved');
-  const promotedProducts = allProducts.filter(p => p.isPromoted).slice(0, 2);
+
+interface PromotionsProps {
+    products: Product[];
+}
+
+export function Promotions({ products }: PromotionsProps) {
+  const promotedProducts = products.filter(p => p.isPromoted).slice(0, 2);
+
+  if (products.length === 0) {
+      return (
+          <section className="grid md:grid-cols-2 gap-6">
+              <Skeleton className="h-64" />
+              <Skeleton className="h-64" />
+          </section>
+      )
+  }
 
   if (promotedProducts.length === 0) {
     return null;

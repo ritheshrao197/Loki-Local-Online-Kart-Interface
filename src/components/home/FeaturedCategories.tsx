@@ -1,10 +1,11 @@
 
 
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import type { Product } from '@/lib/types';
-import { getProducts } from '@/lib/firebase/firestore';
+import { Skeleton } from '../ui/skeleton';
 
 type CategoryWithImage = {
   name: string;
@@ -12,8 +13,11 @@ type CategoryWithImage = {
   hint: string;
 };
 
-export async function FeaturedCategories() {
-  const products = await getProducts('approved');
+interface FeaturedCategoriesProps {
+    products: Product[];
+}
+
+export function FeaturedCategories({ products }: FeaturedCategoriesProps) {
   
   const uniqueCategories = products.reduce((acc, product) => {
     if (!acc.find(c => c.name === product.category)) {
@@ -27,6 +31,17 @@ export async function FeaturedCategories() {
   }, [] as CategoryWithImage[]);
 
   const categories = uniqueCategories.slice(0, 4);
+
+  if (products.length === 0) {
+    return (
+        <section className="mt-12">
+            <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="aspect-square"/>)}
+            </div>
+        </section>
+    )
+  }
 
   return (
     <section className="mt-12">

@@ -13,9 +13,10 @@ import {
   Timestamp,
   deleteDoc,
   serverTimestamp,
+  orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Seller, Product, Order, Blog } from '@/lib/types';
+import type { Seller, Product, Order, Blog, HeroSlide } from '@/lib/types';
 
 // ================== Seller Functions ==================
 
@@ -302,4 +303,33 @@ export async function updateBlogStatus(blogId: string, status: Blog['status']): 
 
 export async function deleteBlog(blogId: string): Promise<void> {
   await deleteDoc(doc(db, 'blogs', blogId));
+}
+
+// ================== Hero Slider Functions ==================
+
+export async function getHeroSlides(): Promise<HeroSlide[]> {
+  const slidesCol = collection(db, 'heroSlides');
+  const q = query(slidesCol, where('isActive', '==', true), orderBy('order', 'asc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HeroSlide));
+}
+
+export async function getAllHeroSlides(): Promise<HeroSlide[]> {
+  const slidesCol = collection(db, 'heroSlides');
+  const q = query(slidesCol, orderBy('order', 'asc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HeroSlide));
+}
+
+export async function addHeroSlide(slide: Omit<HeroSlide, 'id'>): Promise<string> {
+  const docRef = await addDoc(collection(db, 'heroSlides'), slide);
+  return docRef.id;
+}
+
+export async function updateHeroSlide(slideId: string, slideData: Partial<Omit<HeroSlide, 'id'>>): Promise<void> {
+  await updateDoc(doc(db, 'heroSlides', slideId), slideData);
+}
+
+export async function deleteHeroSlide(slideId: string): Promise<void> {
+  await deleteDoc(doc(db, 'heroSlides', slideId));
 }

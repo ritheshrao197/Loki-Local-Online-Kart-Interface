@@ -1,13 +1,52 @@
 
+'use client';
+import { useState, useEffect } from 'react';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { Promotions } from '@/components/home/Promotions';
 import { PopularProducts } from '@/components/home/PopularProducts';
 import { getProducts } from '@/lib/firebase/firestore';
 import { ProductGrid } from '@/components/products/ProductGrid';
+import type { Product } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function HomePage() {
-  const approvedProducts = await getProducts('approved');
+export default function HomePage() {
+  const [approvedProducts, setApprovedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const products = await getProducts('approved');
+        setApprovedProducts(products);
+      } catch (error) {
+        console.error("Failed to fetch approved products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return (
+       <div className="flex flex-col">
+        <Skeleton className="h-[600px] w-full" />
+        <div className="container py-8">
+            <Skeleton className="h-8 w-64 mb-6" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Skeleton className="aspect-square w-full" />
+                <Skeleton className="aspect-square w-full" />
+                <Skeleton className="aspect-square w-full" />
+                <Skeleton className="aspect-square w-full" />
+            </div>
+             <div className="mt-12">
+                <Skeleton className="h-64 w-full" />
+            </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">
@@ -22,10 +61,10 @@ export default async function HomePage() {
           </p>
         </section>
 
-        <FeaturedCategories />
+        <FeaturedCategories products={approvedProducts} />
 
         <div className="mt-12">
-          <Promotions />
+          <Promotions products={approvedProducts} />
         </div>
         
         {approvedProducts.length > 0 && (

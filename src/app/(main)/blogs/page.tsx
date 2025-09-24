@@ -1,5 +1,7 @@
 
 
+'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -8,11 +10,41 @@ import { getBlogs } from '@/lib/firebase/firestore';
 import type { Blog } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Newspaper } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function BlogsPage() {
-  const approvedBlogs = await getBlogs('approved');
-  approvedBlogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+export default function BlogsPage() {
+  const [approvedBlogs, setApprovedBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBlogs() {
+      try {
+        const blogs = await getBlogs('approved');
+        blogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setApprovedBlogs(blogs);
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBlogs();
+  }, []);
   
+  if (loading) {
+    return (
+      <div className="container py-12">
+        <div className="text-center mb-12">
+          <Skeleton className="h-12 w-3/4 mx-auto" />
+          <Skeleton className="h-6 w-1/2 mx-auto mt-4" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: 3 }).map((_, i) => <BlogCardSkeleton key={i} />)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-12">
       <div className="text-center mb-12">
@@ -83,3 +115,25 @@ function BlogCard({ blog }: { blog: Blog }) {
     </Card>
   );
 }
+
+
+const BlogCardSkeleton = () => (
+    <Card className="h-full flex flex-col">
+        <Skeleton className="aspect-video w-full rounded-t-lg" />
+        <CardHeader>
+            <Skeleton className="h-6 w-3/4" />
+        </CardHeader>
+        <CardContent className="flex-grow space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+        </CardContent>
+        <CardFooter className="flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <div className="space-y-1">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-20" />
+            </div>
+        </CardFooter>
+    </Card>
+)

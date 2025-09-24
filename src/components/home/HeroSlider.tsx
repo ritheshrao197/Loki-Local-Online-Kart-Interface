@@ -1,23 +1,45 @@
 
 
+'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
+import { getHeroSlides } from '@/lib/firebase/firestore';
+import type { HeroSlide } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
-import { getFeaturedProducts } from '@/lib/firebase/firestore';
 
-export async function HeroSlider() {
-  const featuredProducts = await getFeaturedProducts();
+export function HeroSlider() {
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (featuredProducts.length === 0) {
+  useEffect(() => {
+    async function fetchSlides() {
+      try {
+        const fetchedSlides = await getHeroSlides();
+        setSlides(fetchedSlides);
+      } catch (error) {
+        console.error("Error fetching hero slides:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSlides();
+  }, []);
+
+  if (loading) {
+     return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />;
+  }
+
+  if (slides.length === 0) {
     return (
         <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4">
              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline text-secondary-foreground">
                 Loki Marketplace
               </h2>
               <p className="mt-2 md:mt-4 max-w-lg text-lg text-secondary-foreground/80">
-                No featured products yet. Check back soon!
+                No featured content yet. Check back soon!
               </p>
         </div>
     );
@@ -32,26 +54,25 @@ export async function HeroSlider() {
         }}
       >
         <CarouselContent>
-          {featuredProducts.map((product) => (
-            <CarouselItem key={product.id}>
+          {slides.map((slide) => (
+            <CarouselItem key={slide.id}>
               <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full">
                 <Image
-                  src={product.images[0].url}
-                  alt={product.name}
+                  src={slide.imageUrl}
+                  alt={slide.title}
                   fill
                   priority
                   className="object-cover"
-                  data-ai-hint={product.images[0].hint}
                 />
                 <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline">
-                    {product.name}
+                    {slide.title}
                   </h2>
                   <p className="mt-2 md:mt-4 max-w-lg text-lg">
-                    {product.description.substring(0, 100)}...
+                    {slide.subtitle}
                   </p>
                   <Button asChild className="mt-6 md:mt-8" size="lg">
-                    <Link href={`/products/${product.id}`}>View Product</Link>
+                    <Link href={slide.ctaLink}>{slide.ctaText}</Link>
                   </Button>
                 </div>
               </div>

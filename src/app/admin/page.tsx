@@ -1,5 +1,7 @@
 
 
+'use client';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -12,15 +14,31 @@ import Link from 'next/link';
 import { Package, Users, AlertTriangle } from 'lucide-react';
 import { getProducts } from '@/lib/firebase/firestore';
 import { getSellers } from '@/lib/firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { Product, Seller } from '@/lib/types';
 
-export default async function AdminDashboardPage() {
-  const [pendingProducts, allSellers] = await Promise.all([
-    getProducts('pending'),
-    getSellers(),
-  ]);
+export default function AdminDashboardPage() {
+  const [pendingProductsCount, setPendingProductsCount] = useState(0);
+  const [pendingSellersCount, setPendingSellersCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const pendingProductsCount = pendingProducts.length;
-  const pendingSellersCount = allSellers.filter(s => s.status === 'pending').length;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [pendingProducts, allSellers] = await Promise.all([
+          getProducts('pending'),
+          getSellers(),
+        ]);
+        setPendingProductsCount(pendingProducts.length);
+        setPendingSellersCount(allSellers.filter(s => s.status === 'pending').length);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -32,7 +50,7 @@ export default async function AdminDashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingProductsCount}</div>
+            {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{pendingProductsCount}</div>}
             <p className="text-xs text-muted-foreground">
               Awaiting review and approval
             </p>
@@ -44,7 +62,7 @@ export default async function AdminDashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingSellersCount}</div>
+            {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{pendingSellersCount}</div>}
             <p className="text-xs text-muted-foreground">
               New sellers to be onboarded
             </p>

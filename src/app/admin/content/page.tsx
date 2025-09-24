@@ -3,33 +3,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SlidersHorizontal, Star, UploadCloud } from "lucide-react";
+import { HeroSliderManager } from "@/components/admin/HeroSliderManager";
 
 export default function AdminContentPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Homepage Content Management</h1>
       <div className="grid gap-8">
+        <HeroSliderManager />
         <Card>
           <CardHeader>
-            <CardTitle>Manage Homepage Content</CardTitle>
-            <CardDescription>Control the content that appears on your store's homepage to highlight campaigns, featured products, and promotions.</CardDescription>
+            <CardTitle>Other Homepage Sections</CardTitle>
+            <CardDescription>Manage other content that appears on your store's homepage.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-start gap-4 p-4 border rounded-lg">
-                <SlidersHorizontal className="h-8 w-8 text-primary mt-1"/>
-                <div>
-                    <h3 className="font-semibold text-lg">Hero Sliders</h3>
-                    <p className="text-muted-foreground text-sm mt-1 mb-3">Manage the main carousel images on the homepage. To feature a product in the slider, go to the product's edit page and enable the "Feature on Homepage" option.</p>
-                    <Button variant="outline" asChild>
-                        <Link href="/admin/products">Go to Products</Link>
-                    </Button>
-                </div>
-            </div>
             <div className="flex items-start gap-4 p-4 border rounded-lg">
                 <Star className="h-8 w-8 text-primary mt-1"/>
                 <div>
                     <h3 className="font-semibold text-lg">Featured & Promoted Products</h3>
-                    <p className="text-muted-foreground text-sm mt-1 mb-3">Highlight specific products. Use the "Promote Product" toggle on the product edit page to mark items for special visibility.</p>
+                    <p className="text-muted-foreground text-sm mt-1 mb-3">To feature or promote a product, go to the product's edit page and use the toggles in the "Marketing" section.</p>
                      <Button variant="outline" asChild>
                         <Link href="/admin/products">Go to Products</Link>
                     </Button>

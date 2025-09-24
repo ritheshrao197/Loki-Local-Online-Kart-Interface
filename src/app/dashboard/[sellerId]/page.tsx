@@ -1,5 +1,8 @@
 
 
+'use client';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -11,7 +14,8 @@ import { DollarSign, ListOrdered, Package, Users } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { getOrdersBySeller, getProductsBySeller } from '@/lib/firebase/firestore';
-import type { Order } from '@/lib/types';
+import type { Order, Product } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const statusVariant = {
   pending: 'secondary',
@@ -20,27 +24,66 @@ const statusVariant = {
   delivered: 'destructive',
 } as const;
 
-
-export default async function DashboardPage({ params }: { params: { sellerId: string } }) {
-  const sellerId = params.sellerId;
+export default function DashboardPage() {
+  const params = useParams();
+  const sellerId = params.sellerId as string;
   
-  const [orders, products] = await Promise.all([
-    getOrdersBySeller(sellerId),
-    getProductsBySeller(sellerId),
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  orders.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+  useEffect(() => {
+    if (!sellerId) return;
+
+    async function fetchData() {
+      try {
+        const [sellerOrders, sellerProducts] = await Promise.all([
+          getOrdersBySeller(sellerId),
+          getProductsBySeller(sellerId),
+        ]);
+        
+        sellerOrders.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+        setOrders(sellerOrders);
+        setProducts(sellerProducts);
+
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [sellerId]);
+
   const recentOrders = orders.slice(0, 5);
 
   const totalRevenue = orders
     .filter(o => o.status === 'delivered')
     .reduce((sum, o) => sum + o.total, 0);
 
-  const newOrders = orders.filter(o => o.status === 'pending').length;
+  const newOrdersCount = orders.filter(o => o.status === 'pending').length;
+  const activeProductsCount = products.filter(p => p.status === 'approved').length;
+  const uniqueCustomersCount = new Set(orders.map(o => o.buyer.id)).size;
 
-  const activeProducts = products.filter(p => p.status === 'approved').length;
-
-  const uniqueCustomers = new Set(orders.map(o => o.buyer.id)).size;
+  if (loading) {
+    return (
+      <div>
+        <h1 className="text-3xl font-bold font-headline mb-6">Dashboard</h1>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
+          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
+          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
+          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
+        </div>
+        <div className="mt-8">
+          <Card>
+            <CardHeader><CardTitle>Recent Orders</CardTitle><CardDescription>A list of your 5 most recent orders.</CardDescription></CardHeader>
+            <CardContent><Skeleton className="h-40 w-full" /></CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -64,7 +107,7 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
             <ListOrdered className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-             <div className="text-2xl font-bold">+{newOrders}</div>
+             <div className="text-2xl font-bold">+{newOrdersCount}</div>
             <p className="text-xs text-muted-foreground">
               Currently pending
             </p>
@@ -78,7 +121,7 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-              <div className="text-2xl font-bold">{activeProducts}</div>
+              <div className="text-2xl font-bold">{activeProductsCount}</div>
             <p className="text-xs text-muted-foreground">
               Approved and live
             </p>
@@ -92,7 +135,7 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{uniqueCustomers}</div>
+            <div className="text-2xl font-bold">+{uniqueCustomersCount}</div>
             <p className="text-xs text-muted-foreground">
               Across all orders
             </p>
@@ -116,7 +159,7 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentOrders.map((order) => (
+                  {recentOrders.length > 0 ? recentOrders.map((order) => (
                     <TableRow key={order.id}>
                       <TableCell>{order.buyer.name}</TableCell>
                       <TableCell>{order.product.name}</TableCell>
@@ -127,7 +170,13 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
                       </TableCell>
                       <TableCell>&#8377;{order.total.toLocaleString('en-IN')}</TableCell>
                     </TableRow>
-                  ))}
+                  )) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center">
+                        No recent orders.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
           </CardContent>

@@ -78,3 +78,14 @@ export type Blog = {
   createdAt: string;
   updatedAt?: string;
 };
+
+export type HeroSlide = {
+  id: string;
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+  ctaText: string;
+  ctaLink: string;
+  order: number;
+  isActive: boolean;
+};
