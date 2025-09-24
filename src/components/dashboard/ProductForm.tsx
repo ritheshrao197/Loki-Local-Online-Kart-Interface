@@ -14,11 +14,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
 import { autoCategorizeProduct } from '@/ai/flows/auto-categorize-product';
-import { CalendarIcon, Loader2, Sparkles, Trash2 } from 'lucide-react';
+import { CalendarIcon, Loader2, Sparkles, Trash2, UploadCloud } from 'lucide-react';
 import type { Product } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { addProduct, updateProduct, getSellerById } from '@/lib/firebase/firestore';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -26,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
+import { uploadImage } from '@/lib/firebase/storage';
 
 
 const formSchema = z.object({
@@ -44,13 +44,7 @@ const formSchema = z.object({
   unitOfMeasure: z.enum(['piece', 'kg', 'dozen', 'litre']),
   stockAlert: z.coerce.number().int().min(0, 'Stock alert must be a non-negative number.').optional(),
   keywords: z.string().optional(),
-  images: z.any().refine(
-    (files) => (Array.isArray(files) && files.length > 0) || (typeof files === 'string' && files.length > 0) || (files instanceof FileList),
-    'At least one image is required.'
-  ).refine(
-    (files) => !Array.isArray(files) || files.length <= 5,
-    'You can upload a maximum of 5 images.'
-  ),
+  images: z.array(z.object({ url: z.string(), hint: z.string() })).min(1, 'At least one image is required.').max(5, 'You can upload a maximum of 5 images.'),
   brand: z.string().optional(),
   weight: z.coerce.number().positive('Weight must be a positive number.').optional(),
   dimensions: z.object({
@@ -85,8 +79,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [suggestedCategories, setSuggestedCategories] = useState<string[]>(product ? [product.category] : []);
-  const [imagePreviews, setImagePreviews] = useState<string[]>(product?.images.map(img => img.url) || []);
   
   const isEditMode = !!product;
 
@@ -101,7 +95,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     unitOfMeasure: product.unitOfMeasure,
     stockAlert: product.stockAlert || undefined,
     keywords: product.keywords || '',
-    images: product.images.map(img => img.url),
+    images: product.images,
     brand: product.brand || '',
     weight: product.weight || undefined,
     dimensions: product.dimensions || { length: undefined, width: undefined, height: undefined },
@@ -177,29 +171,44 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files) {
-        const fileArray = Array.from(files);
-        if (fileArray.length + imagePreviews.length > 5) {
-            toast({ title: "Too many images", description: "You can upload a maximum of 5 images.", variant: "destructive"});
-            return;
-        }
+    if (!files || files.length === 0) return;
 
-        form.setValue('images', files);
+    const currentImages = form.getValues('images');
+    if (currentImages.length + files.length > 5) {
+      toast({ title: "Too many images", description: "You can upload a maximum of 5 images.", variant: "destructive" });
+      return;
+    }
 
-        const dataUris = await Promise.all(fileArray.map(file => {
-            return new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }));
+    setIsUploading(true);
+    try {
+      const uploadPromises = Array.from(files).map(file => 
+        uploadImage(file, `products/${sellerId}/`)
+      );
+      
+      const newImageUrls = await Promise.all(uploadPromises);
+      
+      const newImages = newImageUrls.map(url => ({ url, hint: 'product image' }));
+      
+      const updatedImages = [...currentImages, ...newImages];
+      form.setValue('images', updatedImages, { shouldValidate: true });
 
-        setImagePreviews(prev => [...prev, ...dataUris]);
+      toast({ title: `${newImageUrls.length} image(s) uploaded.` });
 
-        if (dataUris[0]) {
-            handleAutoCategorize(dataUris[0], form.getValues('description') || '');
-        }
+      // Trigger auto-categorization with the first new image
+      if (newImageUrls[0]) {
+         const reader = new FileReader();
+         reader.onloadend = async () => {
+             await handleAutoCategorize(reader.result as string, form.getValues('description') || '');
+         }
+         // We need a data URI for Genkit, so we read the first file
+         reader.readAsDataURL(files[0]);
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Image Upload Failed', description: 'Could not upload images to storage.', variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
     }
   };
   
@@ -221,53 +230,12 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   };
 
   const removeImage = (index: number) => {
-    const newPreviews = [...imagePreviews];
-    newPreviews.splice(index, 1);
-    setImagePreviews(newPreviews);
-    
-    const currentImagesValue = form.getValues('images');
-    let updatedImages: (File | string)[] = [];
-    
-    if (Array.isArray(currentImagesValue)) { // string[]
-        updatedImages = [...currentImagesValue];
-        updatedImages.splice(index, 1);
-    } else if (currentImagesValue instanceof FileList) { // FileList
-        updatedImages = Array.from(currentImagesValue);
-        updatedImages.splice(index, 1);
-    }
-
-    if (updatedImages.length > 0) {
-        form.setValue('images', updatedImages);
-    } else {
-        form.setValue('images', []); // Clear value if no images are left
-    }
+    const currentImages = form.getValues('images');
+    const updatedImages = currentImages.filter((_, i) => i !== index);
+    form.setValue('images', updatedImages, { shouldValidate: true });
+    // Note: This does not delete the image from Firebase Storage.
+    // A more robust implementation would do that.
   };
-
-  const processImages = async (images: any): Promise<{ url: string; hint: string; }[]> => {
-    let imageUploads: { url: string; hint: string; }[] = [];
-
-    const toDataURL = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    };
-
-    if (images instanceof FileList) {
-        for (const file of Array.from(images)) {
-            const dataUrl = await toDataURL(file);
-            imageUploads.push({ url: dataUrl, hint: 'custom image' });
-        }
-    } else if (Array.isArray(images)) {
-        // This handles the case where images are already URLs (during edit)
-        imageUploads = images.map(url => ({ url: url, hint: product?.images.find(i=>i.url === url)?.hint || 'custom image' }));
-    }
-    
-    return imageUploads;
-};
-
 
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
@@ -278,43 +246,9 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     }
 
     try {
-        let imageUploads: { url: string; hint: string; }[] = [];
-        const currentImages = form.getValues('images');
-
-        if (currentImages instanceof FileList && currentImages.length > 0) {
-            imageUploads = await processImages(currentImages);
-        } else if (isEditMode && imagePreviews.length > 0) {
-             imageUploads = imagePreviews.map(url => ({ url: url, hint: product?.images.find(i=>i.url === url)?.hint || 'custom image' }));
-        } else {
-            const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
-            imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
-        }
-
       if (isEditMode && product) {
         const updatedProductData: Partial<Product> = {
-          name: data.name,
-          description: data.description || '',
-          price: data.price,
-          discountPrice: data.discountPrice,
-          category: data.category,
-          subcategory: data.subcategory,
-          stock: data.stock,
-          unitOfMeasure: data.unitOfMeasure,
-          stockAlert: data.stockAlert,
-          keywords: data.keywords,
-          brand: data.brand,
-          weight: data.weight,
-          dimensions: data.dimensions,
-          manufacturingDate: data.manufacturingDate?.toISOString(),
-          expiryDate: data.expiryDate?.toISOString(),
-          isGstRegistered: data.isGstRegistered,
-          certification: data.certification,
-          shippingOptions: data.shippingOptions,
-          estimatedDelivery: data.estimatedDelivery,
-          returnPolicy: data.returnPolicy,
-          isPromoted: data.isPromoted,
-          isFeatured: data.isFeatured,
-          images: imageUploads,
+          ...data,
           status: isAdmin ? product.status : 'pending',
         };
 
@@ -334,31 +268,9 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             throw new Error("Could not find seller details.");
         }
         const newProduct: Omit<Product, 'id'> = {
-          name: data.name,
-          description: data.description || '',
-          price: data.price,
-          discountPrice: data.discountPrice,
-          images: imageUploads,
-          category: data.category,
-          subcategory: data.subcategory,
+          ...data,
           seller: { id: sellerId, name: seller.name },
           status: 'pending',
-          keywords: data.keywords,
-          stock: data.stock,
-          unitOfMeasure: data.unitOfMeasure,
-          stockAlert: data.stockAlert,
-          brand: data.brand,
-          weight: data.weight,
-          dimensions: data.dimensions,
-          manufacturingDate: data.manufacturingDate?.toISOString(),
-          expiryDate: data.expiryDate?.toISOString(),
-          isGstRegistered: data.isGstRegistered,
-          certification: data.certification,
-          shippingOptions: data.shippingOptions,
-          estimatedDelivery: data.estimatedDelivery,
-          returnPolicy: data.returnPolicy,
-          isPromoted: data.isPromoted,
-          isFeatured: data.isFeatured,
         };
         await addProduct(newProduct);
         toast({
@@ -391,14 +303,6 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
       }
 
     try {
-        let imageUploads: { url: string; hint: string; }[] = [];
-        if (imagePreviews.length > 0) {
-            imageUploads = imagePreviews.map(url => ({ url: url, hint: product?.images.find(i=>i.url === url)?.hint || 'custom image' }));
-        } else {
-            const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
-            imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
-        }
-        
         const seller = await getSellerById(sellerId);
         if (!seller) throw new Error("Could not find seller details.");
 
@@ -407,7 +311,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             description: data.description || '',
             price: data.price || 0,
             discountPrice: data.discountPrice,
-            images: imageUploads,
+            images: data.images || [],
             category: data.category || '',
             subcategory: data.subcategory,
             seller: { id: sellerId, name: seller.name },
@@ -459,6 +363,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     { value: '7-day', label: '7 Days Return' },
     { value: '15-day', label: '15 Days Return' },
   ];
+  
+  const imagePreviews = form.watch('images');
 
   return (
     <Form {...form}>
@@ -524,16 +430,24 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                         <FormItem>
                             <FormLabel>Product Images</FormLabel>
                             <FormControl>
-                                <Input type="file" accept="image/*" multiple onChange={handleImageChange} disabled={imagePreviews.length >= 5}/>
+                                <div className="flex items-center gap-2">
+                                <Input type="file" id="image-upload" accept="image/*" multiple onChange={handleImageChange} className="hidden"/>
+                                <Button asChild variant="outline" size="sm">
+                                  <label htmlFor="image-upload" className="cursor-pointer">
+                                      {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UploadCloud className="mr-2 h-4 w-4" />}
+                                      {isUploading ? 'Uploading...' : 'Upload Images'}
+                                  </label>
+                                </Button>
+                                </div>
                             </FormControl>
                             <FormDescription>Recommended dimensions: 800x800px. Max 5 images.</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}/>
                     <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                        {imagePreviews.map((src, index) => (
+                        {imagePreviews.map((img, index) => (
                             <div key={index} className="relative group aspect-square">
-                                <Image src={src} alt={`Preview ${index+1}`} fill className="object-cover rounded-md border"/>
+                                <Image src={img.url} alt={`Preview ${index+1}`} fill className="object-cover rounded-md border"/>
                                 <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => removeImage(index)}>
                                     <Trash2 className="h-4 w-4"/>
                                 </Button>
@@ -802,8 +716,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         <div className="flex justify-end gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 px-8 -mx-8">
             <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting}>Clear Form</Button>
             {!isAdmin && <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>}
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isSubmitting || isUploading}>
+              {(isSubmitting || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEditMode ? 'Save Changes' : 'Submit for Review'}
             </Button>
         </div>
