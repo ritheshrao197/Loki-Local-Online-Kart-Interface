@@ -105,10 +105,12 @@ export default function SellerDetailsPage() {
                             <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <CardTitle>{seller.name}</CardTitle>
-                        <CardDescription>
-                            <Badge variant={statusVariant[seller.status]}>
-                                {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
-                            </Badge>
+                        <CardDescription asChild>
+                           <div>
+                                <Badge variant={statusVariant[seller.status]}>
+                                    {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
+                                </Badge>
+                           </div>
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="text-sm space-y-4">
