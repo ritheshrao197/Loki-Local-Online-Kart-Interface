@@ -226,7 +226,7 @@ export async function deleteProduct(productId: string): Promise<void> {
  */
 export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
   const ordersCol = collection(db, 'orders');
-  const q = query(ordersCol, where('sellerId', '==', sellerId));
+  const q = query(ordersCol, where('seller.id', '==', sellerId));
   const orderSnapshot = await getDocs(q);
   const orderList = orderSnapshot.docs.map(doc => {
     const data = doc.data();

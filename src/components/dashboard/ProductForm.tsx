@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState } from 'react';
@@ -46,7 +45,7 @@ const formSchema = z.object({
   stockAlert: z.coerce.number().int().min(0, 'Stock alert must be a non-negative number.').optional(),
   keywords: z.string().optional(),
   images: z.any().refine(
-    (files) => (Array.isArray(files) && files.length > 0) || (typeof files === 'string' && files.length > 0),
+    (files) => (Array.isArray(files) && files.length > 0) || (typeof files === 'string' && files.length > 0) || (files instanceof FileList),
     'At least one image is required.'
   ).refine(
     (files) => !Array.isArray(files) || files.length <= 5,
@@ -185,7 +184,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             return;
         }
 
-        form.setValue('images', fileArray);
+        form.setValue('images', files);
 
         const dataUris = await Promise.all(fileArray.map(file => {
             return new Promise<string>((resolve, reject) => {
@@ -225,17 +224,50 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     const newPreviews = [...imagePreviews];
     newPreviews.splice(index, 1);
     setImagePreviews(newPreviews);
-    // This is tricky with FileList, for now we just update previews
-    // A more robust solution might use a library to manage file inputs
-    const currentImages = form.getValues('images');
-    if(Array.isArray(currentImages)) {
-      const newImages = [...currentImages];
-      newImages.splice(index,1);
-      form.setValue('images', newImages.length > 0 ? newImages : []);
+    
+    const currentImagesValue = form.getValues('images');
+    let updatedImages: (File | string)[] = [];
+    
+    if (Array.isArray(currentImagesValue)) { // string[]
+        updatedImages = [...currentImagesValue];
+        updatedImages.splice(index, 1);
+    } else if (currentImagesValue instanceof FileList) { // FileList
+        updatedImages = Array.from(currentImagesValue);
+        updatedImages.splice(index, 1);
+    }
+
+    if (updatedImages.length > 0) {
+        form.setValue('images', updatedImages);
     } else {
-       form.setValue('images', []);
+        form.setValue('images', []); // Clear value if no images are left
     }
   };
+
+  const processImages = async (images: any): Promise<{ url: string; hint: string; }[]> => {
+    let imageUploads: { url: string; hint: string; }[] = [];
+
+    const toDataURL = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    };
+
+    if (images instanceof FileList) {
+        for (const file of Array.from(images)) {
+            const dataUrl = await toDataURL(file);
+            imageUploads.push({ url: dataUrl, hint: 'custom image' });
+        }
+    } else if (Array.isArray(images)) {
+        // This handles the case where images are already URLs (during edit)
+        imageUploads = images.map(url => ({ url: url, hint: product?.images[0]?.hint || 'custom image' }));
+    }
+    
+    return imageUploads;
+};
+
 
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
@@ -246,19 +278,20 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     }
 
     try {
-      let imageUploads: { url: string; hint: string; }[] = [];
-      if (imagePreviews.length > 0) {
-        imageUploads = imagePreviews.map(url => ({
-          url: url,
-          hint: 'custom image'
-        }));
-      } else if (!isEditMode) {
-        const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
-        imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
-      } else if (isEditMode && product?.images) {
-        imageUploads = product.images;
-      }
-        
+        let imageUploads: { url: string; hint: string; }[] = [];
+
+        // Check if new images were uploaded
+        if (data.images instanceof FileList && data.images.length > 0) {
+            imageUploads = await processImages(data.images);
+        } else if (isEditMode && product?.images) {
+            // No new images, retain existing ones
+            imageUploads = product.images;
+        } else {
+            // No images provided for a new product, use a placeholder
+            const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+            imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
+        }
+
       if (isEditMode && product) {
         const updatedProductData: Partial<Product> = {
           ...data,
@@ -340,7 +373,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             expiryDate: data.expiryDate?.toISOString(),
         };
 
-        if (isEditMode && product?.status === 'draft') {
+        if (isEditMode && (product?.status === 'draft' || product?.status === 'pending' || product?.status === 'rejected')) {
             await updateProduct(product.id, draftProduct);
             toast({ title: 'Draft Updated', description: 'Your product draft has been updated.' });
         } else {
@@ -348,6 +381,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             toast({ title: 'Saved as Draft', description: 'Your product has been saved as a draft.' });
         }
         router.push(`/dashboard/${sellerId}/products?draft=true`);
+        router.refresh();
     } catch (error) {
         console.error("Draft submission error:", error);
         toast({ title: "Draft Error", description: "Could not save draft.", variant: "destructive" });
@@ -429,7 +463,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                     <CardDescription>Upload up to 5 images for your product. The first image will be the main one.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     <FormField control={form.control} name="images" render={({ field }) => (
+                     <FormField control={form.control} name="images" render={() => (
                         <FormItem>
                             <FormLabel>Product Images</FormLabel>
                             <FormControl>
