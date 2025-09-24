@@ -127,13 +127,13 @@ export async function getFeaturedProducts(): Promise<Product[]> {
  */
 export async function getProductsBySeller(sellerId: string): Promise<Product[]> {
   const productsCol = collection(db, 'products');
-  const q = query(productsCol, where('seller.id', '==', sellerId));
+  const q = query(productsCol, where('seller.id', '==', sellerId), where('status', '!=', 'archived'));
   const productSnapshot = await getDocs(q);
   const productList = productSnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   } as Product));
-  return productList.filter(p => p.status !== 'archived');
+  return productList;
 }
 
 
@@ -173,7 +173,7 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  * Adds a new product to the 'products' collection in Firestore.
  * @param product - The product data to add.
  */
-export async function addProduct(product: Omit<Product, 'id'>): Promise<Product> {
+export async function addProduct(product: Omit<Product, 'id'>): Promise<string> {
     const productsCol = collection(db, 'products');
     
     const productData: { [key: string]: any } = { ...product };
@@ -186,7 +186,7 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<Product>
     }
 
     const docRef = await addDoc(productsCol, productData);
-    return { id: docRef.id, ...product };
+    return docRef.id;
 }
 
 /**

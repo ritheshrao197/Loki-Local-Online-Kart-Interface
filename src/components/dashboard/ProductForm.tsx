@@ -283,8 +283,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
 
         if (currentImages instanceof FileList && currentImages.length > 0) {
             imageUploads = await processImages(currentImages);
-        } else if (isEditMode && product?.images) {
-            imageUploads = product.images;
+        } else if (isEditMode && imagePreviews.length > 0) {
+             imageUploads = imagePreviews.map(url => ({ url: url, hint: product?.images.find(i=>i.url === url)?.hint || 'custom image' }));
         } else {
             const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
             imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
@@ -403,17 +403,17 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         if (!seller) throw new Error("Could not find seller details.");
 
         const draftProduct: Omit<Product, 'id'> = {
-            name: data.name,
+            name: data.name || "Untitled Draft",
             description: data.description || '',
-            price: data.price,
+            price: data.price || 0,
             discountPrice: data.discountPrice,
             images: imageUploads,
-            category: data.category,
+            category: data.category || '',
             subcategory: data.subcategory,
             seller: { id: sellerId, name: seller.name },
             status: 'draft',
             keywords: data.keywords,
-            stock: data.stock,
+            stock: data.stock || 0,
             unitOfMeasure: data.unitOfMeasure,
             stockAlert: data.stockAlert,
             brand: data.brand,
