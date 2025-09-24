@@ -1,44 +1,22 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState, FormEvent } from 'react';
 import { getBrandingSettings, updateBrandingSettings } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Loader2, Upload } from 'lucide-react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import Image from 'next/image';
-
-const formSchema = z.object({
-  logoUrl: z.any().refine(val => {
-    if (typeof val === 'string' && val.startsWith('data:image')) return true;
-    if (val instanceof FileList && val.length > 0) return true;
-    if (typeof val === 'string' && val.length > 0) return true; // for existing URLs
-    return false;
-  }, {
-    message: 'A logo image is required.',
-  }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { Label } from '../ui/label';
 
 export function LogoManager() {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [newLogoDataUri, setNewLogoDataUri] = useState<string | null>(null);
   const { toast } = useToast();
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      logoUrl: '',
-    },
-  });
 
   useEffect(() => {
     async function fetchSettings() {
@@ -46,7 +24,6 @@ export function LogoManager() {
       try {
         const settings = await getBrandingSettings();
         if (settings?.logoUrl) {
-          form.setValue('logoUrl', settings.logoUrl);
           setImagePreview(settings.logoUrl);
         }
       } catch (error) {
@@ -56,7 +33,7 @@ export function LogoManager() {
       }
     }
     fetchSettings();
-  }, [form, toast]);
+  }, [toast]);
   
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -65,22 +42,24 @@ export function LogoManager() {
       reader.onloadend = () => {
         const result = reader.result as string;
         setImagePreview(result);
-        form.setValue('logoUrl', result, { shouldValidate: true });
+        setNewLogoDataUri(result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!newLogoDataUri) {
+      toast({ title: 'No new logo selected', description: 'Please choose a file to upload first.', variant: 'destructive' });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      if (!data.logoUrl) {
-        toast({ title: 'No logo image provided', variant: 'destructive' });
-        setIsSubmitting(false);
-        return;
-      }
-      await updateBrandingSettings({ logoUrl: data.logoUrl });
+      await updateBrandingSettings({ logoUrl: newLogoDataUri });
       toast({ title: 'Logo Updated Successfully' });
+      setNewLogoDataUri(null); // Reset after successful submission
     } catch (error) {
       toast({ title: 'An error occurred while updating the logo', variant: 'destructive' });
     } finally {
@@ -95,40 +74,29 @@ export function LogoManager() {
         <CardDescription>Upload and manage your site's logo.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="logoUrl"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Site Logo</FormLabel>
-                   <FormControl>
-                    <div className="flex flex-col sm:flex-row items-start gap-4">
-                      <div className="w-48 h-24 bg-muted rounded-md flex items-center justify-center relative border">
-                        {imagePreview ? 
-                          <Image src={imagePreview} alt="Logo Preview" fill className="object-contain rounded-md p-2"/> : 
-                          <div className="text-center text-muted-foreground p-2">
-                            <Upload className="h-6 w-6 mx-auto"/>
-                            <p className="text-xs mt-1">Upload Logo</p>
-                          </div>
-                        }
-                      </div>
-                       <Input id="logo-upload" type="file" accept="image/*" onChange={handleImageChange} className="max-w-xs"/>
+        <form onSubmit={onSubmit} className="space-y-6">
+            <div className="space-y-2">
+                <Label htmlFor="logo-upload">Site Logo</Label>
+                <div className="flex flex-col sm:flex-row items-start gap-4">
+                    <div className="w-48 h-24 bg-muted rounded-md flex items-center justify-center relative border">
+                    {imagePreview ? 
+                        <Image src={imagePreview} alt="Logo Preview" fill className="object-contain rounded-md p-2"/> : 
+                        <div className="text-center text-muted-foreground p-2">
+                        <Upload className="h-6 w-6 mx-auto"/>
+                        <p className="text-xs mt-1">Upload Logo</p>
+                        </div>
+                    }
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <Input id="logo-upload" type="file" accept="image/*" onChange={handleImageChange} className="max-w-xs"/>
+                </div>
+            </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={isSubmitting || loading}>
+              <Button type="submit" disabled={isSubmitting || loading || !newLogoDataUri}>
                 {isSubmitting && <Loader2 className="mr-2 animate-spin" />}
                 Save Logo
               </Button>
             </div>
-          </form>
-        </Form>
+        </form>
       </CardContent>
     </Card>
   );
