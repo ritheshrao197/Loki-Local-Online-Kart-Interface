@@ -2,6 +2,7 @@
 
 
 
+
 import {
   collection,
   doc,
@@ -129,12 +130,14 @@ export async function getFeaturedProducts(): Promise<Product[]> {
  */
 export async function getProductsBySeller(sellerId: string): Promise<Product[]> {
   const productsCol = collection(db, 'products');
-  const q = query(productsCol, where('seller.id', '==', sellerId), where('status', '!=', 'archived'));
+  const q = query(productsCol, where('seller.id', '==', sellerId));
   const productSnapshot = await getDocs(q);
-  const productList = productSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  } as Product));
+  const productList = productSnapshot.docs
+    .map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    } as Product))
+    .filter(product => product.status !== 'archived');
   return productList;
 }
 
@@ -325,9 +328,11 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
 
 export async function getAllHeroSlides(): Promise<HeroSlide[]> {
   const slidesCol = collection(db, 'heroSlides');
-  const q = query(slidesCol, orderBy('order', 'asc'));
+  const q = query(slidesCol);
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HeroSlide));
+  const slides = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HeroSlide));
+  slides.sort((a,b) => a.order - b.order);
+  return slides;
 }
 
 export async function addHeroSlide(slide: Omit<HeroSlide, 'id'>): Promise<string> {
