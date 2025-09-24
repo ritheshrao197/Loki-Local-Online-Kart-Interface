@@ -3,6 +3,7 @@
 
 
 
+
 import {
   collection,
   doc,
@@ -40,15 +41,20 @@ export async function getSellerById(sellerId: string): Promise<Seller | null> {
     if (!sellerId) {
         return null;
     }
-    const sellerRef = doc(db, 'sellers', sellerId);
-    const sellerSnap = await getDoc(sellerRef);
+    try {
+        const sellerRef = doc(db, 'sellers', sellerId);
+        const sellerSnap = await getDoc(sellerRef);
 
-    if (!sellerSnap.exists()) {
-        console.warn(`No seller found with ID: ${sellerId}`);
+        if (!sellerSnap.exists()) {
+            console.warn(`No seller found with ID: ${sellerId}`);
+            return null;
+        }
+
+        return { id: sellerSnap.id, ...sellerSnap.data() } as Seller;
+    } catch (error) {
+        console.error(`Error fetching seller with ID ${sellerId}:`, error);
         return null;
     }
-
-    return { id: sellerSnap.id, ...sellerSnap.data() } as Seller;
 }
 
 /**
