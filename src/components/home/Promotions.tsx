@@ -1,17 +1,13 @@
 
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import type { Product } from '@/lib/types';
 import { getProducts } from '@/lib/firebase/firestore';
 
 export async function Promotions() {
-  const products = await getProducts('approved');
-  // Sort by price descending and take top 2 as "promotions"
-  const sorted = products.sort((a, b) => b.price - a.price);
-  const promotedProducts = sorted.slice(0, 2);
+  const allProducts = await getProducts('approved');
+  const promotedProducts = allProducts.filter(p => p.isPromoted).slice(0, 2);
 
   if (promotedProducts.length === 0) {
     return null;
@@ -32,7 +28,7 @@ export async function Promotions() {
             />
             <div className="absolute inset-0 bg-black/50 p-6 flex flex-col justify-end">
               <h3 className="text-2xl font-bold font-headline text-white">
-                {index === 0 ? 'Featured Item' : 'Discover More'}
+                {index === 0 ? 'Featured Promotion' : 'Special Offer'}
               </h3>
               <p className="text-white/90 mt-2">{product.name}</p>
               <Button variant="secondary" className="mt-4 w-fit">View Product</Button>

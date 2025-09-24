@@ -265,7 +265,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
           images: imageUploads,
           manufacturingDate: data.manufacturingDate?.toISOString(),
           expiryDate: data.expiryDate?.toISOString(),
-          status: isAdmin ? 'approved' : 'pending', // Admins can approve directly
+          status: isAdmin ? product.status : 'pending', // Admins keep status, sellers reset to pending
         };
         await updateProduct(product.id, updatedProductData);
          toast({
@@ -310,10 +310,50 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   };
 
   const handleSaveAsDraft = async () => {
-    const data = form.getValues();
-    // Similar logic to onSubmit, but status is 'draft'
-     console.log("Saving as draft:", data);
-     toast({ title: 'Saved as Draft', description: 'Your product has been saved as a draft.'});
+     const data = form.getValues();
+     setIsSubmitting(true);
+     
+      if (!sellerId) {
+        toast({ title: "Error", description: "Seller not identified.", variant: "destructive" });
+        setIsSubmitting(false);
+        return;
+      }
+
+    try {
+        let imageUploads: { url: string; hint: string; }[] = [];
+        if (imagePreviews.length > 0) {
+            imageUploads = imagePreviews.map(url => ({ url: url, hint: 'custom image' }));
+        } else {
+            const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+            imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
+        }
+        
+        const seller = await getSellerById(sellerId);
+        if (!seller) throw new Error("Could not find seller details.");
+
+        const draftProduct: Omit<Product, 'id'> = {
+            ...data,
+            images: imageUploads,
+            seller: { id: sellerId, name: seller.name },
+            status: 'draft',
+            manufacturingDate: data.manufacturingDate?.toISOString(),
+            expiryDate: data.expiryDate?.toISOString(),
+        };
+
+        if (isEditMode && product?.status === 'draft') {
+            await updateProduct(product.id, draftProduct);
+            toast({ title: 'Draft Updated', description: 'Your product draft has been updated.' });
+        } else {
+            await addProduct(draftProduct as Omit<Product, 'id'>);
+            toast({ title: 'Saved as Draft', description: 'Your product has been saved as a draft.' });
+        }
+        router.push(`/dashboard/${sellerId}/products?draft=true`);
+    } catch (error) {
+        console.error("Draft submission error:", error);
+        toast({ title: "Draft Error", description: "Could not save draft.", variant: "destructive" });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
   
   const productCategories = ["Home Decor", "Apparel", "Food & Groceries", "Art", "Footwear", "Bath & Body", "Accessories", "Kitchenware", "Jewelry"];
