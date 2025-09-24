@@ -4,6 +4,7 @@
 import { getBrandingSettings } from '@/lib/firebase/firestore';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 function DefaultLogo({ className }: { className?: string }) {
   return (
@@ -43,16 +44,18 @@ export default function Logo({ className }: { className?: string }) {
   }, []);
 
   if (loading) {
-    return <div className={className} style={{ width: 100, height: 33 }} />; // Placeholder with similar dimensions
+    // To prevent layout shift, we can render a placeholder with the same dimensions
+    // as the logo. Let's assume a default aspect ratio if className doesn't specify size.
+    return <div className={cn('h-8 w-auto', className)} style={{ aspectRatio: '100/33' }} />;
   }
 
   if (logoUrl) {
     return (
-      <div className={className} style={{ position: 'relative', width: 100, height: 33 }}>
-        <Image src={logoUrl} alt="Loki Logo" fill objectFit="contain" />
+      <div className={cn('relative h-8 w-auto', className)} style={{ aspectRatio: '100/33' }}>
+        <Image src={logoUrl} alt="Loki Logo" fill style={{ objectFit: 'contain' }} />
       </div>
     );
   }
 
-  return <DefaultLogo className={className} />;
+  return <DefaultLogo className={cn('h-8 w-auto', className)} />;
 }

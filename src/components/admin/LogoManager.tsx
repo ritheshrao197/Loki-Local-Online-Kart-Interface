@@ -15,7 +15,12 @@ import { Input } from '../ui/input';
 import Image from 'next/image';
 
 const formSchema = z.object({
-  logoUrl: z.any().refine(val => (typeof val === 'string' && val.length > 0) || (val instanceof FileList && val.length > 0), {
+  logoUrl: z.any().refine(val => {
+    if (typeof val === 'string' && val.startsWith('data:image')) return true;
+    if (val instanceof FileList && val.length > 0) return true;
+    if (typeof val === 'string' && val.length > 0) return true; // for existing URLs
+    return false;
+  }, {
     message: 'A logo image is required.',
   }),
 });
@@ -58,8 +63,9 @@ export function LogoManager() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        form.setValue('logoUrl', event.target.files);
+        const result = reader.result as string;
+        setImagePreview(result);
+        form.setValue('logoUrl', result, { shouldValidate: true });
       };
       reader.readAsDataURL(file);
     }
@@ -68,25 +74,12 @@ export function LogoManager() {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
-      let newLogoUrl = '';
-      if (typeof data.logoUrl === 'string') {
-        newLogoUrl = data.logoUrl;
-      } else if (data.logoUrl instanceof FileList && data.logoUrl.length > 0) {
-        newLogoUrl = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(data.logoUrl[0]);
-        });
-      }
-
-      if (!newLogoUrl) {
+      if (!data.logoUrl) {
         toast({ title: 'No logo image provided', variant: 'destructive' });
         setIsSubmitting(false);
         return;
       }
-
-      await updateBrandingSettings({ logoUrl: newLogoUrl });
+      await updateBrandingSettings({ logoUrl: data.logoUrl });
       toast({ title: 'Logo Updated Successfully' });
     } catch (error) {
       toast({ title: 'An error occurred while updating the logo', variant: 'destructive' });
