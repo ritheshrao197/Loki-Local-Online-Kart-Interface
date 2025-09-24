@@ -11,6 +11,7 @@ import { PopularProducts } from '@/components/home/PopularProducts';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getProducts } from '@/lib/firebase/firestore';
 
 export default function HomePage() {
   const [approvedProducts, setApprovedProducts] = useState<Product[]>([]);
@@ -25,7 +26,6 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { getProducts } = await import('@/lib/firebase/firestore');
         const products = await getProducts('approved');
         setApprovedProducts(products);
       } catch (error) {

@@ -1,35 +1,18 @@
 
-'use client';
-import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { getBlogs } from '@/lib/firebase/firestore';
 import type { Blog } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Newspaper } from 'lucide-react';
 
-export default function BlogsPage() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchBlogs() {
-      try {
-        const approvedBlogs = await getBlogs('approved');
-        approvedBlogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setBlogs(approvedBlogs);
-      } catch (error) {
-        console.error("Failed to fetch blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchBlogs();
-  }, []);
-
+export default async function BlogsPage() {
+  const approvedBlogs = await getBlogs('approved');
+  approvedBlogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  
   return (
     <div className="container py-12">
       <div className="text-center mb-12">
@@ -41,13 +24,9 @@ export default function BlogsPage() {
         </p>
       </div>
 
-      {loading ? (
+      {approvedBlogs.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: 3 }).map((_, i) => <BlogCardSkeleton key={i} />)}
-        </div>
-      ) : blogs.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs.map((blog) => (
+          {approvedBlogs.map((blog) => (
             <BlogCard key={blog.id} blog={blog} />
           ))}
         </div>
@@ -75,6 +54,7 @@ function BlogCard({ blog }: { blog: Blog }) {
                 alt={blog.title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 data-ai-hint={blog.featuredImage.hint}
                 />
             </div>
@@ -103,26 +83,3 @@ function BlogCard({ blog }: { blog: Blog }) {
     </Card>
   );
 }
-
-const BlogCardSkeleton = () => (
-  <Card>
-    <Skeleton className="aspect-video w-full rounded-t-lg" />
-    <CardHeader>
-      <Skeleton className="h-6 w-3/4" />
-      <Skeleton className="h-5 w-1/2" />
-    </CardHeader>
-    <CardContent>
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-      </div>
-    </CardContent>
-    <CardFooter className="flex items-center gap-3">
-      <Skeleton className="h-8 w-8 rounded-full" />
-      <div className="space-y-1">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="h-3 w-16" />
-      </div>
-    </CardFooter>
-  </Card>
-);

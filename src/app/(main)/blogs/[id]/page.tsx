@@ -1,47 +1,18 @@
 
-'use client';
 
-import { useEffect, useState } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { getBlogById } from '@/lib/firebase/firestore';
-import type { Blog } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default function BlogPostPage() {
-  const params = useParams();
+export default async function BlogPostPage({ params }: { params: { id: string }}) {
   const { id } = params;
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  const blog = await getBlogById(id as string);
 
-  useEffect(() => {
-    if (!id) return;
-    async function fetchBlog() {
-      try {
-        const fetchedBlog = await getBlogById(id as string);
-        if (!fetchedBlog || fetchedBlog.status !== 'approved') {
-          notFound();
-        } else {
-          setBlog(fetchedBlog);
-        }
-      } catch (error) {
-        console.error('Failed to fetch blog post:', error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchBlog();
-  }, [id]);
-
-  if (loading) {
-    return <BlogSkeleton />;
-  }
-
-  if (!blog) {
-    return null;
+  if (!blog || blog.status !== 'approved') {
+    notFound();
   }
 
   return (
@@ -55,6 +26,7 @@ export default function BlogPostPage() {
               fill
               className="object-cover rounded-xl border"
               data-ai-hint={blog.featuredImage.hint}
+              priority
             />
           </div>
         )}
@@ -75,22 +47,3 @@ export default function BlogPostPage() {
     </div>
   );
 }
-
-const BlogSkeleton = () => (
-  <div className="container max-w-4xl py-12">
-    <div className="space-y-6">
-      <Skeleton className="h-96 w-full rounded-xl" />
-      <Skeleton className="h-12 w-3/4" />
-      <div className="flex items-center gap-4">
-        <Skeleton className="h-8 w-8 rounded-full" />
-        <Skeleton className="h-6 w-32" />
-      </div>
-      <div className="space-y-4">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-4 w-full" />
-      </div>
-    </div>
-  </div>
-);

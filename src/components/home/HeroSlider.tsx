@@ -1,38 +1,26 @@
 
-'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
-import type { Product } from '@/lib/types';
 import { Skeleton } from '../ui/skeleton';
 import { getFeaturedProducts } from '@/lib/firebase/firestore';
 
-export function HeroSlider() {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+export async function HeroSlider() {
+  const featuredProducts = await getFeaturedProducts();
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const products = await getFeaturedProducts();
-        setFeaturedProducts(products); 
-      } catch (error) {
-        console.error("Failed to fetch products for hero slider:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProducts();
-  }, []);
-
-  if (loading) {
-    return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />;
-  }
-  
   if (featuredProducts.length === 0) {
-    return null; // Don't show slider if no products
+    return (
+        <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4">
+             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline text-secondary-foreground">
+                Loki Marketplace
+              </h2>
+              <p className="mt-2 md:mt-4 max-w-lg text-lg text-secondary-foreground/80">
+                No featured products yet. Check back soon!
+              </p>
+        </div>
+    );
   }
 
   return (
@@ -51,6 +39,7 @@ export function HeroSlider() {
                   src={product.images[0].url}
                   alt={product.name}
                   fill
+                  priority
                   className="object-cover"
                   data-ai-hint={product.images[0].hint}
                 />

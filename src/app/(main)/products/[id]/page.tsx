@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,6 +13,7 @@ import { ProductCard } from '@/components/products/ProductCard';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { getProductById, getProducts } from '@/lib/firebase/firestore';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -25,8 +27,8 @@ export default function ProductDetailPage() {
     if (!id) return;
     
     async function fetchProductData() {
+      setLoading(true);
       try {
-        const { getProductById, getProducts } = await import('@/lib/firebase/firestore');
         const fetchedProduct = await getProductById(id as string);
         if (!fetchedProduct || fetchedProduct.status !== 'approved') {
           notFound();
@@ -92,6 +94,7 @@ export default function ProductDetailPage() {
                 fill
                 className="object-cover"
                 data-ai-hint={product.images[0].hint}
+                priority
                 />
             </div>
         </div>
