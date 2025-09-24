@@ -1,5 +1,4 @@
 
-
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -33,16 +32,7 @@ export function HeroSlider() {
   }
 
   if (slides.length === 0) {
-    return (
-        <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4">
-             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline text-secondary-foreground">
-                Loki Marketplace
-              </h2>
-              <p className="mt-2 md:mt-4 max-w-lg text-lg text-secondary-foreground/80">
-                No featured content yet. Check back soon!
-              </p>
-        </div>
-    );
+    return null;
   }
 
   return (
