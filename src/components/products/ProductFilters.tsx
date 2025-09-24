@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -9,8 +10,10 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { useState } from 'react';
 
 export function ProductFilters() {
+  const [price, setPrice] = useState(5000);
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
       <div className="flex items-center gap-2">
@@ -46,11 +49,15 @@ export function ProductFilters() {
         <div className="flex flex-1 items-center gap-4 max-w-sm">
             <Label className="text-sm min-w-fit">Price Range:</Label>
             <Slider
-                defaultValue={[500]}
-                max={5000}
+                defaultValue={[price]}
+                max={10000}
                 step={100}
                 className="flex-1"
+                onValueChange={(value) => setPrice(value[0])}
             />
+            <span className="text-sm text-muted-foreground font-medium w-24 text-right">
+              Up to ₹{price.toLocaleString('en-IN')}
+            </span>
         </div>
       </div>
     </div>
