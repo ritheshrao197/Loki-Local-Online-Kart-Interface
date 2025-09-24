@@ -44,10 +44,6 @@ export default function HomePage() {
           </p>
         </section>
 
-        <div className="mb-8">
-          <ProductFilters />
-        </div>
-
         <FeaturedCategories />
 
         <div className="mt-12">
@@ -69,6 +65,9 @@ export default function HomePage() {
 
         <div className="mt-20">
           <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
+           <div className="mb-8">
+            <ProductFilters />
+          </div>
           {loading ? (
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Array.from({length: 8}).map((_, i) => <Skeleton key={i} className="h-80 w-full" />)}
