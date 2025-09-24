@@ -20,7 +20,7 @@ export function Footer() {
             <h3 className="font-semibold font-headline mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm hover:text-primary transition-colors">Home</Link></li>
-              <li><Link href="/seller-signup" className="text-sm hover:text-primary transition-colors">Sell on Loki</Link></li>
+              <li><Link href="/login/admin" className="text-sm hover:text-primary transition-colors">Sell on Loki</Link></li>
               <li><Link href="/" className="text-sm hover:text-primary transition-colors">About Us</Link></li>
             </ul>
           </div>
