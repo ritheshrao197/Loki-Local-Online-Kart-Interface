@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import type { Seller } from '@/lib/types';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -34,7 +34,8 @@ const statusVariant = {
   suspended: 'destructive',
 } as const;
 
-export default function SellersPage() {
+
+function SellersPageContent() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -212,4 +213,12 @@ export default function SellersPage() {
       </div>
     </div>
   );
+}
+
+export default function SellersPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SellersPageContent />
+        </Suspense>
+    )
 }
