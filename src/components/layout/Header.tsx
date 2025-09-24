@@ -27,6 +27,9 @@ export function Header() {
         </div>
         <nav className="ml-6 flex items-center space-x-2 sm:space-x-4">
           <Button variant="ghost" asChild>
+              <Link href="/blogs">Blogs</Link>
+          </Button>
+          <Button variant="ghost" asChild>
             <Link href="/login/admin">Sell on Loki</Link>
           </Button>
           <Button variant="ghost" size="icon" asChild>

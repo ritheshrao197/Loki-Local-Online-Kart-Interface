@@ -61,3 +61,19 @@ export type Order = {
   orderDate: string | Date;
 };
 
+export type Blog = {
+  id: string;
+  title: string;
+  content: string; // HTML content from a rich text editor
+  featuredImage?: {
+    url: string;
+    hint: string;
+  };
+  author: {
+    id: string;
+    name: string;
+  };
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  updatedAt?: string;
+};

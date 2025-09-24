@@ -24,6 +24,7 @@ import {
   Store,
   Wallet,
   Settings,
+  Newspaper,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { getSellerById } from '@/lib/firebase/firestore';
@@ -68,6 +69,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <Link href={`/dashboard/${sellerId}/products`}>
                   <Package />
                   <span>Products</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Blogs">
+                <Link href={`/dashboard/${sellerId}/blogs`}>
+                  <Newspaper />
+                  <span>Blogs</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

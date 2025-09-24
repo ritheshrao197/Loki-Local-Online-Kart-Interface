@@ -25,6 +25,7 @@ import {
   BarChart3,
   Gavel,
   LayoutTemplate,
+  Newspaper,
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -55,6 +56,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 <Link href="/admin/products">
                   <Package />
                   <span>Products</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Blogs">
+                <Link href="/admin/blogs">
+                  <Newspaper />
+                  <span>Blogs</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -1,4 +1,5 @@
 
+
 import {
   collection,
   doc,
@@ -11,9 +12,10 @@ import {
   where,
   Timestamp,
   deleteDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Seller, Product, Order } from '@/lib/types';
+import type { Seller, Product, Order, Blog } from '@/lib/types';
 
 // ================== Seller Functions ==================
 
@@ -222,4 +224,63 @@ export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
 export async function updateOrderStatus(orderId: string, status: Order['status']): Promise<void> {
   const orderRef = doc(db, 'orders', orderId);
   await updateDoc(orderRef, { status });
+}
+
+// ================== Blog Functions ==================
+
+const blogToClient = (doc: any): Blog => {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    ...data,
+    createdAt: data.createdAt?.toDate().toISOString(),
+    updatedAt: data.updatedAt?.toDate().toISOString(),
+  } as Blog;
+};
+
+
+export async function getBlogs(status?: Blog['status'] | 'all'): Promise<Blog[]> {
+  const blogsCol = collection(db, 'blogs');
+  const q = status && status !== 'all' ? query(blogsCol, where('status', '==', status)) : query(blogsCol);
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(blogToClient);
+}
+
+export async function getBlogById(blogId: string): Promise<Blog | null> {
+  const blogRef = doc(db, 'blogs', blogId);
+  const snap = await getDoc(blogRef);
+  return snap.exists() ? blogToClient(snap) : null;
+}
+
+export async function getBlogsBySeller(sellerId: string): Promise<Blog[]> {
+  const q = query(collection(db, 'blogs'), where('author.id', '==', sellerId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(blogToClient);
+}
+
+export async function addBlog(blogData: Omit<Blog, 'id' | 'createdAt'>): Promise<string> {
+  const blogWithTimestamps = {
+    ...blogData,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
+  const docRef = await addDoc(collection(db, 'blogs'), blogWithTimestamps);
+  return docRef.id;
+}
+
+export async function updateBlog(blogId: string, blogData: Partial<Omit<Blog, 'id'>>): Promise<void> {
+  const blogRef = doc(db, 'blogs', blogId);
+  await updateDoc(blogRef, {
+    ...blogData,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function updateBlogStatus(blogId: string, status: Blog['status']): Promise<void> {
+  const blogRef = doc(db, 'blogs', blogId);
+  await updateDoc(blogRef, { status });
+}
+
+export async function deleteBlog(blogId: string): Promise<void> {
+  await deleteDoc(doc(db, 'blogs', blogId));
 }
