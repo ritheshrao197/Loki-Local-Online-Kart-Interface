@@ -109,7 +109,7 @@ export default function ProductDetailPage() {
             </div>
             
             <div className="flex items-center gap-4">
-                <p className="text-4xl font-bold text-primary">₹{product.price.toLocaleString('en-IN')}</p>
+                <p className="text-4xl font-bold text-primary">&#8377;{product.price.toLocaleString('en-IN')}</p>
                 <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
                         <Star key={i} className={`h-5 w-5 ${i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} />

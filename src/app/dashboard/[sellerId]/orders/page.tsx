@@ -155,7 +155,7 @@ export default function OrdersPage() {
                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">₹{order.total.toLocaleString('en-IN')}</TableCell>
+                <TableCell className="hidden md:table-cell">&#8377;{order.total.toLocaleString('en-IN')}</TableCell>
                 <TableCell className="hidden md:table-cell">{format(new Date(order.orderDate), 'PPP')}</TableCell>
                 <TableCell>
                   <DropdownMenu>

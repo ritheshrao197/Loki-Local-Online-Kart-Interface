@@ -421,14 +421,14 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="price" render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Price (₹)</FormLabel>
+                        <FormLabel>Price (&#8377;)</FormLabel>
                         <FormControl><Input type="number" placeholder="e.g. 499" {...field} /></FormControl>
                         <FormMessage />
                         </FormItem>
                     )}/>
                      <FormField control={form.control} name="discountPrice" render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Discount Price (₹) (Optional)</FormLabel>
+                        <FormLabel>Discount Price (&#8377;) (Optional)</FormLabel>
                         <FormControl><Input type="number" placeholder="e.g. 399" {...field} value={field.value ?? ''}/></FormControl>
                          <FormMessage />
                         </FormItem>

@@ -105,7 +105,7 @@ export function ProductModerationCard({ product, onStatusChange, onDelete }: Pro
     <Card>
       <CardHeader>
         <CardTitle>{product.name}</CardTitle>
-        <CardDescription>Sold by {product.seller.name} for ₹{product.price.toLocaleString('en-IN')}</CardDescription>
+        <CardDescription>Sold by {product.seller.name} for &#8377;{product.price.toLocaleString('en-IN')}</CardDescription>
       </CardHeader>
       <CardContent className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-1">

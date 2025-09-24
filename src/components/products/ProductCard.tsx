@@ -55,11 +55,11 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="p-4 pt-0 mt-auto">
              <div className="flex items-center gap-2">
                 <p className={`text-xl font-bold text-primary ${product.discountPrice ? 'text-destructive' : 'text-primary'}`}>
-                    ₹{product.discountPrice ? product.discountPrice.toLocaleString('en-IN') : product.price.toLocaleString('en-IN')}
+                    &#8377;{product.discountPrice ? product.discountPrice.toLocaleString('en-IN') : product.price.toLocaleString('en-IN')}
                 </p>
                 {product.discountPrice && (
                     <p className="text-sm text-muted-foreground line-through">
-                        ₹{product.price.toLocaleString('en-IN')}
+                        &#8377;{product.price.toLocaleString('en-IN')}
                     </p>
                 )}
             </div>

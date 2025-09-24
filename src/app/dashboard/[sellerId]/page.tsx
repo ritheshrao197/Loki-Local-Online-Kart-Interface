@@ -52,7 +52,7 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalRevenue.toLocaleString('en-IN')}</div>
+            <div className="text-2xl font-bold">&#8377;{totalRevenue.toLocaleString('en-IN')}</div>
              <p className="text-xs text-muted-foreground">
               Based on delivered orders
             </p>
@@ -125,7 +125,7 @@ export default async function DashboardPage({ params }: { params: { sellerId: st
                             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell>₹{order.total.toLocaleString('en-IN')}</TableCell>
+                      <TableCell>&#8377;{order.total.toLocaleString('en-IN')}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
