@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -5,15 +6,27 @@ import type { Product } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Check, Loader2, Sparkles, ThumbsDown, ThumbsUp, X } from 'lucide-react';
+import { AlertCircle, Check, Edit, Loader2, Sparkles, ThumbsDown, ThumbsUp, Trash2, X } from 'lucide-react';
 import { adminReviewProductListing, type AdminReviewProductListingOutput } from '@/ai/flows/admin-review-product-listing';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
+import Link from 'next/link';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ProductModerationCardProps {
   product: Product;
   onStatusChange: (productId: string, newStatus: 'approved' | 'rejected') => void;
+  onDelete: (productId: string) => void;
 }
 
 // Helper to convert image URL to data URI via a proxy if needed
@@ -41,9 +54,10 @@ async function toDataURL(url: string): Promise<string> {
 }
 
 
-export function ProductModerationCard({ product, onStatusChange }: ProductModerationCardProps) {
+export function ProductModerationCard({ product, onStatusChange, onDelete }: ProductModerationCardProps) {
   const [isReviewing, setIsReviewing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [review, setReview] = useState<AdminReviewProductListingOutput | null>(null);
   const { toast } = useToast();
   
@@ -80,8 +94,14 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
     await onStatusChange(product.id, newStatus);
     //setIsUpdating(false); // The component will be unmounted, so no need to set state
   };
+  
+  const handleDeleteConfirm = () => {
+    setIsUpdating(true);
+    onDelete(product.id);
+  }
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>{product.name}</CardTitle>
@@ -138,16 +158,49 @@ export function ProductModerationCard({ product, onStatusChange }: ProductModera
             )}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" className="text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => handleStatusUpdate('rejected')} disabled={isUpdating}>
-            {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <X className="mr-2 h-4 w-4"/>}
-             Reject
+      <CardFooter className="flex justify-end gap-2 flex-wrap">
+        <Button variant="ghost" size="sm" asChild>
+            <Link href={`/admin/products/edit/${product.id}`}>
+                <Edit className="mr-2 h-4 w-4" /> Edit
+            </Link>
         </Button>
-        <Button size="sm" onClick={() => handleStatusUpdate('approved')} disabled={isUpdating}>
-            {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4"/>}
-             Approve
+        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => setShowDeleteConfirm(true)} disabled={isUpdating}>
+            <Trash2 className="mr-2 h-4 w-4" /> Delete
         </Button>
+        <div className="flex-grow md:flex-grow-0" />
+        {product.status === 'pending' && (
+            <>
+                <Button variant="outline" size="sm" className="text-destructive border-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => handleStatusUpdate('rejected')} disabled={isUpdating}>
+                    {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <X className="mr-2 h-4 w-4"/>}
+                    Reject
+                </Button>
+                <Button size="sm" onClick={() => handleStatusUpdate('approved')} disabled={isUpdating}>
+                    {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4"/>}
+                    Approve
+                </Button>
+            </>
+        )}
       </CardFooter>
     </Card>
+    
+    <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the product
+              "{product.name}" and remove its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} disabled={isUpdating} className="bg-destructive hover:bg-destructive/90">
+              {isUpdating && <Loader2 className="mr-2 animate-spin" />}
+              Delete Product
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

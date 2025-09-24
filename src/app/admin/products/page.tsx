@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { ProductModerationCard } from "@/components/admin/ProductModerationCard";
 import type { Product } from '@/lib/types';
-import { getProducts, updateProductStatus } from '@/lib/firebase/firestore';
+import { getProducts, updateProductStatus, deleteProduct } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -61,6 +61,27 @@ export default function AdminProductsPage() {
     }
   };
   
+  const handleProductDelete = async (productId: string) => {
+    const originalProducts = [...products];
+    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+
+    try {
+      await deleteProduct(productId);
+      toast({
+        title: 'Product Deleted',
+        description: 'The product has been permanently removed.',
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast({
+        title: 'Delete Failed',
+        description: 'Could not delete the product. Please try again.',
+        variant: 'destructive',
+      });
+      setProducts(originalProducts);
+    }
+  };
+  
   const renderProductList = () => {
     if (loading) {
       return Array.from({ length: 2 }).map((_, i) => <CardSkeleton key={i} />);
@@ -71,6 +92,7 @@ export default function AdminProductsPage() {
           key={product.id} 
           product={product} 
           onStatusChange={handleProductUpdate}
+          onDelete={handleProductDelete}
         />
       ));
     }

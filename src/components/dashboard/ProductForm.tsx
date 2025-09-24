@@ -72,12 +72,14 @@ type ProductFormValues = z.infer<typeof formSchema>;
 
 interface ProductFormProps {
   product?: Product;
+  isAdmin?: boolean;
 }
 
-export function ProductForm({ product }: ProductFormProps) {
+export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const router = useRouter();
   const params = useParams();
-  const sellerId = params.sellerId as string;
+  const sellerId = (isAdmin ? product?.seller.id : params.sellerId) as string;
+
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
@@ -259,14 +261,18 @@ export function ProductForm({ product }: ProductFormProps) {
           images: imageUploads,
           manufacturingDate: data.manufacturingDate?.toISOString(),
           expiryDate: data.expiryDate?.toISOString(),
-          status: 'pending' as const, // After edit, it should be re-approved.
+          status: isAdmin ? 'approved' : 'pending', // Admins can approve directly
         };
         await updateProduct(product.id, updatedProductData);
          toast({
           title: 'Product Updated!',
-          description: `Your product is updated and pending re-approval.`,
+          description: isAdmin ? 'Product has been updated successfully.' : 'Your product is updated and pending re-approval.',
         });
-        router.push(`/dashboard/${sellerId}/products?updated=true`);
+        if (isAdmin) {
+            router.push(`/admin/products?updated=true`);
+        } else {
+            router.push(`/dashboard/${sellerId}/products?updated=true`);
+        }
       } else {
         const seller = await getSellerById(sellerId);
         if (!seller) {
@@ -651,7 +657,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
         <div className="flex justify-end gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 px-8 -mx-8">
             <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting}>Clear Form</Button>
-            <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>
+            {!isAdmin && <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>}
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEditMode ? 'Save Changes' : 'Submit for Review'}
