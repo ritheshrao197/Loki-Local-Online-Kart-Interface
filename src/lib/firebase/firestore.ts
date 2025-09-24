@@ -95,8 +95,8 @@ export async function getProducts(status?: Product['status'] | 'all'): Promise<P
             id: doc.id,
             ...data,
             // Convert Timestamps to ISO strings if they exist
-            manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : undefined,
-            expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : undefined,
+            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
+            expiryDate: data.expiryDate?.toDate().toISOString(),
         } as Product;
     });
     return productList;
@@ -114,8 +114,8 @@ export async function getFeaturedProducts(): Promise<Product[]> {
         return {
             id: doc.id,
             ...data,
-            manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : undefined,
-            expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : undefined,
+            manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
+            expiryDate: data.expiryDate?.toDate().toISOString(),
         } as Product;
     });
     return productList;
@@ -133,7 +133,7 @@ export async function getProductsBySeller(sellerId: string): Promise<Product[]> 
     id: doc.id,
     ...doc.data(),
   } as Product));
-  return productList;
+  return productList.filter(p => p.status !== 'archived');
 }
 
 
@@ -153,8 +153,8 @@ export async function getProductById(productId: string): Promise<Product | null>
     return { 
         id: productSnap.id, 
         ...data,
-        manufacturingDate: data.manufacturingDate instanceof Timestamp ? data.manufacturingDate.toDate().toISOString() : undefined,
-        expiryDate: data.expiryDate instanceof Timestamp ? data.expiryDate.toDate().toISOString() : undefined,
+        manufacturingDate: data.manufacturingDate?.toDate().toISOString(),
+        expiryDate: data.expiryDate?.toDate().toISOString(),
     } as Product;
 }
 

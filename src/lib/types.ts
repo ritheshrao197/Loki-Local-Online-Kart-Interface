@@ -16,7 +16,7 @@ export type Product = {
     id:string;
     name: string;
   };
-  status: 'pending' | 'approved' | 'rejected' | 'draft';
+  status: 'pending' | 'approved' | 'rejected' | 'draft' | 'archived';
   keywords?: string;
   stock: number;
   unitOfMeasure: 'piece' | 'kg' | 'dozen' | 'litre';

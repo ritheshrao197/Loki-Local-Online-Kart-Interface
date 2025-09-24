@@ -262,7 +262,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         }
     } else if (Array.isArray(images)) {
         // This handles the case where images are already URLs (during edit)
-        imageUploads = images.map(url => ({ url: url, hint: product?.images[0]?.hint || 'custom image' }));
+        imageUploads = images.map(url => ({ url: url, hint: product?.images.find(i=>i.url === url)?.hint || 'custom image' }));
     }
     
     return imageUploads;
@@ -279,27 +279,45 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
 
     try {
         let imageUploads: { url: string; hint: string; }[] = [];
+        const currentImages = form.getValues('images');
 
-        // Check if new images were uploaded
-        if (data.images instanceof FileList && data.images.length > 0) {
-            imageUploads = await processImages(data.images);
+        if (currentImages instanceof FileList && currentImages.length > 0) {
+            imageUploads = await processImages(currentImages);
         } else if (isEditMode && product?.images) {
-            // No new images, retain existing ones
             imageUploads = product.images;
         } else {
-            // No images provided for a new product, use a placeholder
             const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
             imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
         }
 
       if (isEditMode && product) {
         const updatedProductData: Partial<Product> = {
-          ...data,
-          images: imageUploads,
+          name: data.name,
+          description: data.description || '',
+          price: data.price,
+          discountPrice: data.discountPrice,
+          category: data.category,
+          subcategory: data.subcategory,
+          stock: data.stock,
+          unitOfMeasure: data.unitOfMeasure,
+          stockAlert: data.stockAlert,
+          keywords: data.keywords,
+          brand: data.brand,
+          weight: data.weight,
+          dimensions: data.dimensions,
           manufacturingDate: data.manufacturingDate?.toISOString(),
           expiryDate: data.expiryDate?.toISOString(),
-          status: isAdmin ? product.status : 'pending', // Admins keep status, sellers reset to pending
+          isGstRegistered: data.isGstRegistered,
+          certification: data.certification,
+          shippingOptions: data.shippingOptions,
+          estimatedDelivery: data.estimatedDelivery,
+          returnPolicy: data.returnPolicy,
+          isPromoted: data.isPromoted,
+          isFeatured: data.isFeatured,
+          images: imageUploads,
+          status: isAdmin ? product.status : 'pending',
         };
+
         await updateProduct(product.id, updatedProductData);
          toast({
           title: 'Product Updated!',
@@ -316,20 +334,40 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             throw new Error("Could not find seller details.");
         }
         const newProduct: Omit<Product, 'id'> = {
-          ...data,
+          name: data.name,
+          description: data.description || '',
+          price: data.price,
+          discountPrice: data.discountPrice,
           images: imageUploads,
+          category: data.category,
+          subcategory: data.subcategory,
           seller: { id: sellerId, name: seller.name },
           status: 'pending',
+          keywords: data.keywords,
+          stock: data.stock,
+          unitOfMeasure: data.unitOfMeasure,
+          stockAlert: data.stockAlert,
+          brand: data.brand,
+          weight: data.weight,
+          dimensions: data.dimensions,
           manufacturingDate: data.manufacturingDate?.toISOString(),
           expiryDate: data.expiryDate?.toISOString(),
+          isGstRegistered: data.isGstRegistered,
+          certification: data.certification,
+          shippingOptions: data.shippingOptions,
+          estimatedDelivery: data.estimatedDelivery,
+          returnPolicy: data.returnPolicy,
+          isPromoted: data.isPromoted,
+          isFeatured: data.isFeatured,
         };
-        await addProduct(newProduct as Omit<Product, 'id'>);
+        await addProduct(newProduct);
         toast({
           title: 'Product Submitted!',
           description: `Your product is pending admin approval.`,
         });
         router.push(`/dashboard/${sellerId}/products?newProduct=true`);
       }
+      router.refresh();
 
     } catch (error) {
       console.error("Form submission error:", error);
@@ -355,7 +393,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     try {
         let imageUploads: { url: string; hint: string; }[] = [];
         if (imagePreviews.length > 0) {
-            imageUploads = imagePreviews.map(url => ({ url: url, hint: 'custom image' }));
+            imageUploads = imagePreviews.map(url => ({ url: url, hint: product?.images.find(i=>i.url === url)?.hint || 'custom image' }));
         } else {
             const randomImage = PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
             imageUploads.push({ url: randomImage.imageUrl, hint: randomImage.imageHint });
@@ -365,19 +403,38 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         if (!seller) throw new Error("Could not find seller details.");
 
         const draftProduct: Omit<Product, 'id'> = {
-            ...data,
+            name: data.name,
+            description: data.description || '',
+            price: data.price,
+            discountPrice: data.discountPrice,
             images: imageUploads,
+            category: data.category,
+            subcategory: data.subcategory,
             seller: { id: sellerId, name: seller.name },
             status: 'draft',
+            keywords: data.keywords,
+            stock: data.stock,
+            unitOfMeasure: data.unitOfMeasure,
+            stockAlert: data.stockAlert,
+            brand: data.brand,
+            weight: data.weight,
+            dimensions: data.dimensions,
             manufacturingDate: data.manufacturingDate?.toISOString(),
             expiryDate: data.expiryDate?.toISOString(),
+            isGstRegistered: data.isGstRegistered,
+            certification: data.certification,
+            shippingOptions: data.shippingOptions,
+            estimatedDelivery: data.estimatedDelivery,
+            returnPolicy: data.returnPolicy,
+            isPromoted: data.isPromoted,
+            isFeatured: data.isFeatured,
         };
 
         if (isEditMode && (product?.status === 'draft' || product?.status === 'pending' || product?.status === 'rejected')) {
             await updateProduct(product.id, draftProduct);
             toast({ title: 'Draft Updated', description: 'Your product draft has been updated.' });
         } else {
-            await addProduct(draftProduct as Omit<Product, 'id'>);
+            await addProduct(draftProduct);
             toast({ title: 'Saved as Draft', description: 'Your product has been saved as a draft.' });
         }
         router.push(`/dashboard/${sellerId}/products?draft=true`);
@@ -450,7 +507,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                                 Generate with AI
                             </Button>
                         </div>
-                        <FormControl><Textarea rows={6} placeholder="Describe your product in detail..." {...field} value={field.value ?? ''} /></FormControl>
+                        <FormControl><Textarea placeholder="Describe your product in detail..." {...field} value={field.value ?? ''} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )}/>
