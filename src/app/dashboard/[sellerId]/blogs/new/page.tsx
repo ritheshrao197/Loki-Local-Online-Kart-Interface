@@ -1,10 +1,29 @@
 
 'use client';
+import { Suspense, lazy } from 'react';
 import { useParams } from 'next/navigation';
-import { StoryForm } from '@/components/dashboard/StoryForm';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const StoryForm = lazy(() => import('@/components/dashboard/StoryForm').then(mod => ({ default: mod.StoryForm })));
+
+const FormSkeleton = () => (
+    <div className="space-y-6">
+        <div className="space-y-4 border p-6 rounded-lg">
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-10 w-full" />
+        </div>
+        <div className="space-y-4 border p-6 rounded-lg">
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-40 w-full" />
+        </div>
+        <div className="flex justify-end">
+            <Skeleton className="h-10 w-32" />
+        </div>
+    </div>
+)
 
 export default function NewStoryPage() {
   const params = useParams();
@@ -26,7 +45,9 @@ export default function NewStoryPage() {
         </Button>
         <h1 className="text-3xl font-bold font-headline">Create New Story</h1>
       </div>
-      <StoryForm sellerId={sellerId} />
+      <Suspense fallback={<FormSkeleton />}>
+        <StoryForm sellerId={sellerId} />
+      </Suspense>
     </div>
   );
 }

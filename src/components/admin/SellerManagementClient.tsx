@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Table,
@@ -25,6 +25,7 @@ import type { Seller } from '@/lib/types';
 import Link from 'next/link';
 import { updateSellerStatus } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '../ui/skeleton';
 
 const statusVariant = {
   pending: 'secondary',
@@ -37,10 +38,27 @@ interface SellerManagementClientProps {
   initialSellers: Seller[];
 }
 
+const SellerListSkeleton = () => (
+    <>
+        {Array.from({ length: 5 }).map((_, i) => (
+        <TableRow key={i}>
+            <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+            <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+            <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+            <TableCell className="hidden lg:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+            <TableCell className="hidden lg:table-cell"><Skeleton className="h-5 w-12" /></TableCell>
+            <TableCell><Skeleton className="h-8 w-20" /></TableCell>
+        </TableRow>
+        ))}
+    </>
+)
+
+
 export function SellerManagementClient({ initialSellers }: SellerManagementClientProps) {
   const [sellers, setSellers] = useState<Seller[]>(initialSellers);
   const { toast } = useToast();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     setSellers(initialSellers);
@@ -58,7 +76,11 @@ export function SellerManagementClient({ initialSellers }: SellerManagementClien
           if (a.status !== 'pending' && b.status === 'pending') return 1;
           return a.name.localeCompare(b.name);
       });
-      setSellers(updatedSellers);
+      
+      startTransition(() => {
+        setSellers(updatedSellers);
+        router.refresh();
+      });
 
       toast({
         title: 'Status Updated',
@@ -88,71 +110,73 @@ export function SellerManagementClient({ initialSellers }: SellerManagementClien
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sellers.length === 0 ? (
-              <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
-                      No sellers found. <Link href="/admin/sellers/new" className="text-primary underline">Add the first seller</Link>.
-                  </TableCell>
-              </TableRow>
-          ) : (
-            sellers.map(seller => (
-              <TableRow key={seller.id}>
-                <TableCell className="font-medium">{seller.name}</TableCell>
-                <TableCell>
-                  <Badge variant={statusVariant[seller.status]}>
-                    {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
-                <TableCell className="hidden lg:table-cell">{seller.pan}</TableCell>
-                <TableCell className="hidden lg:table-cell">{seller.commissionRate ?? '15'}%</TableCell>
-                <TableCell>
-                  {seller.status === 'pending' ? (
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700"
-                        onClick={() => handleSellerStatusChange(seller.id, 'approved')}
-                      >
-                        <Check className="h-4 w-4 mr-1" /> Approve
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700"
-                        onClick={() => handleSellerStatusChange(seller.id, 'rejected')}
-                      >
-                        <X className="h-4 w-4 mr-1" /> Reject
-                      </Button>
-                    </div>
-                  ) : (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/admin/sellers/${seller.id}`}>View Details</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleSellerStatusChange(seller.id, 'suspended')}
-                          className="text-destructive"
-                          disabled={seller.status === 'suspended'}
-                        >
-                          Suspend
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))
-          )}
+            <Suspense fallback={<SellerListSkeleton/>}>
+              {isPending ? <SellerListSkeleton/> : sellers.length === 0 ? (
+                  <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                          No sellers found. <Link href="/admin/sellers/new" className="text-primary underline">Add the first seller</Link>.
+                      </TableCell>
+                  </TableRow>
+              ) : (
+                sellers.map(seller => (
+                  <TableRow key={seller.id}>
+                    <TableCell className="font-medium">{seller.name}</TableCell>
+                    <TableCell>
+                      <Badge variant={statusVariant[seller.status]}>
+                        {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{seller.pan}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{seller.commissionRate ?? '15'}%</TableCell>
+                    <TableCell>
+                      {seller.status === 'pending' ? (
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-green-600 border-green-600 hover:bg-green-50 hover:text-green-700"
+                            onClick={() => handleSellerStatusChange(seller.id, 'approved')}
+                          >
+                            <Check className="h-4 w-4 mr-1" /> Approve
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => handleSellerStatusChange(seller.id, 'rejected')}
+                          >
+                            <X className="h-4 w-4 mr-1" /> Reject
+                          </Button>
+                        </div>
+                      ) : (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Toggle menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem asChild>
+                              <Link href={`/admin/sellers/${seller.id}`}>View Details</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleSellerStatusChange(seller.id, 'suspended')}
+                              className="text-destructive"
+                              disabled={seller.status === 'suspended'}
+                            >
+                              Suspend
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </Suspense>
         </TableBody>
       </Table>
     </div>

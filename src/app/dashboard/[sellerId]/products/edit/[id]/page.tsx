@@ -1,15 +1,24 @@
 
 'use client';
 
-import { ProductForm } from "@/components/dashboard/ProductForm";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProductById } from "@/lib/firebase/firestore";
 import { notFound, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import type { Product } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const ProductForm = lazy(() => import('@/components/dashboard/ProductForm').then(mod => ({ default: mod.ProductForm })));
+
+const ProductFormSkeleton = () => (
+    <div className="space-y-4">
+        <Skeleton className="h-10 w-1/4" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
+    </div>
+);
 
 export default function EditProductPage() {
   const params = useParams();
@@ -53,13 +62,11 @@ export default function EditProductPage() {
         <h1 className="text-3xl font-bold font-headline">Edit Product</h1>
       </div>
       {loading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-1/4" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-        </div>
+        <ProductFormSkeleton />
       ) : product ? (
-        <ProductForm product={product} />
+        <Suspense fallback={<ProductFormSkeleton />}>
+          <ProductForm product={product} />
+        </Suspense>
       ) : null}
     </div>
   );

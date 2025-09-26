@@ -10,6 +10,12 @@ import type { Seller } from "@/lib/types";
 import { getSellers } from "@/lib/firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import dynamic from "next/dynamic";
+
+const SalesChart = dynamic(() => import('@/components/charts/SalesChart'), {
+  loading: () => <div className="h-60 w-full bg-secondary rounded-lg flex items-center justify-center"><p className="text-muted-foreground">Loading chart...</p></div>,
+  ssr: false,
+});
 
 export default function ReportsPage() {
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -59,10 +65,7 @@ export default function ReportsPage() {
             <CardDescription>A summary of sales performance.</CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Placeholder for a chart */}
-            <div className="h-60 w-full bg-secondary rounded-lg flex items-center justify-center">
-              <p className="text-muted-foreground">Sales chart will be displayed here.</p>
-            </div>
+            <SalesChart />
           </CardContent>
         </Card>
         <Card>

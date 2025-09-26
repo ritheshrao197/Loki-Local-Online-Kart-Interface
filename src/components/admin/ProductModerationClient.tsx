@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useTransition, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import { ProductModerationCard } from "@/components/admin/ProductModerationCard";
 import type { Product } from '@/lib/types';
 import { updateProductStatus, deleteProduct } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ProductModerationCard } from '@/components/admin/ProductModerationCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type ProductStatus = 'pending' | 'approved' | 'rejected';
 
@@ -15,6 +16,23 @@ interface ProductModerationClientProps {
   initialProducts: Product[];
   searchParams: { tab?: string };
 }
+
+const CardSkeleton = () => (
+    <div className="border rounded-lg p-6 space-y-4">
+      <div className="flex gap-6">
+        <Skeleton className="h-24 w-24 rounded-md" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+    </div>
+  );
 
 export function ProductModerationClient({ initialProducts, searchParams }: ProductModerationClientProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -105,7 +123,9 @@ export function ProductModerationClient({ initialProducts, searchParams }: Produ
         <TabsTrigger value="rejected">Rejected</TabsTrigger>
       </TabsList>
       <TabsContent value={currentTab} className="mt-6 space-y-6" forceMount>
-        {isPending ? 'Loading...' : renderProductList()}
+         <Suspense fallback={<CardSkeleton />}>
+          {isPending ? <CardSkeleton /> : renderProductList()}
+        </Suspense>
       </TabsContent>
     </Tabs>
   );
