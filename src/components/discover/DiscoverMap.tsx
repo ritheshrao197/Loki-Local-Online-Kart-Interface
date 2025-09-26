@@ -4,15 +4,20 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect } from 'react';
 import type { Seller } from '@/lib/types';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Fix for default icon not showing up in Next.js
-// @ts-ignore
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default.src,
-  iconUrl: require('leaflet/dist/images/marker-icon.png').default.src,
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png').default.src,
+const customIcon = new L.Icon({
+  iconUrl: markerIcon.src,
+  iconRetinaUrl: markerIcon2x.src,
+  shadowUrl: markerShadow.src,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
 });
+
 
 interface DiscoverMapProps {
   sellers: Seller[];
@@ -53,7 +58,7 @@ export default function DiscoverMap({ sellers, selectedSeller }: DiscoverMapProp
       />
       {validSellers.map(seller => (
         seller.location && (
-            <Marker key={seller.id} position={[seller.location.lat, seller.location.lng]}>
+            <Marker key={seller.id} position={[seller.location.lat, seller.location.lng]} icon={customIcon}>
             <Popup>
                 {seller.name}
             </Popup>
