@@ -31,10 +31,10 @@ export function Promotions() {
 
   if (loading) {
       return (
-          <section className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
               <Skeleton className="h-64" />
               <Skeleton className="h-64" />
-          </section>
+          </div>
       )
   }
 
@@ -43,7 +43,7 @@ export function Promotions() {
   }
 
   return (
-    <section className="grid md:grid-cols-2 gap-6">
+    <div className="grid md:grid-cols-2 gap-6">
       {promotedProducts.map((product, index) => (
         <Link href={`/products/${product.id}`} key={product.id} className="group">
           <Card className="relative overflow-hidden h-64">
@@ -65,6 +65,6 @@ export function Promotions() {
           </Card>
         </Link>
       ))}
-    </section>
+    </div>
   );
 }

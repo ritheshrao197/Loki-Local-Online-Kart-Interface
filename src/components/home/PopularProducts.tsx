@@ -29,7 +29,7 @@ export function PopularProducts() {
 
   if (loading) {
     return (
-      <section>
+      <div>
         <h2 className="text-2xl font-bold font-headline mb-6">Popular Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {Array.from({length: 4}).map((_, i) => (
@@ -40,7 +40,7 @@ export function PopularProducts() {
              </div>
           ))}
         </div>
-      </section>
+      </div>
     )
   }
 
@@ -49,7 +49,7 @@ export function PopularProducts() {
   }
 
   return (
-    <section>
+    <div>
       <h2 className="text-2xl font-bold font-headline mb-6">Popular Products</h2>
       <Carousel
         opts={{
@@ -70,6 +70,6 @@ export function PopularProducts() {
         <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex" />
         <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex" />
       </Carousel>
-    </section>
+    </div>
   );
 }

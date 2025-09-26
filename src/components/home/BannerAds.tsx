@@ -32,10 +32,10 @@ export function BannerAds({ placement }: BannerAdsProps) {
 
   if (loading) {
     return (
-      <section className="my-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
-      </section>
+      </div>
     );
   }
 
@@ -44,7 +44,7 @@ export function BannerAds({ placement }: BannerAdsProps) {
   }
 
   return (
-    <section className="my-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {ads.map((ad) => (
         <Link href={ad.linkUrl} key={ad.id} className="group block">
           <Card className="overflow-hidden">
@@ -60,6 +60,6 @@ export function BannerAds({ placement }: BannerAdsProps) {
           </Card>
         </Link>
       ))}
-    </section>
+    </div>
   );
 }

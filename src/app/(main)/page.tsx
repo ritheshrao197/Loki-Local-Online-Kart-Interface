@@ -24,9 +24,9 @@ export default function HomePage() {
 
   if (!isClient) {
     return (
-      <div className="container py-8 space-y-12">
+      <div className="space-y-12">
         <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />
-        <div className="space-y-4">
+        <div className="container space-y-4">
           <Skeleton className="h-8 w-1/4" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Skeleton className="aspect-square" />
@@ -35,7 +35,7 @@ export default function HomePage() {
             <Skeleton className="aspect-square" />
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="container space-y-4">
             <Skeleton className="h-8 w-1/4" />
             <Skeleton className="h-64 w-full" />
         </div>
@@ -46,8 +46,8 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <HeroSlider />
-      <div className="container py-8">
-        <section className="text-center mb-12">
+      <div className="container py-12 space-y-20">
+        <section className="text-center">
           <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
             Discover Local Treasures
           </h1>
@@ -58,20 +58,22 @@ export default function HomePage() {
 
         <BannerAds placement="homepage_top" />
 
-        <FeaturedCategories />
+        <section>
+          <FeaturedCategories />
+        </section>
 
-        <div className="mt-12">
+        <section>
           <Promotions />
-        </div>
+        </section>
         
-        <div className="mt-12">
-            <PopularProducts />
-        </div>
+        <section>
+          <PopularProducts />
+        </section>
 
-        <div className="mt-20">
+        <section>
           <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
           <ProductGrid />
-        </div>
+        </section>
       </div>
     </div>
   );

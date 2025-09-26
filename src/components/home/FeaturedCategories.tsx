@@ -44,12 +44,12 @@ export function FeaturedCategories() {
 
   if (loading) {
     return (
-        <section className="mt-12">
+        <div>
             <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="aspect-square"/>)}
             </div>
-        </section>
+        </div>
     )
   }
 
@@ -58,7 +58,7 @@ export function FeaturedCategories() {
   }
 
   return (
-    <section className="mt-12">
+    <div>
       <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {categories.map((category) => (
@@ -81,6 +81,6 @@ export function FeaturedCategories() {
           </Link>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
