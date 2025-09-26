@@ -79,10 +79,10 @@ export default function SellerStoriesPage() {
       <div>
         <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl font-bold font-headline">My Stories</h1>
+            <h1 className="text-3xl font-bold font-headline text-gradient">My Stories</h1>
             <p className="text-muted-foreground mt-1">Share your brand's journey and connect with your customers.</p>
           </div>
-          <Button asChild>
+          <Button asChild className="btn-primary">
             <Link href={`/dashboard/${sellerId}/blogs/new`}>
               <PlusCircle className="mr-2 h-4 w-4" /> Create New Story
             </Link>
@@ -90,7 +90,7 @@ export default function SellerStoriesPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
-            <Card>
+            <Card className="card-modern">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Stories</CardTitle>
                     <BookOpen className="h-4 w-4 text-muted-foreground"/>
@@ -99,7 +99,7 @@ export default function SellerStoriesPage() {
                     {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{totalStories}</div>}
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="card-modern">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Views</CardTitle>
                     <Eye className="h-4 w-4 text-muted-foreground"/>
@@ -108,7 +108,7 @@ export default function SellerStoriesPage() {
                     {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{totalViews.toLocaleString('en-IN')}</div>}
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="card-modern">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
                     <Heart className="h-4 w-4 text-muted-foreground"/>
@@ -119,7 +119,7 @@ export default function SellerStoriesPage() {
             </Card>
         </div>
 
-        <div className="border rounded-lg">
+        <div className="border rounded-lg card-modern">
           <Table>
             <TableHeader>
               <TableRow>

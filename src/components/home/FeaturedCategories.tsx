@@ -47,14 +47,14 @@ export function FeaturedCategories() {
   return (
     <div>
       <motion.h2 
-        className="text-2xl font-bold font-headline mb-6"
+        className="text-2xl font-bold font-headline mb-6 text-gradient text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         Featured Categories
       </motion.h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {categories.map((category, index) => (
           <motion.div
             key={category.name}
@@ -73,7 +73,7 @@ export function FeaturedCategories() {
             className="group"
           >
             <Link href="/" className="block h-full">
-              <Card className="overflow-hidden border-0 bg-gradient-to-br from-card to-card/80 shadow-sm hover:shadow-xl transition-all duration-300 h-full transform-gpu rounded-app-lg">
+              <Card className="overflow-hidden border border-border bg-card shadow-sm hover:shadow-md transition-all duration-300 h-full rounded-lg">
                 <div className="relative aspect-[4/5]">
                   <motion.div
                     className="absolute inset-0"
@@ -89,9 +89,9 @@ export function FeaturedCategories() {
                       data-ai-hint={category.hint}
                     />
                   </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end justify-start p-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end justify-start p-3">
                     <motion.h3 
-                      className="font-headline text-white text-lg font-semibold drop-shadow-md"
+                      className="font-headline text-white text-sm font-semibold drop-shadow-md"
                       whileHover={{ 
                         scale: 1.05,
                         transition: { duration: 0.2 }

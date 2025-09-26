@@ -44,7 +44,7 @@ export function BannerAds({ placement }: BannerAdsProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {ads.map((ad, index) => (
         <motion.div
           key={ad.id}
@@ -63,7 +63,7 @@ export function BannerAds({ placement }: BannerAdsProps) {
           className="group block"
         >
           <Link href={ad.linkUrl} className="group block">
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden border border-border bg-card shadow-sm hover:shadow-md transition-all duration-300">
               <div className="relative aspect-[2/1] w-full">
                 <motion.div
                   className="absolute inset-0"

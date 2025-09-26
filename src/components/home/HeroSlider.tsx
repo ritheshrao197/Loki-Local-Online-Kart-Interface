@@ -51,9 +51,9 @@ export function HeroSlider() {
 
   if (slides.length === 0) {
     return (
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4 rounded-app-xl">
+      <div className="relative h-[300px] md:h-[400px] w-full bg-card border border-border rounded-lg flex flex-col items-center justify-center text-center p-4">
         <motion.h2 
-          className="text-3xl font-bold font-headline"
+          className="text-2xl font-bold font-headline text-gradient"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -61,7 +61,7 @@ export function HeroSlider() {
           Welcome to Loki
         </motion.h2>
         <motion.p 
-          className="mt-4 max-w-lg text-lg text-muted-foreground"
+          className="mt-4 max-w-lg text-muted-foreground"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -81,10 +81,10 @@ export function HeroSlider() {
         }}
         setApi={setApi}
       >
-        <CarouselContent className="rounded-app-xl overflow-hidden shadow-depth-4">
+        <CarouselContent className="rounded-lg overflow-hidden shadow-modern">
           {slides.map((slide, index) => (
-            <CarouselItem key={slide.id} className="rounded-app-xl overflow-hidden">
-              <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-app-xl overflow-hidden">
+            <CarouselItem key={slide.id} className="rounded-lg overflow-hidden">
+              <div className="relative h-[300px] md:h-[400px] w-full rounded-lg overflow-hidden">
                 <motion.div
                   initial={{ scale: 1.05, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -96,7 +96,7 @@ export function HeroSlider() {
                     alt={slide.title}
                     fill
                     priority={index === 0}
-                    className="object-cover rounded-app-xl"
+                    className="object-cover rounded-lg"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     placeholder="blur"
                     blurDataURL={`/_next/image?url=${slide.imageUrl}&w=16&q=1`}
@@ -104,9 +104,9 @@ export function HeroSlider() {
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                 </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent rounded-app-xl flex flex-col items-start justify-center text-left text-white p-8 md:p-12 lg:p-16">
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent rounded-lg flex flex-col items-start justify-center text-left text-white p-6 md:p-8">
                   <motion.h2 
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline max-w-lg"
+                    className="text-2xl md:text-3xl font-bold font-headline max-w-lg"
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ 
@@ -119,7 +119,7 @@ export function HeroSlider() {
                     {slide.title}
                   </motion.h2>
                   <motion.p 
-                    className="mt-4 md:mt-6 max-w-md text-lg md:text-xl"
+                    className="mt-4 max-w-md text-base"
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ 
@@ -141,7 +141,7 @@ export function HeroSlider() {
                       stiffness: 100
                     }}
                   >
-                    <Button asChild className="mt-6 md:mt-8 shadow-lg hover:shadow-xl transition-shadow rounded-full" size="lg">
+                    <Button asChild className="mt-4 btn-primary" size="lg">
                       <Link href={slide.ctaLink}>{slide.ctaText}</Link>
                     </Button>
                   </motion.div>
@@ -150,8 +150,8 @@ export function HeroSlider() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex rounded-full bg-white/30 hover:bg-white/50 backdrop-blur-sm border-0 w-10 h-10 text-white" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex rounded-full bg-white/30 hover:bg-white/50 backdrop-blur-sm border-0 w-10 h-10 text-white" />
+        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border-0 w-10 h-10 text-white" />
+        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border-0 w-10 h-10 text-white" />
       </Carousel>
     </section>
   );

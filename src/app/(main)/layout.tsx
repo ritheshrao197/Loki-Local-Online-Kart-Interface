@@ -22,8 +22,27 @@ export default function MainLayout({
       const userRole = sessionStorage.getItem('userRole');
       const userId = sessionStorage.getItem('userId');
 
-      // Only redirect if they are NOT on the homepage
-      if (pathname !== '/') {
+      // Define public routes that all users can access
+      const publicRoutes = [
+        '/home',
+        '/products',
+        '/categories',
+        '/search',
+        '/deals',
+        '/wishlist',
+        '/about',
+        '/contact',
+        '/faq',
+        '/privacy',
+        '/blogs',
+        '/sellers',
+        '/discover',
+        '/cart',
+        '/profile'
+      ];
+
+      // Only redirect if they are NOT on a public route
+      if (!publicRoutes.includes(pathname)) {
         if (userRole === 'admin') {
           router.replace('/admin');
         } else if (userRole === 'seller' && userId) {

@@ -1,8 +1,7 @@
 
-import { HomePageClient } from './HomePageClient';
+import { redirect } from 'next/navigation';
 
-// This is now a pure Server Component.
-// The actual content and client-side logic have been moved to HomePageClient.
-export default function HomePage() {
-  return <HomePageClient />;
+// Redirect root to /home
+export default function RootPage() {
+  redirect('/home');
 }

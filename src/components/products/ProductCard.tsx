@@ -43,16 +43,16 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
       whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group rounded-app-lg shadow-depth-1 hover:shadow-depth-3 border-0 bg-gradient-app">
-        <div className="h-full transition-all duration-300 rounded-app-lg">
-          <CardContent className="p-0 flex flex-col flex-grow h-full rounded-app-lg">
+      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group rounded-2xl shadow-modern hover:shadow-glow border-0 card-modern">
+        <div className="h-full transition-all duration-300 rounded-2xl">
+          <CardContent className="p-0 flex flex-col flex-grow h-full rounded-2xl">
             <Link href={`/products/${product.id}`} className="block flex flex-col flex-grow">
-              <div className="relative aspect-square w-full overflow-hidden rounded-t-app-lg">
+              <div className="relative aspect-square w-full overflow-hidden rounded-t-2xl">
                 <Image
                   src={product.images[0].url}
                   alt={product.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-app-lg"
+                  className="object-cover transition-transform duration-300 group-hover:scale-110 rounded-t-2xl"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   data-ai-hint={product.images[0].hint}
                   quality={80}
@@ -93,7 +93,7 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                     whileTap={{ scale: 0.97 }}
                     className="w-full"
                   >
-                    <Button size="sm" className="w-full rounded-full shadow-sm hover:shadow-md transition-shadow" onClick={handleAddToCart}>
+                    <Button size="sm" className="w-full btn-primary" onClick={handleAddToCart}>
                         <ShoppingCart className="mr-2 h-4 w-4"/>
                         Add to Cart
                     </Button>

@@ -93,9 +93,9 @@ export default function OrdersPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold font-headline">Orders</h1>
+        <h1 className="text-3xl font-bold font-headline text-gradient">Orders</h1>
       </div>
-      <div className="border rounded-lg overflow-x-auto">
+      <div className="border rounded-lg overflow-x-auto card-modern">
         <Table>
           <TableHeader>
             <TableRow>

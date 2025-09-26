@@ -43,7 +43,7 @@ export function PopularProducts() {
   return (
     <div>
       <motion.h2 
-        className="text-2xl font-bold font-headline mb-6"
+        className="text-2xl font-bold font-headline mb-6 text-gradient text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -77,8 +77,8 @@ export function PopularProducts() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex" />
-        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex" />
+        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex bg-background/80 hover:bg-background border-border" />
+        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex bg-background/80 hover:bg-background border-border" />
       </Carousel>
     </div>
   );

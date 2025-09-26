@@ -109,7 +109,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
               <Store className="size-6 text-primary" />
-              <span>Loki</span>
+              <span className="text-gradient">Loki</span>
             </Link>
             <SidebarTrigger className="ml-auto" />
           </div>

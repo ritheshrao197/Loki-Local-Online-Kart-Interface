@@ -109,14 +109,14 @@ export default function ProductsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold font-headline">My Products</h1>
-        <Button asChild>
+        <h1 className="text-3xl font-bold font-headline text-gradient">My Products</h1>
+        <Button asChild className="btn-primary">
           <Link href={`/dashboard/${sellerId}/products/new`}>
             <PlusCircle className="mr-2 h-4 w-4" /> Add Product
           </Link>
         </Button>
       </div>
-      <div className="border rounded-lg">
+      <div className="border rounded-lg card-modern">
         <Table>
           <TableHeader>
             <TableRow>

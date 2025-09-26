@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Heart, Tag, Grid3X3 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -64,9 +64,13 @@ export function MobileNav() {
   };
 
   const navItems = [
-    { href: '/', label: 'Home', icon: Home },
+    { href: '/home', label: 'Home', icon: Home },
+    { href: '/products', label: 'Products', icon: Grid3X3 },
+    { href: '/categories', label: 'Categories', icon: Tag },
+    { href: '/deals', label: 'Deals', icon: Tag },
     { href: '/discover', label: 'Discover', icon: Compass },
     { href: '/blogs', label: 'Stories', icon: Newspaper },
+    { href: '/wishlist', label: 'Wishlist', icon: Heart },
     { href: getProfileLink(), label: 'Profile', icon: (userRole === 'admin' || userRole === 'seller') ? LayoutDashboard : User },
     { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
   ];
