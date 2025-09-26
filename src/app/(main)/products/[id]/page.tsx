@@ -112,7 +112,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="container py-12">
+    <div className="px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         <div className="flex flex-col gap-4">
             <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
@@ -211,7 +211,7 @@ export default function ProductDetailPage() {
 
 
 const ProductDetailSkeleton = () => (
-  <div className="container py-12">
+  <div className="px-4 sm:px-6 lg:px-8 py-12">
     <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
       <div>
         <Skeleton className="aspect-square w-full rounded-lg" />

@@ -50,7 +50,7 @@ export default function ProfilePage() {
   ]
 
   return (
-    <div className="container py-12">
+    <div className="px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex items-center gap-6 mb-8">
         <Avatar className="h-24 w-24">
           <AvatarImage src={user.avatarUrl} alt={user.name} />

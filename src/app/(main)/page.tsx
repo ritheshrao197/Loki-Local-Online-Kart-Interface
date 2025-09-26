@@ -31,7 +31,7 @@ export default function HomePage() {
     return (
       <div className="space-y-12">
         <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />
-        <div className="container space-y-4 py-12">
+        <div className="px-4 sm:px-6 lg:px-8 space-y-4 py-12">
           <Skeleton className="h-8 w-1/4" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Skeleton className="aspect-square" />
@@ -40,7 +40,7 @@ export default function HomePage() {
             <Skeleton className="aspect-square" />
           </div>
         </div>
-        <div className="container space-y-4">
+        <div className="px-4 sm:px-6 lg:px-8 space-y-4">
             <Skeleton className="h-8 w-1/4" />
             <Skeleton className="h-64 w-full" />
         </div>
@@ -53,48 +53,48 @@ export default function HomePage() {
       <HeroSlider />
       <div className="space-y-24">
         <section className="py-12">
-            <div className="container">
-                <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
+            <div className="px-4 sm:px-6 lg:px-8">
+                <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl text-left">
                     Discover Local Treasures
                 </h1>
-                <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+                <p className="mt-4 max-w-2xl text-lg text-muted-foreground text-left">
                     Explore unique, handcrafted products from local artisans and manufacturers near you.
                 </p>
             </div>
         </section>
 
         <section className="py-12">
-            <div className="container">
+            <div className="px-4 sm:px-6 lg:px-8">
                 <BannerAds placement="homepage_top" />
             </div>
         </section>
 
         <section className="py-12">
-            <div className="container">
+            <div className="px-4 sm:px-6 lg:px-8">
                 <FeaturedCategories />
             </div>
         </section>
 
         <section className="py-12">
-            <div className="container">
+            <div className="px-4 sm:px-6 lg:px-8">
                 <Promotions />
             </div>
         </section>
 
         <section className="py-12">
-            <div className="container">
+            <div className="px-4 sm:px-6 lg:px-8">
                 <RecentlyViewedProducts />
             </div>
         </section>
         
         <section className="py-12">
-            <div className="container">
+            <div className="px-4 sm:px-6 lg:px-8">
                 <PopularProducts />
             </div>
         </section>
 
         <section className="py-12">
-            <div className="container">
+            <div className="px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
                 <ProductGrid />
             </div>

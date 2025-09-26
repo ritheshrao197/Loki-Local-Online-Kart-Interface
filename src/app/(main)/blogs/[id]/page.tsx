@@ -33,7 +33,7 @@ export default async function StoryPage({ params }: StoryPageProps) {
   }
 
   return (
-    <div className="container max-w-4xl py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <article className="prose lg:prose-xl max-w-none">
         {story.featuredImage && (
           <div className="relative aspect-video mb-8">
@@ -67,7 +67,7 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
 export function StoryPageSkeleton() {
   return (
-    <div className="container max-w-4xl py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <Skeleton className="relative aspect-video mb-8" />
       <Skeleton className="h-12 w-3/4 mb-4" />
       <div className="flex items-center gap-4 mb-8">

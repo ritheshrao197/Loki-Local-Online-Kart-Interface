@@ -81,7 +81,7 @@ export default function DiscoverPage() {
   }, [sellers, searchTerm]);
 
   return (
-    <div className="container py-12">
+    <div className="px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
           Discover Local Sellers
