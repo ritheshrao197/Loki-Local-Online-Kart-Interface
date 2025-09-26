@@ -2,20 +2,13 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { Montserrat, PT_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 
-const fontSans = PT_Sans({
+const fontInter = Inter({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-sans',
-});
-
-const fontHeadline = Montserrat({
-  subsets: ['latin'],
-  weight: ['700'],
-  variable: '--font-headline',
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
@@ -33,8 +26,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable,
-          fontHeadline.variable
+          fontInter.variable
         )}
         suppressHydrationWarning
       >
