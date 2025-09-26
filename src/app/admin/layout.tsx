@@ -47,8 +47,10 @@ function AdminDashboardSkeleton() {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-             <Store className="size-6 text-primary" />
-             <SidebarMenuSkeleton className="h-6 w-20" />
+            <div className="flex items-center gap-2 font-headline text-lg font-semibold">
+                <Skeleton className="h-7 w-7" />
+                <Skeleton className="h-6 w-20" />
+            </div>
             <SidebarTrigger className="ml-auto" />
           </div>
         </SidebarHeader>
