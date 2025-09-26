@@ -80,7 +80,7 @@ export function MobileNav() {
     { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
     { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: '/profile', label: 'Profile', icon: User },
+    { href: `/sellers/${userId}`, label: 'Profile', icon: User },
   ];
 
   const navItems = isDashboard ? sellerNavItems : buyerNavItems;
