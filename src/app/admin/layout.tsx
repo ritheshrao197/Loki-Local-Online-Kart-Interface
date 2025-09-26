@@ -22,7 +22,6 @@ import {
   Package,
   Users,
   LogOut,
-  ShieldCheck,
   Landmark,
   BarChart3,
   Gavel,
@@ -47,9 +46,10 @@ function AdminDashboardSkeleton() {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 font-headline text-lg font-semibold">
-                <Skeleton className="h-7 w-20" />
-            </div>
+            <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
+              <Skeleton className="h-7 w-7" />
+              <Skeleton className="h-6 w-20" />
+            </Link>
             <SidebarTrigger className="ml-auto" />
           </div>
         </SidebarHeader>
@@ -64,8 +64,8 @@ function AdminDashboardSkeleton() {
             <SidebarMenuSkeleton showIcon/>
             <SidebarMenuItem>
               <SidebarMenuButton>
-                <SidebarMenuSkeleton className="size-7 rounded-full" />
-                <SidebarMenuSkeleton className="h-5 w-24" />
+                <Skeleton className="size-7 rounded-full" />
+                <Skeleton className="h-5 w-24" />
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -73,8 +73,8 @@ function AdminDashboardSkeleton() {
       </Sidebar>
       <SidebarInset>
         <div className="p-4 sm:p-6 lg:p-8">
-            <SidebarMenuSkeleton className="h-8 w-1/4 mb-6" />
-            <SidebarMenuSkeleton className="h-64 w-full" />
+            <Skeleton className="h-8 w-1/4 mb-6" />
+            <Skeleton className="h-64 w-full" />
         </div>
       </SidebarInset>
     </SidebarProvider>
