@@ -99,10 +99,13 @@ function sanitizeProductData(productData: { [key: string]: any }) {
 
             if (value === undefined) {
                 sanitizedData[key] = null;
-            } else if (value === null) {
-                sanitizedData[key] = null;
-            } else if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Timestamp) && value !== serverTimestamp()) {
-                // Recursively sanitize nested objects (like 'dimensions'), but not Timestamps or serverTimestamp sentinels
+            } else if (Array.isArray(value)) {
+                // If the value is an array, map over it and sanitize each item if it's an object
+                 sanitizedData[key] = value.map(item =>
+                    (typeof item === 'object' && item !== null && !Array.isArray(item)) ? sanitizeProductData(item) : item
+                );
+            } else if (typeof value === 'object' && value !== null && !(value instanceof Timestamp) && value !== serverTimestamp()) {
+                // Recursively sanitize nested objects (like 'dimensions' or 'seller')
                 sanitizedData[key] = sanitizeProductData(value);
             } else {
                 sanitizedData[key] = value;
