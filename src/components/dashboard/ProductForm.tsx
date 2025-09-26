@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,9 +15,9 @@ import { useToast } from '@/hooks/use-toast';
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
 import { autoCategorizeProduct } from '@/ai/flows/auto-categorize-product';
 import { CalendarIcon, Loader2, Sparkles, Trash2, UploadCloud } from 'lucide-react';
-import type { Product } from '@/lib/types';
+import type { Product, Seller } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addProduct, updateProduct, getSellerById } from '@/lib/firebase/firestore';
+import { addProduct, updateProduct, getSellerById, getSellers } from '@/lib/firebase/firestore';
 import Image from 'next/image';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -60,6 +60,8 @@ const formSchema = z.object({
   returnPolicy: z.enum(['none', '7-day', '15-day']).optional(),
   isPromoted: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
+  // Admin-specific field
+  sellerId: z.string().optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -72,7 +74,7 @@ interface ProductFormProps {
 export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const router = useRouter();
   const params = useParams();
-  const sellerId = (isAdmin ? product?.seller.id : params.sellerId) as string;
+  const urlSellerId = params.sellerId as string;
 
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,8 +82,20 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const [isCategorizing, setIsCategorizing] = useState(false);
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [suggestedCategories, setSuggestedCategories] = useState<string[]>(product ? [product.category] : []);
+  const [sellers, setSellers] = useState<Seller[]>([]);
   
   const isEditMode = !!product;
+  const isAdminCreateMode = isAdmin && !isEditMode;
+
+  useEffect(() => {
+    if (isAdminCreateMode) {
+      getSellers().then(fetchedSellers => {
+        const approvedSellers = fetchedSellers.filter(s => s.status === 'approved');
+        setSellers(approvedSellers);
+      });
+    }
+  }, [isAdminCreateMode]);
+
 
   const defaultValues: Partial<ProductFormValues> = isEditMode ? {
     name: product.name,
@@ -106,6 +120,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     returnPolicy: product.returnPolicy || 'none',
     isPromoted: product.isPromoted || false,
     isFeatured: product.isFeatured || false,
+    sellerId: product.seller.id,
   } : {
     name: '',
     description: '',
@@ -237,8 +252,11 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
 
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
+    
+    const sellerId = isAdmin ? (isEditMode ? product.seller.id : data.sellerId) : urlSellerId;
+
     if (!sellerId) {
-      toast({ title: "Error", description: "Seller not identified.", variant: "destructive" });
+      toast({ title: "Seller Not Selected", description: "Please select a seller for this product.", variant: "destructive" });
       setIsSubmitting(false);
       return;
     }
@@ -268,14 +286,18 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         const newProduct: Omit<Product, 'id'> = {
           ...data,
           seller: { id: sellerId, name: seller.name },
-          status: 'pending',
+          status: isAdmin ? 'approved' : 'pending',
         };
         await addProduct(newProduct);
         toast({
           title: 'Product Submitted!',
           description: `Your product is pending admin approval.`,
         });
-        router.push(`/dashboard/${sellerId}/products?newProduct=true`);
+        if (isAdmin) {
+          router.push(`/admin/products?newProduct=true`);
+        } else {
+          router.push(`/dashboard/${sellerId}/products?newProduct=true`);
+        }
       }
       router.refresh();
 
@@ -293,6 +315,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const handleSaveAsDraft = async () => {
      const data = form.getValues();
      setIsSubmitting(true);
+     
+     const sellerId = isAdmin ? data.sellerId : urlSellerId;
      
       if (!sellerId) {
         toast({ title: "Error", description: "Seller not identified.", variant: "destructive" });
@@ -339,7 +363,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             await addProduct(draftProduct);
             toast({ title: 'Saved as Draft', description: 'Your product has been saved as a draft.' });
         }
-        router.push(`/dashboard/${sellerId}/products?draft=true`);
+        router.push(`/dashboard/${urlSellerId}/products?draft=true`);
         router.refresh();
     } catch (error) {
         console.error("Draft submission error:", error);
@@ -377,6 +401,19 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                 <CardDescription>Enter the basic details for your product.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {isAdminCreateMode && (
+                   <FormField control={form.control} name="sellerId" render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Seller</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger><SelectValue placeholder="Select a seller to assign this product to" /></SelectTrigger></FormControl>
+                            <SelectContent>{sellers.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                        </Select>
+                        <FormDescription>This product will be created on behalf of the selected seller.</FormDescription>
+                        <FormMessage />
+                        </FormItem>
+                    )}/>
+                )}
                 <FormField control={form.control} name="name" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Product Name</FormLabel>
@@ -716,7 +753,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             {!isAdmin && <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>}
             <Button type="submit" disabled={isSubmitting || isProcessingImages}>
               {(isSubmitting || isProcessingImages) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isEditMode ? 'Save Changes' : 'Submit for Review'}
+              {isEditMode ? 'Save Changes' : (isAdmin ? 'Create Product' : 'Submit for Review')}
             </Button>
         </div>
       </form>

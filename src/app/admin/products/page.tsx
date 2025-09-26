@@ -9,6 +9,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { PlusCircle } from 'lucide-react';
 
 type ProductStatus = 'pending' | 'approved' | 'rejected';
 
@@ -106,9 +109,16 @@ export default function AdminProductsPage() {
 
   return (
     <div className="md:col-span-2 lg:col-span-3">
-        <div className="mb-6">
-            <h1 className="text-3xl font-bold font-headline">Product Moderation</h1>
-            <p className="text-muted-foreground">Review and manage products submitted by sellers.</p>
+        <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+            <div>
+                <h1 className="text-3xl font-bold font-headline">Product Moderation</h1>
+                <p className="text-muted-foreground">Review and manage products submitted by sellers.</p>
+            </div>
+            <Button asChild>
+                <Link href="/admin/products/new">
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Product
+                </Link>
+            </Button>
         </div>
 
         <Tabs value={currentTab} onValueChange={(value) => setCurrentTab(value as ProductStatus)}>
