@@ -442,7 +442,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                             <FormMessage />
                         </FormItem>
                     )}/>
-                    <div className="mt-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {imagePreviews.map((img, index) => (
                             <div key={index} className="relative group aspect-square">
                                 <Image src={img.url} alt={`Preview ${index+1}`} fill className="object-cover rounded-md border"/>
@@ -577,7 +577,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
           </div>
 
           {/* Right Sidebar */}
-          <div className="space-y-8">
+          <div className="lg:col-span-1 space-y-8">
             <Card>
               <CardHeader>
                 <CardTitle>AI Suggestions</CardTitle>
@@ -711,7 +711,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 px-8 -mx-8">
+        <div className="flex justify-end gap-2 sticky bottom-0 bg-background/80 backdrop-blur-sm py-4 px-8 -mx-8 -mb-8">
             <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting}>Clear Form</Button>
             {!isAdmin && <Button type="button" variant="secondary" onClick={handleSaveAsDraft} disabled={isSubmitting}>Save as Draft</Button>}
             <Button type="submit" disabled={isSubmitting || isProcessingImages}>

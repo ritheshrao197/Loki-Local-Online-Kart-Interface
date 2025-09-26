@@ -95,7 +95,7 @@ export default function OrdersPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-headline">Orders</h1>
       </div>
-      <div className="border rounded-lg">
+      <div className="border rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -104,7 +104,7 @@ export default function OrdersPage() {
               <TableHead>Product</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="hidden md:table-cell">Total</TableHead>
-              <TableHead className="hidden md:table-cell">Date</TableHead>
+              <TableHead className="hidden lg:table-cell">Date</TableHead>
               <TableHead><span className="sr-only">Actions</span></TableHead>
             </TableRow>
           </TableHeader>
@@ -122,7 +122,7 @@ export default function OrdersPage() {
                   </TableCell>
                   <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                   <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-16" /></TableCell>
-                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
                   <TableCell><Skeleton className="h-8 w-8" /></TableCell>
                 </TableRow>
               ))
@@ -156,7 +156,7 @@ export default function OrdersPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">&#8377;{order.total.toLocaleString('en-IN')}</TableCell>
-                <TableCell className="hidden md:table-cell">{format(new Date(order.orderDate), 'PPP')}</TableCell>
+                <TableCell className="hidden lg:table-cell">{format(new Date(order.orderDate), 'PPP')}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -83,8 +83,8 @@ export default function CommissionsPage() {
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Commission Management</h1>
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-1">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="lg:col-span-1 space-y-8">
           <Card>
             <CardHeader>
               <CardTitle>Set Commission Rate</CardTitle>
@@ -121,7 +121,7 @@ export default function CommissionsPage() {
               </Button>
             </CardContent>
           </Card>
-           <Card className="mt-8">
+           <Card>
             <CardHeader>
                 <CardTitle>Commission Slabs</CardTitle>
                 <CardDescription>Define commission tiers based on performance.</CardDescription>
@@ -143,45 +143,47 @@ export default function CommissionsPage() {
             </CardContent>
           </Card>
         </div>
-        <div className="lg:col-span-2">
+        <div className="md:col-span-1 lg:col-span-2">
            <Card>
              <CardHeader>
                 <CardTitle>Seller Commissions</CardTitle>
                 <CardDescription>Current commission rates for all approved sellers.</CardDescription>
              </CardHeader>
              <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Seller</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Commission</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {loading ? (
-                          Array.from({length: 3}).map((_, i) => (
-                            <TableRow key={i}>
-                              <TableCell><Skeleton className="h-5 w-32"/></TableCell>
-                              <TableCell><Skeleton className="h-6 w-20"/></TableCell>
-                              <TableCell className="text-right"><Skeleton className="h-5 w-10 inline-block"/></TableCell>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Seller</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Commission</TableHead>
                             </TableRow>
-                          ))
-                        ) : (
-                          sellers.map(seller => (
-                              <TableRow key={seller.id}>
-                                  <TableCell className="font-medium">{seller.name}</TableCell>
-                                  <TableCell className="text-muted-foreground">
-                                      <Badge variant={seller.status === 'approved' ? 'default' : 'secondary'}>
-                                          {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
-                                      </Badge>
-                                  </TableCell>
-                                  <TableCell className="text-right">{seller.commissionRate ?? 15}%</TableCell>
-                              </TableRow>
-                          ))
-                        )}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {loading ? (
+                            Array.from({length: 3}).map((_, i) => (
+                                <TableRow key={i}>
+                                <TableCell><Skeleton className="h-5 w-32"/></TableCell>
+                                <TableCell><Skeleton className="h-6 w-20"/></TableCell>
+                                <TableCell className="text-right"><Skeleton className="h-5 w-10 inline-block"/></TableCell>
+                                </TableRow>
+                            ))
+                            ) : (
+                            sellers.map(seller => (
+                                <TableRow key={seller.id}>
+                                    <TableCell className="font-medium">{seller.name}</TableCell>
+                                    <TableCell className="text-muted-foreground">
+                                        <Badge variant={seller.status === 'approved' ? 'default' : 'secondary'}>
+                                            {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">{seller.commissionRate ?? 15}%</TableCell>
+                                </TableRow>
+                            ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
              </CardContent>
            </Card>
         </div>

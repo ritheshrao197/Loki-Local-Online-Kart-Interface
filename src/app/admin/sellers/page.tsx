@@ -119,15 +119,15 @@ function SellersPageContent() {
           </Link>
         </Button>
       </div>
-      <div className="border rounded-lg">
+      <div className="border rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Seller Name</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="hidden md:table-cell">Mobile</TableHead>
-              <TableHead className="hidden md:table-cell">PAN</TableHead>
-              <TableHead className="hidden md:table-cell">Commission</TableHead>
+              <TableHead className="hidden lg:table-cell">PAN</TableHead>
+              <TableHead className="hidden lg:table-cell">Commission</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -138,8 +138,8 @@ function SellersPageContent() {
                   <TableCell><Skeleton className="h-5 w-32" /></TableCell>
                   <TableCell><Skeleton className="h-5 w-20" /></TableCell>
                   <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
-                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
-                  <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-12" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-5 w-12" /></TableCell>
                   <TableCell><Skeleton className="h-8 w-20" /></TableCell>
                 </TableRow>
               ))
@@ -159,11 +159,11 @@ function SellersPageContent() {
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{seller.mobile}</TableCell>
-                  <TableCell className="hidden md:table-cell">{seller.pan}</TableCell>
-                  <TableCell className="hidden md:table-cell">{seller.commissionRate ?? '15'}%</TableCell>
+                  <TableCell className="hidden lg:table-cell">{seller.pan}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{seller.commissionRate ?? '15'}%</TableCell>
                   <TableCell>
                     {seller.status === 'pending' ? (
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Button
                           variant="outline"
                           size="sm"
