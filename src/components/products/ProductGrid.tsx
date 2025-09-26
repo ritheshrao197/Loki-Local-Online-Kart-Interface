@@ -7,6 +7,7 @@ import { ProductFilters } from '@/components/products/ProductFilters';
 import { ProductCard } from '@/components/products/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getProducts } from '@/lib/firebase/firestore';
+import { PackageSearch } from 'lucide-react';
 
 export function ProductGrid() {
   const [initialProducts, setInitialProducts] = useState<Product[]>([]);
@@ -29,6 +30,11 @@ export function ProductGrid() {
     fetchProducts();
   }, []);
 
+  const categories = useMemo(() => {
+    const allCategories = initialProducts.map(p => p.category);
+    return [...new Set(allCategories)];
+  }, [initialProducts]);
+
   const filteredAndSortedProducts = useMemo(() => {
     let products = [...initialProducts];
 
@@ -40,19 +46,20 @@ export function ProductGrid() {
 
     switch (sortOption) {
       case 'price_asc':
-        products.sort((a, b) => a.price - b.price);
+        products.sort((a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price));
         break;
       case 'price_desc':
-        products.sort((a, b) => b.price - a.price);
+        products.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
         break;
       case 'newest':
-        // Assuming ID is sortable by date, which is not guaranteed.
-        // A 'createdAt' timestamp is better.
+        // A 'createdAt' timestamp would be better for sorting by newest.
+        // As a fallback, we'll sort by ID descending.
         products.sort((a, b) => b.id.localeCompare(a.id));
         break;
       case 'featured':
       default:
-        // No default sorting for 'featured' without an explicit order field
+        // No default sorting for 'featured' without an explicit order field.
+        // You could add a sort based on a `isFeatured` flag or shuffle them.
         break;
     }
 
@@ -62,9 +69,9 @@ export function ProductGrid() {
   if (loading) {
     return (
        <div className="space-y-8">
-        <div className="flex gap-4">
-            <Skeleton className="h-10 w-[180px]" />
-            <Skeleton className="h-10 w-[180px]" />
+        <div className="flex flex-col sm:flex-row gap-4">
+            <Skeleton className="h-10 w-full sm:w-[180px]" />
+            <Skeleton className="h-10 w-full sm:w-[180px]" />
             <Skeleton className="h-10 flex-1" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -75,17 +82,16 @@ export function ProductGrid() {
   }
 
   return (
-    <>
-      <div className="mb-8">
-        <ProductFilters 
-          sortOption={sortOption}
-          setSortOption={setSortOption}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-        />
-      </div>
+    <div className="space-y-8">
+      <ProductFilters 
+        sortOption={sortOption}
+        setSortOption={setSortOption}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        priceRange={priceRange}
+        setPriceRange={setPriceRange}
+        categories={categories}
+      />
       {filteredAndSortedProducts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredAndSortedProducts.map((product) => (
@@ -93,13 +99,14 @@ export function ProductGrid() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg">
-          <h3 className="text-lg font-semibold">No Products Match Your Filters</h3>
-          <p className="text-muted-foreground mt-1">
-            Try adjusting your filters to find what you're looking for.
-          </p>
+        <div className="text-center py-20 border-2 border-dashed rounded-lg flex flex-col items-center">
+            <PackageSearch className="h-16 w-16 text-muted-foreground" />
+            <h3 className="mt-6 text-xl font-semibold">No Products Match Your Filters</h3>
+            <p className="mt-2 text-muted-foreground">
+                Try adjusting your filters to find what you're looking for.
+            </p>
         </div>
       )}
-    </>
+    </div>
   );
 }

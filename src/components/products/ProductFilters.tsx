@@ -18,6 +18,7 @@ interface ProductFiltersProps {
   setSelectedCategory: (value: string) => void;
   priceRange: number;
   setPriceRange: (value: number) => void;
+  categories: string[];
 }
 
 export function ProductFilters({
@@ -27,14 +28,15 @@ export function ProductFilters({
   setSelectedCategory,
   priceRange,
   setPriceRange,
+  categories,
 }: ProductFiltersProps) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
       <div className="flex items-center gap-2">
-        <Label htmlFor="sort-by" className="text-sm">Sort by:</Label>
+        <Label htmlFor="sort-by" className="text-sm shrink-0">Sort by:</Label>
         <Select value={sortOption} onValueChange={setSortOption}>
-          <SelectTrigger id="sort-by" className="w-[180px]">
+          <SelectTrigger id="sort-by" className="w-full sm:w-[180px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -45,28 +47,23 @@ export function ProductFilters({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div className="flex flex-1 flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex items-center gap-2">
-            <Label htmlFor="category" className="text-sm">Category:</Label>
+            <Label htmlFor="category" className="text-sm shrink-0">Category:</Label>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger id="category" className="w-[180px]">
+            <SelectTrigger id="category" className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Home Decor">Home Decor</SelectItem>
-                <SelectItem value="Apparel">Apparel</SelectItem>
-                <SelectItem value="Food">Food</SelectItem>
-                <SelectItem value="Handicrafts">Handicrafts</SelectItem>
-                <SelectItem value="Textiles">Textiles</SelectItem>
-                <SelectItem value="Personal Care">Personal Care</SelectItem>
-                <SelectItem value="Beauty">Beauty</SelectItem>
-                <SelectItem value="Accessories">Accessories</SelectItem>
+                {categories.map(cat => (
+                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                ))}
             </SelectContent>
             </Select>
         </div>
         <div className="flex flex-1 items-center gap-4 max-w-sm">
-            <Label className="text-sm min-w-fit">Price Range:</Label>
+            <Label className="text-sm shrink-0">Price Range:</Label>
             <Slider
                 defaultValue={[priceRange]}
                 max={10000}
