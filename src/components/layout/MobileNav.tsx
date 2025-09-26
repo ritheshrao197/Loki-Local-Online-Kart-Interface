@@ -1,7 +1,7 @@
 
 'use client';
 import { useState } from 'react';
-import { Home, LayoutGrid, Search, ShoppingCart, User, X, Trash2 } from 'lucide-react';
+import { Home, LayoutGrid, Newspaper, Search, ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -14,10 +14,11 @@ import { Separator } from '../ui/separator';
 import { mockProducts } from '@/lib/placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
+import { Trash2 } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '#', label: 'Categories', icon: LayoutGrid },
+  { href: '/blogs', label: 'Blogs', icon: Newspaper },
   { href: '#', label: 'Search', icon: Search },
   { href: '/profile', label: 'Profile', icon: User },
 ];
@@ -37,7 +38,7 @@ export function MobileNav() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handleComingSoon = (label: string) => {
-    if (['Categories', 'Search'].includes(label)) {
+    if (['Search'].includes(label)) {
       toast({
         title: `${label} feature is coming soon!`,
       });

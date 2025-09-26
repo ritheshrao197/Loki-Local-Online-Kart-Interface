@@ -35,6 +35,7 @@ export function ProductCard({ product }: ProductCardProps) {
               alt={product.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               data-ai-hint={product.images[0].hint}
             />
             {product.status === 'pending' && (
