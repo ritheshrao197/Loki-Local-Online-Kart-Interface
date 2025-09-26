@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Poppins, PT_Sans } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 const fontSans = PT_Sans({
   subsets: ['latin'],
@@ -27,17 +28,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
           fontHeadline.variable
         )}
-        suppressHydrationWarning={true}
       >
-        {children}
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

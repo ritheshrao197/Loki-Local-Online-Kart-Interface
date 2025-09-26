@@ -10,6 +10,7 @@ import Logo from '@/components/common/logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileNav } from './MobileNav';
 import { Badge } from '../ui/badge';
+import { ThemeToggle } from './ThemeToggle';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -40,20 +41,26 @@ export function Header() {
   const renderActionButtons = () => {
     if (userRole === 'admin') {
       return (
-        <Button asChild>
-          <Link href="/admin">
-            <LayoutDashboard className="mr-2" /> Admin Dashboard
-          </Link>
-        </Button>
+        <>
+          <Button asChild>
+            <Link href="/admin">
+              <LayoutDashboard className="mr-2" /> Admin Dashboard
+            </Link>
+          </Button>
+          <ThemeToggle />
+        </>
       );
     }
     if (userRole === 'seller' && userId) {
       return (
-        <Button asChild>
-          <Link href={`/dashboard/${userId}`}>
-            <LayoutDashboard className="mr-2" /> Seller Dashboard
-          </Link>
-        </Button>
+        <>
+          <Button asChild>
+            <Link href={`/dashboard/${userId}`}>
+              <LayoutDashboard className="mr-2" /> Seller Dashboard
+            </Link>
+          </Button>
+          <ThemeToggle />
+        </>
       );
     }
     // Default for buyers or guests
@@ -69,6 +76,7 @@ export function Header() {
           <Link href="/login/admin">Sell on Loki</Link>
         </Button>
         <div className="flex items-center space-x-1">
+          <ThemeToggle />
           <Button variant="ghost" size="icon" asChild>
             <Link href="/profile">
               <User className="h-5 w-5" />
