@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense } from 'react';
@@ -11,7 +12,7 @@ import { motion } from 'framer-motion';
 // Dynamically import components with optimized loading
 const HeroSlider = dynamic(() => import('@/components/home/HeroSlider').then(mod => mod.HeroSlider), {
   loading: () => <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-app-xl" />,
-  ssr: true
+  ssr: false
 });
 
 const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCategories').then(mod => mod.FeaturedCategories), {
