@@ -16,9 +16,10 @@ async function ProductList({ status, searchParams }: { status: ProductStatus, se
   return <ProductModerationClient initialProducts={products} searchParams={searchParams} />;
 }
 
-const ProductListSkeleton = () => (
+const ProductModerationSkeleton = () => (
     <div className="space-y-6">
-        {Array.from({ length: 2 }).map((_, i) => <CardSkeleton key={i} />)}
+        <CardSkeleton />
+        <CardSkeleton />
     </div>
 );
 
@@ -38,7 +39,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                 </Link>
             </Button>
         </div>
-        <Suspense fallback={<ProductListSkeleton />}>
+        <Suspense fallback={<ProductModerationSkeleton />}>
             <ProductList status={currentTab} searchParams={searchParams}/>
         </Suspense>
     </div>
@@ -49,7 +50,7 @@ const CardSkeleton = () => (
   <Card className="p-6">
     <div className="flex flex-col md:flex-row gap-6">
       <div className="md:w-1/3">
-        <Skeleton className="h-[200px] w-full rounded-xl" />
+        <Skeleton className="aspect-square w-full rounded-xl" />
       </div>
       <div className="md:w-2/3 space-y-4">
         <Skeleton className="h-6 w-3/4" />

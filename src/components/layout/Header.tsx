@@ -11,6 +11,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileNav } from './MobileNav';
 import { Badge } from '../ui/badge';
 import { ThemeToggle } from './ThemeToggle';
+import { useRouter } from 'next/navigation';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -18,6 +19,7 @@ export const Header = React.memo(function Header() {
   const isMobile = useIsMobile();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const router = useRouter();
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -25,8 +27,14 @@ export const Header = React.memo(function Header() {
       const id = sessionStorage.getItem('userId');
       setUserRole(role);
       setUserId(id);
+
+      // Prefetch important pages for buyers/guests
+      if (!role || role === 'buyer') {
+          router.prefetch('/blogs');
+          router.prefetch('/discover');
+      }
     }
-  }, []);
+  }, [router]);
 
   const cartItemCount = 2; // Mock count
 
