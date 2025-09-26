@@ -1,12 +1,8 @@
-
-
-'use client';
-
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addBannerAd, deleteBannerAd, getAllBannerAds, updateBannerAd } from '@/lib/firebase/firestore';
+import { addBannerAd, deleteBannerAd, getAllBannerAds, updateBannerAd, uploadImage } from '@/lib/firebase/firestore';
 import type { BannerAd } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -53,7 +49,7 @@ export function BannerAdsManager() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      imageUrl: '',
+      imageUrl: undefined,
       linkUrl: '/',
       placement: 'homepage_top',
       isActive: true,
@@ -97,12 +93,19 @@ export function BannerAdsManager() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Set the file in the form
+      form.setValue('imageUrl', event.target.files, { shouldValidate: true });
+      
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
-        form.setValue('imageUrl', event.target.files);
       };
       reader.readAsDataURL(file);
+    } else {
+      // Clear the image if no file is selected
+      form.setValue('imageUrl', undefined, { shouldValidate: true });
+      setImagePreview(null);
     }
   };
 
@@ -110,18 +113,37 @@ export function BannerAdsManager() {
     setIsSubmitting(true);
     try {
       let imageUrl = '';
-      if (typeof data.imageUrl === 'string') {
-        imageUrl = data.imageUrl;
+      
+      // Handle image data
+      if (typeof data.imageUrl === 'string' && data.imageUrl.startsWith('data:')) {
+        // Upload base64 image to Firebase Storage
+        const fileName = `banner_${Date.now()}_${Math.floor(Math.random() * 1000)}.jpg`;
+        imageUrl = await uploadImage(data.imageUrl, fileName);
       } else if (data.imageUrl instanceof FileList && data.imageUrl.length > 0) {
-        imageUrl = await new Promise((resolve, reject) => {
+        // Convert file to data URL and upload to Firebase Storage
+        const imageData = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result as string);
           reader.onerror = reject;
           reader.readAsDataURL(data.imageUrl[0]);
         });
+        const fileName = `banner_${Date.now()}_${Math.floor(Math.random() * 1000)}.jpg`;
+        imageUrl = await uploadImage(imageData, fileName);
+      } else if (editingAd && typeof data.imageUrl === 'string' && !data.imageUrl.startsWith('data:')) {
+        // For editing, if imageUrl is already a URL (from storage), keep it
+        imageUrl = data.imageUrl;
+      } else {
+        throw new Error('No valid image provided');
       }
 
-      const adData = { ...data, imageUrl };
+      // Create the ad data object
+      const adData = {
+        title: data.title,
+        imageUrl: imageUrl,
+        linkUrl: data.linkUrl,
+        placement: data.placement,
+        isActive: data.isActive,
+      };
       
       if (editingAd) {
         await updateBannerAd(editingAd.id, adData);
@@ -133,7 +155,12 @@ export function BannerAdsManager() {
       await fetchAds();
       setIsDialogOpen(false);
     } catch (error) {
-      toast({ title: 'An error occurred', variant: 'destructive' });
+      console.error('Error saving banner ad:', error);
+      toast({ 
+        title: 'Error saving banner ad', 
+        description: error instanceof Error ? error.message : 'An unknown error occurred',
+        variant: 'destructive' 
+      });
     } finally {
       setIsSubmitting(false);
     }

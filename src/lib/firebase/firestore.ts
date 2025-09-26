@@ -1,5 +1,3 @@
-
-
 import {
   collection,
   doc,
@@ -15,7 +13,8 @@ import {
   serverTimestamp,
   orderBy,
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { db, storage } from './firebase';
 import type { Seller, Product, Order, Blog, HeroSlide, BannerAd } from '@/lib/types';
 
 // ================== Seller Functions ==================
@@ -406,4 +405,30 @@ export async function updateBannerAd(adId: string, adData: Partial<Omit<BannerAd
 
 export async function deleteBannerAd(adId: string): Promise<void> {
   await deleteDoc(doc(db, 'bannerAds', adId));
+}
+
+// ================== Storage Functions ==================
+
+/**
+ * Uploads an image to Firebase Storage and returns the download URL
+ * @param imageData - Base64 encoded image data
+ * @param fileName - Name to save the file as
+ * @returns Promise<string> - The download URL of the uploaded image
+ */
+export async function uploadImage(imageData: string, fileName: string): Promise<string> {
+  try {
+    // Create a reference to the file location in storage
+    const storageRef = ref(storage, `hero-slides/${fileName}`);
+    
+    // Upload the base64 string
+    await uploadString(storageRef, imageData, 'data_url');
+    
+    // Get the download URL
+    const downloadURL = await getDownloadURL(storageRef);
+    
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw new Error('Failed to upload image');
+  }
 }

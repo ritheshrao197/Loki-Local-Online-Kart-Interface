@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addHeroSlide, deleteHeroSlide, getAllHeroSlides, updateHeroSlide } from '@/lib/firebase/firestore';
+import { addHeroSlide, deleteHeroSlide, getAllHeroSlides, updateHeroSlide, uploadImage } from '@/lib/firebase/firestore';
 import type { HeroSlide } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -54,7 +54,7 @@ export function HeroSliderManager() {
     defaultValues: {
       title: '',
       subtitle: '',
-      imageUrl: '',
+      imageUrl: undefined,
       ctaText: 'Shop Now',
       ctaLink: '/',
       order: 0,
@@ -88,13 +88,15 @@ export function HeroSliderManager() {
       });
       setImagePreview(slide.imageUrl);
     } else {
+      // For new slides, set the order to the next available number
+      const nextOrder = slides.length > 0 ? Math.max(...slides.map(s => s.order)) + 1 : 0;
       form.reset({
         title: '',
         subtitle: '',
         imageUrl: undefined,
         ctaText: 'Shop Now',
         ctaLink: '/',
-        order: slides.length,
+        order: nextOrder,
         isActive: true,
       });
     }
@@ -104,12 +106,19 @@ export function HeroSliderManager() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Set the file in the form
       form.setValue('imageUrl', event.target.files, { shouldValidate: true });
+      
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    } else {
+      // Clear the image if no file is selected
+      form.setValue('imageUrl', undefined, { shouldValidate: true });
+      setImagePreview(null);
     }
   };
 
@@ -117,18 +126,39 @@ export function HeroSliderManager() {
     setIsSubmitting(true);
     try {
       let imageUrl = '';
-      if (typeof data.imageUrl === 'string') {
-        imageUrl = data.imageUrl;
+      
+      // Handle image data
+      if (typeof data.imageUrl === 'string' && data.imageUrl.startsWith('data:')) {
+        // Upload base64 image to Firebase Storage
+        const fileName = `slide_${Date.now()}_${Math.floor(Math.random() * 1000)}.jpg`;
+        imageUrl = await uploadImage(data.imageUrl, fileName);
       } else if (data.imageUrl instanceof FileList && data.imageUrl.length > 0) {
-        imageUrl = await new Promise((resolve, reject) => {
+        // Convert file to data URL and upload to Firebase Storage
+        const imageData = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result as string);
           reader.onerror = reject;
           reader.readAsDataURL(data.imageUrl[0]);
         });
+        const fileName = `slide_${Date.now()}_${Math.floor(Math.random() * 1000)}.jpg`;
+        imageUrl = await uploadImage(imageData, fileName);
+      } else if (editingSlide && typeof data.imageUrl === 'string' && !data.imageUrl.startsWith('data:')) {
+        // For editing, if imageUrl is already a URL (from storage), keep it
+        imageUrl = data.imageUrl;
+      } else {
+        throw new Error('No valid image provided');
       }
 
-      const slideData = { ...data, imageUrl };
+      // Create the slide data object
+      const slideData = {
+        title: data.title,
+        subtitle: data.subtitle,
+        imageUrl: imageUrl,
+        ctaText: data.ctaText,
+        ctaLink: data.ctaLink,
+        order: data.order,
+        isActive: data.isActive,
+      };
       
       if (editingSlide) {
         await updateHeroSlide(editingSlide.id, slideData);
@@ -140,7 +170,12 @@ export function HeroSliderManager() {
       await fetchSlides();
       setIsDialogOpen(false);
     } catch (error) {
-      toast({ title: 'An error occurred', variant: 'destructive' });
+      console.error('Error saving slide:', error);
+      toast({ 
+        title: 'Error saving slide', 
+        description: error instanceof Error ? error.message : 'An unknown error occurred',
+        variant: 'destructive' 
+      });
     } finally {
       setIsSubmitting(false);
     }

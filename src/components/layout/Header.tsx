@@ -37,6 +37,7 @@ export const Header = React.memo(function Header() {
 
   const cartItemCount = 2; // Mock count
 
+  // Prevent layout shift by rendering a placeholder when isMobile is undefined
   if (isMobile === undefined) {
     return <div className="h-16 border-b" />; // Prevent layout shift
   }
@@ -46,44 +47,68 @@ export const Header = React.memo(function Header() {
   }
 
   const renderActionButtons = () => {
-    if (userRole === 'admin') {
-      return (
-        <>
-          <Button asChild variant="ghost" className="rounded-full px-4">
-            <Link href="/admin">
-              <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
-            </Link>
-          </Button>
-          <ThemeToggle />
-        </>
-      );
-    }
-    if (userRole === 'seller' && userId) {
-      return (
-        <>
-          <Button asChild variant="ghost" className="rounded-full px-4">
-            <Link href={`/dashboard/${userId}`}>
-              <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard
-            </Link>
-          </Button>
-          <ThemeToggle />
-        </>
-      );
-    }
-    // Default for buyers or guests
+    // Always render the same structure to prevent hydration mismatches
     return (
       <>
-        <Button variant="ghost" asChild className="rounded-full px-4">
+        {/* Admin buttons - conditionally visible */}
+        <Button 
+          asChild 
+          variant="ghost" 
+          className="rounded-full px-4"
+          style={{ display: userRole === 'admin' ? 'flex' : 'none' }}
+        >
+          <Link href="/admin">
+            <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
+          </Link>
+        </Button>
+        
+        {/* Seller buttons - conditionally visible */}
+        <Button 
+          asChild 
+          variant="ghost" 
+          className="rounded-full px-4"
+          style={{ display: userRole === 'seller' && userId ? 'flex' : 'none' }}
+        >
+          <Link href={userId ? `/dashboard/${userId}` : '#'}>
+            <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard
+          </Link>
+        </Button>
+        
+        {/* Default buttons for buyers or guests - conditionally visible */}
+        <Button 
+          variant="ghost" 
+          asChild 
+          className="rounded-full px-4"
+          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
+        >
           <Link href="/blogs">Stories</Link>
         </Button>
-         <Button variant="ghost" asChild className="rounded-full px-4">
+        
+        <Button 
+          variant="ghost" 
+          asChild 
+          className="rounded-full px-4"
+          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
+        >
           <Link href="/discover">Discover</Link>
         </Button>
-        <Button variant="ghost" asChild className="rounded-full px-4">
+        
+        <Button 
+          variant="ghost" 
+          asChild 
+          className="rounded-full px-4"
+          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
+        >
           <Link href="/login/admin">Sell on Loki</Link>
         </Button>
-        <div className="flex items-center space-x-1">
-          <ThemeToggle />
+        
+        <div 
+          className="flex items-center space-x-1"
+          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
+        >
+          <div style={{ display: 'flex' }}>
+            <ThemeToggle />
+          </div>
           <Button variant="ghost" size="icon" asChild className="rounded-full">
             <Link href="/profile">
               <User className="h-5 w-5" />
@@ -101,6 +126,11 @@ export const Header = React.memo(function Header() {
               <span className="sr-only">Cart</span>
             </Link>
           </Button>
+        </div>
+        
+        {/* Always render ThemeToggle for all user roles but control visibility */}
+        <div style={{ display: userRole && userRole !== 'buyer' ? 'flex' : 'none' }}>
+          <ThemeToggle />
         </div>
       </>
     );

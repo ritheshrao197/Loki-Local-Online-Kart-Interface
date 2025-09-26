@@ -4,116 +4,105 @@
 
 @layer base {
   :root {
-    /* Apple-inspired color palette using Loki brand colors */
-    /* Primary Loki Blue: #295398 */
-    /* Bright Yellow: #F9DD53 */
-    /* Dark Gray: #646464 */
+    /* Light Theme with new color palette */
+    /* Anti-flash white: #EDEEEC */
+    /* White: #FFFFFF */
+    /* Mustard: #FEDD59 */
+    /* Lapis Lazuli: #336398 */
     
-    /* Background with clean, light aesthetic */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --background: 0 0% 93%; /* Anti-flash white: #EDEEEC */
+    --foreground: 0 0% 20%; /* Charcoal Gray for text */
     
-    /* Card with subtle depth and clean appearance */
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 10%;
+    --card: 0 0% 100%; /* White: #FFFFFF */
+    --card-foreground: 0 0% 20%; /* Charcoal Gray for text */
     
-    /* Popover with elevated appearance */
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 0 0% 100%; /* White: #FFFFFF */
+    --popover-foreground: 0 0% 20%; /* Charcoal Gray for text */
     
-    /* Primary - Loki Blue with Apple's clean approach */
-    --primary: 219 56% 38%; /* #295398 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 211 50% 40%; /* Lapis Lazuli: #336398 */
+    --primary-foreground: 0 0% 100%; /* White */
     
-    /* Secondary - Subtle gray with clean contrast */
-    --secondary: 0 0% 92%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 48 99% 67%; /* Mustard: #FEDD59 */
+    --secondary-foreground: 0 0% 20%; /* Charcoal Gray for text */
     
-    /* Muted - Apple's muted grays */
-    --muted: 0 0% 85%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 0 0% 87%; /* Anti-flash white: #EDEEEC */
+    --muted-foreground: 0 0% 50%; /* Medium Gray */
     
-    /* Accent - Loki Yellow for highlights */
-    --accent: 46 90% 65%; /* #F9DD53 */
-    --accent-foreground: 0 0% 15%;
+    --accent: 48 99% 67%; /* Mustard: #FEDD59 */
+    --accent-foreground: 0 0% 20%; /* Charcoal Gray for text */
     
-    /* Destructive - Apple's red */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%; /* Red */
+    --destructive-foreground: 0 0% 100%; /* White */
     
-    /* Borders with subtle definition */
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 219 56% 38%; /* Loki Blue ring */
+    --border: 0 0% 87%; /* Anti-flash white: #EDEEEC */
+    --input: 0 0% 87%; /* Anti-flash white: #EDEEEC */
+    --ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
     
-    /* Radius with Apple's subtle rounded corners */
     --radius: 0.5rem;
     
-    /* Chart colors with better contrast */
-    --chart-1: 219 56% 38%; /* Loki Blue */
-    --chart-2: 46 90% 65%; /* Loki Yellow */
+    --chart-1: 211 50% 40%; /* Lapis Lazuli: #336398 */
+    --chart-2: 48 99% 67%; /* Mustard: #FEDD59 */
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
     
-    /* Sidebar with enhanced depth */
-    --sidebar-background: 0 0% 96%;
-    --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 219 56% 38%; /* Loki Blue */
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 90%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 85%;
-    --sidebar-ring: 219 56% 38%; /* Loki Blue */
+    --sidebar-background: 0 0% 100%; /* White: #FFFFFF */
+    --sidebar-foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --sidebar-primary: 211 50% 40%; /* Lapis Lazuli: #336398 */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 48 99% 67%; /* Mustard: #FEDD59 */
+    --sidebar-accent-foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --sidebar-border: 0 0% 87%; /* Anti-flash white: #EDEEEC */
+    --sidebar-ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
   }
 
   .dark {
-    /* Dark theme with Apple's approach */
-    --background: 0 0% 8%;
-    --foreground: 0 0% 95%;
+    /* Dark Theme */
+    /* Primary (Main Brand Color): Deep Blue (#295399) */
+    /* Secondary (Accent / CTA): Bright Yellow (#F9DD53) */
+    /* Background: Charcoal Gray (#333333) */
+    /* Surface (Cards / Sections): Dark Gray (#222222) */
+    /* Primary Text: Light Gray (#EFEFEF) */
+    /* Secondary Text: Light Blue (#A4C3F0) */
+    /* Borders / Dividers: Medium Gray (#555555) */
+    /* Hover State: Slightly brighter blue (#C3D8F7) */
     
-    /* Card with subtle elevation effect */
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 95%;
+    --background: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
     
-    /* Popover with elevated appearance */
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 95%;
+    --card: 0 0% 13%; /* Dark Gray (#222222) */
+    --card-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
     
-    /* Primary - Loki Blue in dark mode */
-    --primary: 219 56% 45%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 13%; /* Dark Gray (#222222) */
+    --popover-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
     
-    /* Secondary with better contrast */
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 95%;
+    --primary: 219 56% 38%; /* Deep Blue (#295399) */
+    --primary-foreground: 0 0% 100%; /* White */
     
-    /* Muted with better readability */
-    --muted: 0 0% 25%;
-    --muted-foreground: 0 0% 75%;
+    --secondary: 46 90% 65%; /* Bright Yellow (#F9DD53) */
+    --secondary-foreground: 0 0% 13%; /* Dark Gray (#222222) */
     
-    /* Accent - Loki Yellow in dark mode */
-    --accent: 46 90% 70%;
-    --accent-foreground: 0 0% 10%;
+    --muted: 0 0% 33%; /* Medium Gray (#555555) */
+    --muted-foreground: 0 0% 75%; /* Light Gray */
     
-    /* Destructive with better visibility */
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --accent: 46 90% 65%; /* Bright Yellow (#F9DD53) */
+    --accent-foreground: 0 0% 13%; /* Dark Gray (#222222) */
     
-    /* Borders with better contrast */
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 219 56% 45%;
+    --destructive: 0 70% 50%; /* Red */
+    --destructive-foreground: 0 0% 100%; /* White */
     
-    /* Sidebar with enhanced depth */
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 219 56% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 20%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 219 56% 45%;
+    --border: 0 0% 33%; /* Medium Gray (#555555) */
+    --input: 0 0% 33%; /* Medium Gray (#555555) */
+    --ring: 219 56% 38%; /* Deep Blue (#295399) */
+    
+    --sidebar-background: 0 0% 13%; /* Dark Gray (#222222) */
+    --sidebar-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --sidebar-primary: 219 56% 38%; /* Deep Blue (#295399) */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 46 90% 65%; /* Bright Yellow (#F9DD53) */
+    --sidebar-accent-foreground: 0 0% 13%; /* Dark Gray (#222222) */
+    --sidebar-border: 0 0% 33%; /* Medium Gray (#555555) */
+    --sidebar-ring: 219 56% 38%; /* Deep Blue (#295399) */
   }
 }
 
