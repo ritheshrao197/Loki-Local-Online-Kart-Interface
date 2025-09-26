@@ -40,6 +40,7 @@ import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 function AdminDashboardSkeleton() {
   return (
