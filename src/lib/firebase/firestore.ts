@@ -90,6 +90,9 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
  * Converts undefined values to null recursively, as Firestore doesn't support 'undefined'.
  */
 function sanitizeDataForFirestore(data: any): any {
+    if (data instanceof Timestamp) {
+        return data;
+    }
     if (data === undefined) {
         return null;
     }
@@ -219,8 +222,8 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
  */
 export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
-  const sanitizedData = sanitizeDataForFirestore(productData);
-  await updateDoc(productRef, sanitizedData);
+  const dataToUpdate = sanitizeDataForFirestore(productData);
+  await updateDoc(productRef, dataToUpdate);
 }
 
 /**

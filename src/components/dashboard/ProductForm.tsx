@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -266,33 +267,11 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
 
     try {
       if (isEditMode && product) {
-        // Construct a clean data object for update
-        const updatedProductData: Partial<Product> = {
-          name: data.name,
-          description: data.description || '',
-          price: data.price,
-          discountPrice: data.discountPrice,
-          category: data.category,
-          subcategory: data.subcategory,
-          stock: data.stock,
-          unitOfMeasure: data.unitOfMeasure,
-          stockAlert: data.stockAlert,
-          keywords: data.keywords,
-          images: data.images.map(img => ({ url: img.url, hint: img.hint })),
-          brand: data.brand,
-          weight: data.weight,
-          dimensions: data.dimensions,
-          manufacturingDate: data.manufacturingDate?.toISOString(),
-          expiryDate: data.expiryDate?.toISOString(),
-          isGstRegistered: data.isGstRegistered,
-          certification: data.certification,
-          shippingOptions: data.shippingOptions,
-          estimatedDelivery: data.estimatedDelivery,
-          returnPolicy: data.returnPolicy,
-          isPromoted: data.isPromoted,
-          isFeatured: data.isFeatured,
+        const updatedProductData = {
+          ...data,
+          images: data.images.map(img => ({ url: img.url, hint: img.hint })), // Ensure plain objects
+          seller: product.seller, // Preserve original seller info
           status: isAdmin ? product.status : 'pending',
-          seller: { id: product.seller.id, name: product.seller.name },
         };
         
         await updateProduct(product.id, updatedProductData);
