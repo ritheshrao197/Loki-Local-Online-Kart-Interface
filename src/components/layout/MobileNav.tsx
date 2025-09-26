@@ -15,10 +15,10 @@ import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { placeholderImages } from '@/lib/placeholder-images';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { placeholderImages } from '@/lib/placeholder-images';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -43,24 +43,30 @@ export function MobileNav() {
       setUserRole(role);
       setUserId(id);
 
-      const items = [
-        {
-          id: 'prod_101',
-          name: 'Handwoven Cotton Scarf',
-          quantity: 1,
-          price: 499,
-          seller: { name: 'Artisan Fabrics Co.' },
-          images: [{ url: placeholderImages.find(p => p.id === 'prod_101')?.url, hint: 'cotton scarf' }]
-        },
-        {
-          id: 'prod_115',
-          name: 'Bamboo Toothbrush Set',
-          quantity: 1,
-          price: 399,
-          seller: { name: 'GreenEarth' },
-          images: [{ url: placeholderImages.find(p => p.id === 'prod_115')?.url, hint: 'bamboo toothbrush' }]
-        }
-      ].filter(item => item.images[0].url); // Ensure item is valid before adding
+      const items = [];
+      const item1Data = placeholderImages.find(p => p.id === 'prod_101');
+      if (item1Data) {
+          items.push({
+              id: 'prod_101',
+              name: 'Handwoven Cotton Scarf',
+              quantity: 1,
+              price: 499,
+              seller: { name: 'Artisan Fabrics Co.' },
+              images: [{ url: item1Data.url, hint: item1Data.hint }]
+          });
+      }
+      
+      const item2Data = placeholderImages.find(p => p.id === 'prod_115');
+      if (item2Data) {
+          items.push({
+              id: 'prod_115',
+              name: 'Bamboo Toothbrush Set',
+              quantity: 1,
+              price: 399,
+              seller: { name: 'GreenEarth' },
+              images: [{ url: item2Data.url, hint: item2Data.hint }]
+          });
+      }
 
       setCartItems(items);
     }
@@ -239,16 +245,16 @@ export function MobileNav() {
               </div>
             </SheetTitle>
           </SheetHeader>
-          <div className="p-4">
-            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4"/>
-              Logout
-            </Button>
-             <Button variant="outline" asChild className="w-full justify-start mt-4">
+          <div className="p-4 space-y-2">
+             <Button variant="outline" asChild className="w-full justify-start">
                 <Link href={`/sellers/${userId}`}>
                     <User className="mr-2 h-4 w-4"/>
                     View Public Profile
                 </Link>
+            </Button>
+            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4"/>
+              Logout
             </Button>
           </div>
         </SheetContent>
