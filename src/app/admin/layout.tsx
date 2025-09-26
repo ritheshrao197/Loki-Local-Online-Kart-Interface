@@ -49,7 +49,7 @@ function AdminDashboardSkeleton() {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-              <div className={cn('relative h-7 w-auto')} style={{ aspectRatio: '200/66' }}/>
+               <Logo className="h-7" />
             </Link>
             <SidebarTrigger className="ml-auto" />
           </div>
