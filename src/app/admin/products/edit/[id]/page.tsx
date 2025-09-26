@@ -10,8 +10,7 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Product } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const ProductForm = lazy(() => import('@/components/dashboard/ProductForm').then(mod => ({ default: mod.ProductForm })));
+import { ProductForm } from "@/components/dashboard/ProductForm";
 
 export default function AdminEditProductPage() {
   const params = useParams();

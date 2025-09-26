@@ -102,8 +102,8 @@ export function ProductModerationCard({ product, onStatusChange, onDelete }: Pro
   };
   
   const handleDeleteConfirm = () => {
-    setIsUpdating(true);
     onDelete(product.id);
+    setIsUpdating(true);
   }
 
   return (
