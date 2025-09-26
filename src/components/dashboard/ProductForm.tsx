@@ -35,9 +35,6 @@ const formSchema = z.object({
   price: z.coerce.number().positive('Price must be a positive number.'),
   discountPrice: z.coerce.number().optional().nullable().refine(
     (data) => data === undefined || data === null || data > 0, { message: 'Discount must be positive' }
-  ).refine(
-    (data, ctx) => (data && data > 0) ? data < ctx.parent.price : true,
-    { message: 'Discount price must be less than the original price.', path: ['discountPrice'] }
   ),
   stock: z.coerce.number().int().min(0, 'Stock cannot be negative.'),
   unitOfMeasure: z.enum(['piece', 'kg', 'dozen', 'litre']),
@@ -62,7 +59,10 @@ const formSchema = z.object({
   isFeatured: z.boolean().optional(),
   // Admin-specific field
   sellerId: z.string().optional(),
-});
+}).refine(
+    (data) => (data.discountPrice && data.discountPrice > 0) ? data.discountPrice < data.price : true,
+    { message: 'Discount price must be less than the original price.', path: ['discountPrice'] }
+);
 
 type ProductFormValues = z.infer<typeof formSchema>;
 
