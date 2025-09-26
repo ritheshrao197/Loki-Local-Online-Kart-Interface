@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { getDistance, type Coordinates } from '@/lib/location';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 type SellerWithDistance = Seller & { distance: number | null };
 
