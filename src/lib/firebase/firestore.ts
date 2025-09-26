@@ -94,22 +94,30 @@ function sanitizeProductData(productData: { [key: string]: any }) {
     const sanitizedData: { [key: string]: any } = {};
 
     for (const key in productData) {
-        const value = productData[key];
-        if (value === undefined) {
-            sanitizedData[key] = null;
-        } else if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Timestamp)) {
-            // Recursively sanitize nested objects (like 'dimensions')
-            sanitizedData[key] = sanitizeProductData(value);
-        } else {
-            sanitizedData[key] = value;
+        if (Object.prototype.hasOwnProperty.call(productData, key)) {
+            const value = productData[key];
+
+            if (value === undefined) {
+                sanitizedData[key] = null;
+            } else if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Timestamp)) {
+                // Recursively sanitize nested objects (like 'dimensions')
+                sanitizedData[key] = sanitizeProductData(value);
+            } else {
+                sanitizedData[key] = value;
+            }
         }
     }
 
     if (productData.manufacturingDate && typeof productData.manufacturingDate === 'string') {
         sanitizedData.manufacturingDate = Timestamp.fromDate(new Date(productData.manufacturingDate));
+    } else if (productData.manufacturingDate === null) {
+        sanitizedData.manufacturingDate = null;
     }
+    
     if (productData.expiryDate && typeof productData.expiryDate === 'string') {
         sanitizedData.expiryDate = Timestamp.fromDate(new Date(productData.expiryDate));
+    } else if (productData.expiryDate === null) {
+        sanitizedData.expiryDate = null;
     }
     
     return sanitizedData;
