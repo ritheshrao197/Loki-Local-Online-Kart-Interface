@@ -91,20 +91,17 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
  * Firestore does not support 'undefined'.
  */
 function sanitizeProductData(productData: { [key: string]: any }) {
-    const sanitizedData = { ...productData };
-    // Get all keys and check for undefined
-    for (const key in sanitizedData) {
-        if (sanitizedData[key] === undefined) {
+    const sanitizedData: { [key: string]: any } = {};
+
+    for (const key in productData) {
+        const value = productData[key];
+        if (value === undefined) {
             sanitizedData[key] = null;
-        }
-    }
-    
-    // Handle nested objects like dimensions
-    if (sanitizedData.dimensions) {
-        for (const key in sanitizedData.dimensions) {
-             if (sanitizedData.dimensions[key] === undefined) {
-                sanitizedData.dimensions[key] = null;
-            }
+        } else if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Timestamp)) {
+            // Recursively sanitize nested objects (like 'dimensions')
+            sanitizedData[key] = sanitizeProductData(value);
+        } else {
+            sanitizedData[key] = value;
         }
     }
 
@@ -230,19 +227,7 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
 export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
   
-  // Create a mutable copy to avoid modifying the original object
-  const dataWithSeller: Partial<Product> = { ...productData };
-  
-  // If the productData includes sellerId (from admin form), reconstruct the seller object
-  if ('sellerId' in productData && productData.sellerId) {
-    const seller = await getSellerById(productData.sellerId);
-    if (seller) {
-      dataWithSeller.seller = { id: seller.id, name: seller.name };
-    }
-    delete (dataWithSeller as any).sellerId; // Remove the temporary sellerId field
-  }
-  
-  const dataToUpdate = sanitizeProductData(dataWithSeller);
+  const dataToUpdate = sanitizeProductData(productData);
 
   await updateDoc(productRef, dataToUpdate);
 }
