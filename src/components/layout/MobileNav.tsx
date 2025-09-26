@@ -71,15 +71,15 @@ export function MobileNav() {
     { href: '/discover', label: 'Discover', icon: Compass },
     { href: '/blogs', label: 'Stories', icon: Newspaper },
     { href: '/profile', label: 'Profile', icon: User },
-    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
+    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, action: () => setIsCartOpen(true) },
   ];
-  
+
   const sellerNavItems = [
     { href: `/dashboard/${userId}`, label: 'Dashboard', icon: LayoutDashboard },
     { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
     { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: `#`, label: 'Seller', icon: User, isAction: true, isProfile: true },
+    { href: `#`, label: 'Seller', icon: User, isAction: true, action: () => setIsProfileOpen(true) },
   ];
   
   const navItems = isDashboard ? sellerNavItems : buyerNavItems;
@@ -98,14 +98,9 @@ export function MobileNav() {
 
 
   const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
-    if ('isAction' in item && item.isAction) {
-        e.preventDefault();
-    }
-    if ('isCart' in item && item.isCart) {
-      setIsCartOpen(true);
-    }
-    if ('isProfile' in item && item.isProfile) {
-        setIsProfileOpen(true);
+    if ('isAction' in item && item.action) {
+      e.preventDefault();
+      item.action();
     }
   }
 
@@ -141,7 +136,7 @@ export function MobileNav() {
                 )}
                 onClick={(e) => handleActionClick(e, item)}
               >
-                {'isCart' in item && item.isCart && cartItems.length > 0 && (
+                {item.label === 'Cart' && cartItems.length > 0 && (
                    <Badge variant="destructive" className="absolute -right-2 top-0 h-4 w-4 justify-center p-0 text-[10px] sm:right-0 md:right-1">
                         {cartItems.length}
                     </Badge>
@@ -242,7 +237,7 @@ export function MobileNav() {
             </Button>
              <Separator />
              <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
-                <LayoutDashboard className="mr-2" />
+                <LogOut className="mr-2" />
                 Logout
             </Button>
           </div>
