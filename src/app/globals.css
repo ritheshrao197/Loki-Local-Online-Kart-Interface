@@ -5,9 +5,9 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%; /* near-white */
-    --foreground: 240 10% 3.9%; /* #333333 Charcoal Gray */
-    --card: 0 0% 100%; 
+    --background: 30 50% 98%;
+    --foreground: 240 10% 3.9%;
+    --card: 30 50% 100%; 
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
@@ -30,7 +30,7 @@
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 210 20% 98%;
+    --sidebar-background: 30 50% 98%;
     --sidebar-foreground: 240 10% 3.9%;
     --sidebar-primary: 215 59% 37%;
     --sidebar-primary-foreground: 0 0% 100%;
