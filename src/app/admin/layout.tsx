@@ -159,12 +159,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton>
-                <Avatar className="size-7">
-                  <AvatarImage src="https://picsum.photos/seed/avatarAdmin/100/100" />
-                  <AvatarFallback>AD</AvatarFallback>
-                </Avatar>
-                <span className="truncate">Admin User</span>
+              <SidebarMenuButton asChild>
+                <Link href="/profile">
+                  <Avatar className="size-7">
+                    <AvatarImage src="https://picsum.photos/seed/avatarAdmin/100/100" />
+                    <AvatarFallback>AD</AvatarFallback>
+                  </Avatar>
+                  <span className="truncate">Admin User</span>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

@@ -53,13 +53,19 @@ export default function ProfilePage() {
     address: '123, Rose Villa, Mumbai, Maharashtra'
   };
 
+  const adminUser = {
+    name: 'Admin User',
+    avatarUrl: 'https://picsum.photos/seed/avatarAdmin/200',
+    fallback: 'AD',
+  };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
       if (typeof window !== 'undefined') {
         sessionStorage.clear();
       }
-      router.push('/login');
+      router.push('/login/admin');
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
     } catch (error) {
       console.error("Logout error:", error);
@@ -82,6 +88,35 @@ export default function ProfilePage() {
 
   if (loading) {
     return <Loader />;
+  }
+
+  // Admin Profile View
+  if (userRole === 'admin') {
+     return (
+        <div className="px-4 sm:px-6 lg:px-8 py-12">
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-6">
+                    <Avatar className="h-24 w-24">
+                        <AvatarImage src={adminUser.avatarUrl} alt={adminUser.name} />
+                        <AvatarFallback>{adminUser.fallback}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h1 className="text-3xl font-bold font-headline">{adminUser.name}</h1>
+                        <p className="text-muted-foreground">Administrator</p>
+                    </div>
+                </div>
+            </div>
+             <Card>
+                <CardHeader>
+                    <CardTitle>Admin Account</CardTitle>
+                    <CardDescription>Manage your account.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button variant="destructive" onClick={handleLogout}><LogOut className="mr-2"/> Logout</Button>
+                </CardContent>
+            </Card>
+        </div>
+    )
   }
 
   // Seller Profile View
