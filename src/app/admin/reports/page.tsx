@@ -5,17 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import type { Seller } from "@/lib/types";
 import { getSellers } from "@/lib/firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import dynamic from "next/dynamic";
 
-const SalesChart = dynamic(() => import('@/components/charts/SalesChart'), {
-  loading: () => <div className="h-60 w-full bg-secondary rounded-lg flex items-center justify-center"><p className="text-muted-foreground">Loading chart...</p></div>,
-  ssr: false,
-});
+const SalesChart = lazy(() => import('@/components/charts/SalesChart'));
+
+const ChartSkeleton = () => <div className="h-60 w-full bg-secondary rounded-lg flex items-center justify-center"><p className="text-muted-foreground">Loading chart...</p></div>;
 
 export default function ReportsPage() {
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -65,7 +63,9 @@ export default function ReportsPage() {
             <CardDescription>A summary of sales performance.</CardDescription>
           </CardHeader>
           <CardContent>
-            <SalesChart />
+            <Suspense fallback={<ChartSkeleton />}>
+              <SalesChart />
+            </Suspense>
           </CardContent>
         </Card>
         <Card>

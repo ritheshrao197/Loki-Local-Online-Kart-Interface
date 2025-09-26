@@ -1,7 +1,7 @@
 
 'use client';
 
-import { ProductForm } from "@/components/dashboard/ProductForm";
+import { Suspense, lazy } from "react";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Product } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const ProductForm = lazy(() => import('@/components/dashboard/ProductForm').then(mod => ({ default: mod.ProductForm })));
 
 export default function AdminEditProductPage() {
   const params = useParams();
@@ -55,7 +57,9 @@ export default function AdminEditProductPage() {
           <Skeleton className="h-20 w-full" />
         </div>
       ) : product ? (
-        <ProductForm product={product} isAdmin={true} />
+        <Suspense fallback={<div className="space-y-4"><Skeleton className="h-48 w-full" /></div>}>
+          <ProductForm product={product} isAdmin={true} />
+        </Suspense>
       ) : null}
     </div>
   );

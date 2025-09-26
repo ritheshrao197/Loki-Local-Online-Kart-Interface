@@ -1,9 +1,14 @@
+
 'use client';
 
-import { ProductForm } from "@/components/dashboard/ProductForm";
+import { Suspense, lazy } from "react";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const ProductForm = lazy(() => import('@/components/dashboard/ProductForm').then(mod => ({ default: mod.ProductForm })));
+
 
 export default function AdminNewProductPage() {
 
@@ -18,7 +23,9 @@ export default function AdminNewProductPage() {
         </Button>
         <h1 className="text-3xl font-bold font-headline">Add New Product (Admin)</h1>
       </div>
-      <ProductForm isAdmin={true} />
+       <Suspense fallback={<div className="space-y-4"><Skeleton className="h-48 w-full" /></div>}>
+        <ProductForm isAdmin={true} />
+      </Suspense>
     </div>
   );
 }

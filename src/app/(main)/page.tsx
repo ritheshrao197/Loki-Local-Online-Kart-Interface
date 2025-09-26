@@ -1,40 +1,16 @@
 
 'use client';
 import { HeroSlider } from '@/components/home/HeroSlider';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import dynamic from 'next/dynamic';
 import React from 'react';
 
-const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCategories').then(mod => mod.FeaturedCategories), {
-  loading: () => <div className="h-48" />, // Simple placeholder
-  ssr: false,
-});
-
-const Promotions = dynamic(() => import('@/components/home/Promotions').then(mod => mod.Promotions), {
-  loading: () => <div className="h-64" />, // Simple placeholder
-  ssr: false,
-});
-
-const PopularProducts = dynamic(() => import('@/components/home/PopularProducts').then(mod => mod.PopularProducts), {
-  loading: () => <ProductGridSkeleton />,
-  ssr: false,
-});
-
-const BannerAds = dynamic(() => import('@/components/home/BannerAds').then(mod => mod.BannerAds), {
-  ssr: false,
-});
-
-
-const RecentlyViewedProducts = dynamic(() => import('@/components/home/RecentlyViewedProducts').then(mod => mod.RecentlyViewedProducts), {
-  ssr: false,
-  loading: () => <RecentlyViewedSkeleton />
-});
-
-const ProductGrid = dynamic(() => import('@/components/products/ProductGrid').then(mod => mod.ProductGrid), {
-  loading: () => <ProductGridSkeleton />,
-  ssr: false,
-});
+const FeaturedCategories = lazy(() => import('@/components/home/FeaturedCategories').then(mod => ({ default: mod.FeaturedCategories })));
+const Promotions = lazy(() => import('@/components/home/Promotions').then(mod => ({ default: mod.Promotions })));
+const PopularProducts = lazy(() => import('@/components/home/PopularProducts').then(mod => ({ default: mod.PopularProducts })));
+const BannerAds = lazy(() => import('@/components/home/BannerAds').then(mod => ({ default: mod.BannerAds })));
+const RecentlyViewedProducts = lazy(() => import('@/components/home/RecentlyViewedProducts').then(mod => ({ default: mod.RecentlyViewedProducts })));
+const ProductGrid = lazy(() => import('@/components/products/ProductGrid').then(mod => ({ default: mod.ProductGrid })));
 
 
 export default function HomePage() {
@@ -82,44 +58,50 @@ export default function HomePage() {
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <BannerAds placement="homepage_top" />
+                <Suspense fallback={<div />}>
+                  <BannerAds placement="homepage_top" />
+                </Suspense>
             </div>
         </section>
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                 <React.Suspense fallback={<div className="h-48" />}>
+                 <Suspense fallback={<div className="h-48" />}>
                   <FeaturedCategories />
-                </React.Suspense>
+                </Suspense>
             </div>
         </section>
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <React.Suspense fallback={<div className="h-64" />}>
+                <Suspense fallback={<div className="h-64" />}>
                   <Promotions />
-                </React.Suspense>
+                </Suspense>
             </div>
         </section>
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <RecentlyViewedProducts />
+                <Suspense fallback={<RecentlyViewedSkeleton />}>
+                  <RecentlyViewedProducts />
+                </Suspense>
             </div>
         </section>
         
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <React.Suspense fallback={<ProductGridSkeleton />}>
+                <Suspense fallback={<ProductGridSkeleton />}>
                   <PopularProducts />
-                </React.Suspense>
+                </Suspense>
             </div>
         </section>
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
-                <ProductGrid />
+                <Suspense fallback={<ProductGridSkeleton />}>
+                    <ProductGrid />
+                </Suspense>
             </div>
         </section>
       </div>
