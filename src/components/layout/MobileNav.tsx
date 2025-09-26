@@ -11,17 +11,26 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '../ui
 import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
-import { mockProducts } from '@/lib/placeholder-data';
+import { mockProducts, mockSellers } from '@/lib/placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import type { Product } from '@/lib/types';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 const cartItems = [
-    { ...mockProducts[0], quantity: 1 },
-    { ...mockProducts[4], quantity: 1 },
+    { 
+        ...mockProducts.find(p => p.id === 'prod_101')!, 
+        quantity: 1, 
+        seller: { name: mockSellers.find(s => s.id === 'seller_101')!.name } 
+    },
+    { 
+        ...mockProducts.find(p => p.id === 'prod_115')!, 
+        quantity: 1, 
+        seller: { name: mockSellers.find(s => s.id === 'seller_103')!.name } 
+    },
 ];
   
 const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
