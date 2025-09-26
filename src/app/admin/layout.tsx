@@ -35,11 +35,17 @@ import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import Logo from '@/components/common/logo';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { useEffect, useState } from 'react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -55,6 +61,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     }
   };
 
+  if (!isMounted) {
+    return (
+        <div className="flex flex-col min-h-screen">
+            <div className="h-16 border-b" />
+            <main className="flex-1 p-4 sm:p-6" />
+        </div>
+    );
+  }
 
   return (
     <>
