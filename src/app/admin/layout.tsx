@@ -27,7 +27,6 @@ import {
   Gavel,
   LayoutTemplate,
   Newspaper,
-  Store,
 } from 'lucide-react';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
@@ -47,22 +46,28 @@ function AdminDashboardSkeleton() {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-               <Logo className="h-7" />
-            </Link>
-            <SidebarTrigger className="ml-auto" />
-          </div>
+          <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
+            <Logo className="h-7" />
+          </Link>
+          <SidebarTrigger className="ml-auto" />
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            {Array.from({length: 8}).map((_, i) => <SidebarMenuSkeleton key={i} showIcon />)}
+            {Array.from({length: 8}).map((_, i) => (
+              <SidebarMenuItem key={i}>
+                <SidebarMenuSkeleton showIcon />
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuSkeleton showIcon/>
-            <SidebarMenuSkeleton showIcon/>
+            <SidebarMenuItem>
+              <SidebarMenuSkeleton showIcon/>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuSkeleton showIcon/>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton>
                 <Skeleton className="size-7 rounded-full" />
