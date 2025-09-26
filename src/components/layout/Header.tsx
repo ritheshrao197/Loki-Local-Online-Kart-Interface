@@ -1,8 +1,9 @@
 
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { LayoutDashboard, Search, ShoppingCart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Logo from '@/components/common/logo';
@@ -10,17 +11,84 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileNav } from './MobileNav';
 import { Badge } from '../ui/badge';
 
+type UserRole = 'admin' | 'seller' | 'buyer' | null;
+
 export function Header() {
   const isMobile = useIsMobile();
+  const [userRole, setUserRole] = useState<UserRole>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const role = sessionStorage.getItem('userRole') as UserRole;
+      const id = sessionStorage.getItem('userId');
+      setUserRole(role);
+      setUserId(id);
+    }
+  }, []);
+
   const cartItemCount = 2; // Mock count
 
   if (isMobile === undefined) {
     return <div className="h-16 border-b" />; // Prevent layout shift
   }
 
-  return isMobile ? (
-    <MobileNav />
-  ) : (
+  if (isMobile) {
+    return <MobileNav />;
+  }
+
+  const renderActionButtons = () => {
+    if (userRole === 'admin') {
+      return (
+        <Button asChild>
+          <Link href="/admin">
+            <LayoutDashboard className="mr-2" /> Admin Dashboard
+          </Link>
+        </Button>
+      );
+    }
+    if (userRole === 'seller' && userId) {
+      return (
+        <Button asChild>
+          <Link href={`/dashboard/${userId}`}>
+            <LayoutDashboard className="mr-2" /> Seller Dashboard
+          </Link>
+        </Button>
+      );
+    }
+    // Default for buyers or guests
+    return (
+      <>
+        <Button variant="ghost" asChild>
+          <Link href="/blogs">Blogs</Link>
+        </Button>
+        <Button variant="ghost" asChild>
+          <Link href="/login/admin">Sell on Loki</Link>
+        </Button>
+        <div className="flex items-center space-x-1">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/profile">
+              <User className="h-5 w-5" />
+              <span className="sr-only">Profile</span>
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/cart" className="relative">
+              {cartItemCount > 0 && (
+                <Badge variant="destructive" className="absolute -right-1 -top-1 h-4 w-4 justify-center rounded-full p-0 text-[10px]">
+                  {cartItemCount}
+                </Badge>
+              )}
+              <ShoppingCart className="h-5 w-5" />
+              <span className="sr-only">Cart</span>
+            </Link>
+          </Button>
+        </div>
+      </>
+    );
+  };
+
+  return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between gap-6">
         {/* Logo */}
@@ -42,32 +110,7 @@ export function Header() {
 
         {/* Desktop Navigation & Actions */}
         <nav className="flex items-center space-x-4">
-           <Button variant="ghost" asChild>
-              <Link href="/blogs">Blogs</Link>
-          </Button>
-          <Button variant="ghost" asChild>
-            <Link href="/login/admin">Sell on Loki</Link>
-          </Button>
-
-          <div className="flex items-center space-x-1">
-             <Button variant="ghost" size="icon" asChild>
-                <Link href="/profile">
-                  <User className="h-5 w-5" />
-                  <span className="sr-only">Profile</span>
-                </Link>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="/cart" className="relative">
-                   {cartItemCount > 0 && (
-                    <Badge variant="destructive" className="absolute -right-1 -top-1 h-4 w-4 justify-center rounded-full p-0 text-[10px]">
-                        {cartItemCount}
-                    </Badge>
-                  )}
-                  <ShoppingCart className="h-5 w-5" />
-                  <span className="sr-only">Cart</span>
-                </Link>
-              </Button>
-          </div>
+           {renderActionButtons()}
         </nav>
       </div>
     </header>

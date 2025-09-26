@@ -1,7 +1,7 @@
 
 'use client';
-import { useState } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -16,13 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 
-const navItems = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/blogs', label: 'Blogs', icon: Newspaper },
-  { href: '#', label: 'Search', icon: Search },
-  { href: '/profile', label: 'Profile', icon: User },
-  { href: '#', label: 'Cart', icon: ShoppingCart, isCart: true },
-];
+type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 const cartItems = [
     { ...mockProducts[0], quantity: 1 },
@@ -37,23 +31,42 @@ export function MobileNav() {
   const pathname = usePathname();
   const { toast } = useToast();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const handleComingSoon = (label: string) => {
-    if (['Search'].includes(label)) {
-      toast({
-        title: `${label} feature is coming soon!`,
-      });
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const role = sessionStorage.getItem('userRole') as UserRole;
+      const id = sessionStorage.getItem('userId');
+      setUserRole(role);
+      setUserId(id);
     }
+  }, []);
+
+  const getProfileLink = () => {
+    if (userRole === 'admin') return '/admin';
+    if (userRole === 'seller' && userId) return `/dashboard/${userId}`;
+    return '/profile';
   };
 
-  const handleNavClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
-    if (item.href === '#') {
-      e.preventDefault();
+  const navItems = [
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/blogs', label: 'Blogs', icon: Newspaper },
+    { href: '#', label: 'Search', icon: Search, isAction: true },
+    { href: getProfileLink(), label: 'Profile', icon: (userRole === 'admin' || userRole === 'seller') ? LayoutDashboard : User },
+    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
+  ];
+
+  const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
+    if (item.isAction) {
+        e.preventDefault();
     }
     if (item.isCart) {
       setIsCartOpen(true);
-    } else {
-      handleComingSoon(item.label);
+    } else if (item.label === 'Search') {
+      toast({
+        title: `${item.label} feature is coming soon!`,
+      });
     }
   }
 
@@ -80,7 +93,7 @@ export function MobileNav() {
                   'flex flex-col items-center justify-center gap-1 transition-colors relative',
                   isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 )}
-                onClick={(e) => handleNavClick(e, item)}
+                onClick={(e) => handleActionClick(e, item)}
               >
                 {item.isCart && cartItems.length > 0 && (
                    <Badge variant="destructive" className="absolute -right-2 top-0 h-4 w-4 justify-center p-0 text-[10px] sm:right-0 md:right-1">
@@ -88,7 +101,7 @@ export function MobileNav() {
                     </Badge>
                 )}
                 <item.icon className="h-5 w-5" />
-                <span>{item.label}</span>
+                <span>{item.label === 'Profile' && (userRole === 'admin' || userRole === 'seller') ? 'Dashboard' : item.label}</span>
               </Link>
             );
           })}
