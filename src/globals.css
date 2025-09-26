@@ -10,7 +10,7 @@
     /* Mustard: #FEDD59 */
     /* Lapis Lazuli: #336398 */
     
-    --background: 0 0% 93%; /* Anti-flash white: #EDEEEC */
+    --background: 0 0% 100%; /* White: #FFFFFF */
     --foreground: 0 0% 20%; /* Charcoal Gray for text */
     
     --card: 0 0% 100%; /* White: #FFFFFF */
@@ -55,54 +55,52 @@
     --sidebar-border: 0 0% 87%; /* Anti-flash white: #EDEEEC */
     --sidebar-ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
   }
-
+ 
   .dark {
-    /* Dark Theme */
-    /* Primary (Main Brand Color): Deep Blue (#295399) */
-    /* Secondary (Accent / CTA): Bright Yellow (#F9DD53) */
-    /* Background: Charcoal Gray (#333333) */
-    /* Surface (Cards / Sections): Dark Gray (#222222) */
-    /* Primary Text: Light Gray (#EFEFEF) */
-    /* Secondary Text: Light Blue (#A4C3F0) */
-    /* Borders / Dividers: Medium Gray (#555555) */
-    /* Hover State: Slightly brighter blue (#C3D8F7) */
+    --background: 0 0% 0%; /* Black */
+    --foreground: 0 0% 100%; /* White */
     
-    --background: 0 0% 20%; /* Charcoal Gray (#333333) */
-    --foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --card: 0 0% 10%; /* Dark Gray */
+    --card-foreground: 0 0% 100%; /* White */
     
-    --card: 0 0% 13%; /* Dark Gray (#222222) */
-    --card-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --popover: 0 0% 10%; /* Dark Gray */
+    --popover-foreground: 0 0% 100%; /* White */
     
-    --popover: 0 0% 13%; /* Dark Gray (#222222) */
-    --popover-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
-    
-    --primary: 219 56% 38%; /* Deep Blue (#295399) */
+    --primary: 211 50% 40%; /* Lapis Lazuli: #336398 */
     --primary-foreground: 0 0% 100%; /* White */
     
-    --secondary: 46 90% 65%; /* Bright Yellow (#F9DD53) */
-    --secondary-foreground: 0 0% 13%; /* Dark Gray (#222222) */
+    --secondary: 48 99% 67%; /* Mustard: #FEDD59 */
+    --secondary-foreground: 0 0% 0%; /* Black */
     
-    --muted: 0 0% 33%; /* Medium Gray (#555555) */
-    --muted-foreground: 0 0% 75%; /* Light Gray */
+    --muted: 0 0% 20%; /* Dark Gray */
+    --muted-foreground: 0 0% 70%; /* Light Gray */
     
-    --accent: 46 90% 65%; /* Bright Yellow (#F9DD53) */
-    --accent-foreground: 0 0% 13%; /* Dark Gray (#222222) */
+    --accent: 48 99% 67%; /* Mustard: #FEDD59 */
+    --accent-foreground: 0 0% 0%; /* Black */
     
-    --destructive: 0 70% 50%; /* Red */
+    --destructive: 0 84% 60%; /* Red */
     --destructive-foreground: 0 0% 100%; /* White */
     
-    --border: 0 0% 33%; /* Medium Gray (#555555) */
-    --input: 0 0% 33%; /* Medium Gray (#555555) */
-    --ring: 219 56% 38%; /* Deep Blue (#295399) */
+    --border: 0 0% 20%; /* Dark Gray */
+    --input: 0 0% 20%; /* Dark Gray */
+    --ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
     
-    --sidebar-background: 0 0% 13%; /* Dark Gray (#222222) */
-    --sidebar-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
-    --sidebar-primary: 219 56% 38%; /* Deep Blue (#295399) */
+    --radius: 0.5rem;
+    
+    --chart-1: 211 50% 40%; /* Lapis Lazuli: #336398 */
+    --chart-2: 48 99% 67%; /* Mustard: #FEDD59 */
+    --chart-3: 154 55% 48%;
+    --chart-4: 0 84% 60%;
+    --chart-5: 27 87% 67%;
+    
+    --sidebar-background: 0 0% 10%; /* Dark Gray */
+    --sidebar-foreground: 0 0% 100%; /* White */
+    --sidebar-primary: 211 50% 40%; /* Lapis Lazuli: #336398 */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 46 90% 65%; /* Bright Yellow (#F9DD53) */
-    --sidebar-accent-foreground: 0 0% 13%; /* Dark Gray (#222222) */
-    --sidebar-border: 0 0% 33%; /* Medium Gray (#555555) */
-    --sidebar-ring: 219 56% 38%; /* Deep Blue (#295399) */
+    --sidebar-accent: 48 99% 67%; /* Mustard: #FEDD59 */
+    --sidebar-accent-foreground: 0 0% 0%; /* Black */
+    --sidebar-border: 0 0% 20%; /* Dark Gray */
+    --sidebar-ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
   }
 }
 
@@ -112,106 +110,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  
-  /* Apple-inspired subtle effects */
-  .card {
-    @apply shadow-sm transition-all duration-300;
-  }
-  
-  /* Subtle depth effects for interactive elements */
-  .btn-primary {
-    @apply shadow transition-transform duration-200 active:scale-[0.98];
-  }
-  
-  /* Enhanced depth for popover elements */
-  .popover {
-    @apply shadow-lg;
-  }
-  
-  /* Floating animation for subtle motion */
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  /* Apple-inspired hover effects */
-  .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
-  }
-  
-  /* Smooth fade-in animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
-  }
-}
-
-@layer utilities {
-  /* Depth shadows - Apple's subtle approach */
-  .shadow-depth-1 {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.08);
-  }
-  
-  .shadow-depth-2 {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.07);
-  }
-  
-  .shadow-depth-3 {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
-  }
-  
-  .shadow-depth-4 {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Apple's rounded corners */
-  .rounded-apple {
-    border-radius: 12px;
-  }
-  
-  .rounded-apple-lg {
-    border-radius: 18px;
-  }
-  
-  .rounded-apple-xl {
-    border-radius: 24px;
-  }
-  
-  /* Apple's subtle gradients */
-  .bg-gradient-apple {
-    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--background)));
-  }
-  
-  /* Apple's clean borders */
-  .border-apple {
-    border: 1px solid hsl(var(--border));
   }
 }
