@@ -1,13 +1,30 @@
 
 'use client';
 import { HeroSlider } from '@/components/home/HeroSlider';
-import { FeaturedCategories } from '@/components/home/FeaturedCategories';
-import { Promotions } from '@/components/home/Promotions';
-import { PopularProducts } from '@/components/home/PopularProducts';
-import { BannerAds } from '@/components/home/BannerAds';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
+import React from 'react';
+
+const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCategories').then(mod => mod.FeaturedCategories), {
+  loading: () => <div className="h-48" />, // Simple placeholder
+  ssr: false,
+});
+
+const Promotions = dynamic(() => import('@/components/home/Promotions').then(mod => mod.Promotions), {
+  loading: () => <div className="h-64" />, // Simple placeholder
+  ssr: false,
+});
+
+const PopularProducts = dynamic(() => import('@/components/home/PopularProducts').then(mod => mod.PopularProducts), {
+  loading: () => <ProductGridSkeleton />,
+  ssr: false,
+});
+
+const BannerAds = dynamic(() => import('@/components/home/BannerAds').then(mod => mod.BannerAds), {
+  ssr: false,
+});
+
 
 const RecentlyViewedProducts = dynamic(() => import('@/components/home/RecentlyViewedProducts').then(mod => mod.RecentlyViewedProducts), {
   ssr: false,
@@ -71,13 +88,17 @@ export default function HomePage() {
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <FeaturedCategories />
+                 <React.Suspense fallback={<div className="h-48" />}>
+                  <FeaturedCategories />
+                </React.Suspense>
             </div>
         </section>
 
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <Promotions />
+                <React.Suspense fallback={<div className="h-64" />}>
+                  <Promotions />
+                </React.Suspense>
             </div>
         </section>
 
@@ -89,7 +110,9 @@ export default function HomePage() {
         
         <section className="py-12">
             <div className="px-4 sm:px-6 lg:px-8">
-                <PopularProducts />
+                <React.Suspense fallback={<ProductGridSkeleton />}>
+                  <PopularProducts />
+                </React.Suspense>
             </div>
         </section>
 
