@@ -83,7 +83,7 @@ export default function DiscoverPage() {
   return (
     <div className="container py-12">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
+        <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl text-gradient">
           Discover Local Sellers
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">

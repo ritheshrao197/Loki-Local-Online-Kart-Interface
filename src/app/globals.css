@@ -10,8 +10,8 @@
     --card-foreground: 24 9.8% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 24 9.8% 10%;
-    --primary: 15 100% 64%; /* vibrant-orange: #FF7849 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 45 100% 67%; /* #ffde59 */
+    --primary-foreground: 24 9.8% 10%;
     --secondary: 30 30% 90%;
     --secondary-foreground: 24 9.8% 10%;
     --muted: 30 30% 90%;
@@ -22,21 +22,21 @@
     --destructive-foreground: 0 0% 100%;
     --border: 30 30% 85%;
     --input: 30 30% 85%;
-    --ring: 15 100% 64%;
+    --ring: 45 100% 67%;
     --radius: 0.5rem;
-    --chart-1: 15 100% 64%;
+    --chart-1: 45 100% 67%;
     --chart-2: 36 59% 65%;
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
     --sidebar-background: 30 50% 93%;
     --sidebar-foreground: 24 9.8% 10%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 45 100% 67%;
+    --sidebar-primary-foreground: 24 9.8% 10%;
     --sidebar-accent: 30 40% 88%;
     --sidebar-accent-foreground: 24 9.8% 10%;
     --sidebar-border: 30 30% 85%;
-    --sidebar-ring: 15 100% 64%;
+    --sidebar-ring: 45 100% 67%;
   }
 
   .dark {
@@ -46,8 +46,8 @@
     --card-foreground: 30 50% 95%;
     --popover: 24 9.8% 10%;
     --popover-foreground: 30 50% 95%;
-    --primary: 15 100% 64%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 45 100% 67%;
+    --primary-foreground: 24 9.8% 10%;
     --secondary: 24 9.8% 20%;
     --secondary-foreground: 30 50% 95%;
     --muted: 24 9.8% 20%;
@@ -58,15 +58,15 @@
     --destructive-foreground: 0 0% 100%;
     --border: 24 9.8% 20%;
     --input: 24 9.8% 20%;
-    --ring: 15 100% 64%;
+    --ring: 45 100% 67%;
     --sidebar-background: 24 9.8% 12%;
     --sidebar-foreground: 30 50% 95%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 45 100% 67%;
+    --sidebar-primary-foreground: 24 9.8% 10%;
     --sidebar-accent: 24 9.8% 20%;
     --sidebar-accent-foreground: 30 50% 95%;
     --sidebar-border: 24 9.8% 20%;
-    --sidebar-ring: 15 100% 64%;
+    --sidebar-ring: 45 100% 67%;
   }
 }
 
@@ -78,8 +78,8 @@
     @apply bg-background text-foreground;
     background-image: url('/images/wave-pattern.svg');
     background-attachment: fixed;
-    background-size: cover;
-    color: hsl(var(--muted-foreground) / 0.1);
+    background-size: 200%;
+    color: hsl(var(--foreground) / 0.1);
   }
 
   body::before {
@@ -91,5 +91,9 @@
     height: 100vh;
     background-color: hsl(var(--background));
     z-index: -10;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-muted-foreground to-primary;
   }
 }

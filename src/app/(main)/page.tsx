@@ -53,7 +53,7 @@ export default function HomePage() {
       <HeroSlider />
       <div className="container py-12 space-y-20">
         <section className="text-center">
-          <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
+          <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl text-gradient">
             Discover Local Treasures
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
@@ -82,7 +82,7 @@ export default function HomePage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
+          <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">All Products</h2>
           <ProductGrid />
         </section>
       </div>
@@ -106,7 +106,7 @@ const ProductGridSkeleton = () => (
 
 const RecentlyViewedSkeleton = () => (
   <div>
-    <h2 className="text-2xl font-bold font-headline mb-6">Recently Viewed</h2>
+    <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">Recently Viewed</h2>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {Array.from({length: 4}).map((_, i) => (
          <div key={i} className="space-y-2">
