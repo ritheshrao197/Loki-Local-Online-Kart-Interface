@@ -90,10 +90,9 @@ export function MobileNav() {
   const { toast } = useToast();
 
   const handleLogout = () => {
-      // Dummy logout logic
       sessionStorage.clear();
       toast({ title: "Logged Out", description: "You have been successfully logged out." });
-      window.location.href = '/login/admin'; // Force reload
+      window.location.href = '/login/admin';
   };
 
 
