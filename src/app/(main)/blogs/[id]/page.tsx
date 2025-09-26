@@ -1,7 +1,4 @@
-
-'use client';
-import { useState, useEffect } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { getBlogById } from '@/lib/firebase/firestore';
@@ -9,52 +6,29 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Blog } from '@/lib/types';
 
-export default function BlogPostPage() {
-  const params = useParams();
-  const { id } = params;
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
+interface BlogPostPageProps {
+  params: { id: string };
+}
 
-  useEffect(() => {
-    if (!id) return;
-    async function fetchBlog() {
-      try {
-        const fetchedBlog = await getBlogById(id as string);
-        if (!fetchedBlog || fetchedBlog.status !== 'approved') {
-          notFound();
-        } else {
-          setBlog(fetchedBlog);
-        }
-      } catch (error) {
-        console.error("Failed to fetch blog:", error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
+async function getBlogData(id: string): Promise<Blog | null> {
+  try {
+    const fetchedBlog = await getBlogById(id as string);
+    if (!fetchedBlog || fetchedBlog.status !== 'approved') {
+      return null;
     }
-    fetchBlog();
-  }, [id]);
-  
-  if (loading) {
-    return (
-      <div className="container max-w-4xl py-12">
-        <Skeleton className="relative aspect-video mb-8" />
-        <Skeleton className="h-12 w-3/4 mb-4" />
-        <div className="flex items-center gap-4 mb-8">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-6 w-24" />
-        </div>
-        <div className="space-y-4">
-            <Skeleton className="h-5 w-full" />
-            <Skeleton className="h-5 w-full" />
-            <Skeleton className="h-5 w-5/6" />
-        </div>
-      </div>
-    );
+    return fetchedBlog;
+  } catch (error) {
+    console.error("Failed to fetch blog:", error);
+    return null;
   }
+}
+
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { id } = params;
+  const blog = await getBlogData(id);
 
   if (!blog) {
-    return null; // notFound() would be called
+    notFound();
   }
 
   return (
@@ -86,6 +60,24 @@ export default function BlogPostPage() {
         </div>
         <div dangerouslySetInnerHTML={{ __html: blog.content }} />
       </article>
+    </div>
+  );
+}
+
+export function BlogPostSkeleton() {
+  return (
+    <div className="container max-w-4xl py-12">
+      <Skeleton className="relative aspect-video mb-8" />
+      <Skeleton className="h-12 w-3/4 mb-4" />
+      <div className="flex items-center gap-4 mb-8">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-6 w-24" />
+      </div>
+      <div className="space-y-4">
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-5 w-5/6" />
+      </div>
     </div>
   );
 }

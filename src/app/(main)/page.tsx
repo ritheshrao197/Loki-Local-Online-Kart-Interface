@@ -8,7 +8,11 @@ import { BannerAds } from '@/components/home/BannerAds';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
-import { RecentlyViewedProducts } from '@/components/home/RecentlyViewedProducts';
+
+const RecentlyViewedProducts = dynamic(() => import('@/components/home/RecentlyViewedProducts').then(mod => mod.RecentlyViewedProducts), {
+  ssr: false,
+  loading: () => <RecentlyViewedSkeleton />
+});
 
 const ProductGrid = dynamic(() => import('@/components/products/ProductGrid').then(mod => mod.ProductGrid), {
   loading: () => <ProductGridSkeleton />,
@@ -27,7 +31,7 @@ export default function HomePage() {
     return (
       <div className="space-y-12">
         <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />
-        <div className="container space-y-4">
+        <div className="container space-y-4 py-12">
           <Skeleton className="h-8 w-1/4" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Skeleton className="aspect-square" />
@@ -98,4 +102,19 @@ const ProductGridSkeleton = () => (
         {Array.from({length: 8}).map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
     </div>
    </div>
+)
+
+const RecentlyViewedSkeleton = () => (
+  <div>
+    <h2 className="text-2xl font-bold font-headline mb-6">Recently Viewed</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {Array.from({length: 4}).map((_, i) => (
+         <div key={i} className="space-y-2">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-5 w-1/2" />
+         </div>
+      ))}
+    </div>
+  </div>
 )
