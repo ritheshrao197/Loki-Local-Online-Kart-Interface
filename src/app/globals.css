@@ -88,6 +88,7 @@
     filter: blur(100px);
     border-radius: 50%;
     pointer-events: none;
+    opacity: 0; /* Initially hidden for fade-in */
   }
 
   body::before {
@@ -96,6 +97,7 @@
     background-color: hsl(var(--accent) / 0.15);
     top: -200px;
     right: -200px;
+    animation: float 15s infinite alternate, fadeIn 2s forwards;
   }
 
   body::after {
@@ -104,12 +106,24 @@
     background-color: hsl(var(--primary) / 0.15);
     bottom: -200px;
     left: -200px;
+    animation: float 20s infinite alternate, fadeIn 2s forwards;
   }
 
   .dark body::before,
   .dark body::after {
-    opacity: 0.2;
+    opacity: 0; /* Reset opacity for dark mode fade in */
+    animation: float 20s infinite alternate, fadeInDark 2s forwards;
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInDark {
+  from { opacity: 0; }
+  to { opacity: 0.2; }
 }
 
 /* CRED-inspired card hover effect */
