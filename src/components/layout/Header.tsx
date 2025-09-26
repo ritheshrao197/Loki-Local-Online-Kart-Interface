@@ -3,12 +3,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Search, ShoppingCart, User, Store } from 'lucide-react';
+import { LayoutDashboard, Search, ShoppingCart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Logo from '@/components/common/logo';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { MobileNav } from './MobileNav';
 import { Badge } from '../ui/badge';
 import { ThemeToggle } from './ThemeToggle';
 import { usePathname, useRouter } from 'next/navigation';

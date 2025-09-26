@@ -1,9 +1,9 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, LogOut, Settings } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -15,9 +15,6 @@ import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { getAuth, signOut } from 'firebase/auth';
-import { app } from '@/lib/firebase/firebase';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import type { Seller } from '@/lib/types';
 import { getSellerById } from '@/lib/firebase/firestore';
 
@@ -27,8 +24,6 @@ type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 export function MobileNav() {
   const pathname = usePathname();
-  const { toast } = useToast();
-  const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -50,28 +45,24 @@ export function MobileNav() {
         getSellerById(id).then(setSeller);
       }
       
-      const items = [];
-      const item1 = {
-          id: 'prod_101',
-          name: 'Handwoven Cotton Scarf',
-          quantity: 1,
-          price: 499,
-          seller: { name: 'Artisan Fabrics Co.' },
+      setCartItems([
+        { 
+          id: 'prod_101', 
+          name: 'Handwoven Cotton Scarf', 
+          quantity: 1, 
+          price: 499, 
+          seller: { name: 'Artisan Fabrics Co.' }, 
           images: [{ url: 'https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'cotton scarf' }]
-      };
-      if (item1) items.push(item1);
-
-      const item2 = {
-          id: 'prod_115',
-          name: 'Bamboo Toothbrush Set',
-          quantity: 1,
-          price: 399,
-          seller: { name: 'GreenEarth' },
+        },
+        { 
+          id: 'prod_115', 
+          name: 'Bamboo Toothbrush Set', 
+          quantity: 1, 
+          price: 399, 
+          seller: { name: 'GreenEarth' }, 
           images: [{ url: 'https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop', hint: 'bamboo toothbrush' }]
-      };
-      if(item2) items.push(item2);
-
-      setCartItems(items);
+        }
+      ]);
     }
   }, []);
 
