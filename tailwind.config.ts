@@ -100,6 +100,10 @@ export default {
             '0%': { transform: 'translateY(0px)' },
             '50%': { transform: 'translateY(-20px)' },
             '100%': { transform: 'translateY(0px)' },
+        },
+        'drive': {
+            '0%': { transform: 'translateX(-100%)' },
+            '100%': { transform: 'translateX(200%)' },
         }
       },
       animation: {
@@ -107,6 +111,7 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'shimmer': 'shimmer 2s ease-in-out infinite',
         'float': 'float 3s ease-in-out infinite',
+        'drive': 'drive 1.5s ease-in-out infinite',
       },
     },
   },
