@@ -4,69 +4,111 @@
 
 @layer base {
   :root {
-    --background: 30 50% 95%; /* light-peach: #FFEEDD */
-    --foreground: 24 9.8% 10%;
-    --card: 30 50% 93%; /* Slightly darker peach for cards */
-    --card-foreground: 24 9.8% 10%;
+    /* Enhanced 3D color palette with depth and better visual hierarchy */
+    --background: 30 40% 96%; /* Lighter peach base with more depth */
+    --foreground: 24 15% 12%; /* Slightly more saturated text */
+    
+    /* Card with subtle gradient effect for 3D appearance */
+    --card: 30 45% 94%;
+    --card-foreground: 24 15% 12%;
+    
+    /* Popover with elevated appearance */
     --popover: 0 0% 100%;
-    --popover-foreground: 24 9.8% 10%;
-    --primary: 15 100% 64%; /* vibrant-orange: #FF7849 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 30% 90%;
-    --secondary-foreground: 24 9.8% 10%;
-    --muted: 30 30% 90%;
-    --muted-foreground: 24 9.8% 40%;
-    --accent: 36 59% 65%; /* earthy-yellow: #D4A373 */
-    --accent-foreground: 24 9.8% 10%;
+    --popover-foreground: 24 15% 12%;
+    
+    /* Primary with enhanced vibrancy and depth */
+    --primary: 18 95% 58%; /* More vibrant orange with better saturation */
+    --primary-foreground: 0 0% 98%;
+    
+    /* Secondary with subtle depth */
+    --secondary: 30 25% 88%;
+    --secondary-foreground: 24 15% 12%;
+    
+    /* Muted with better contrast */
+    --muted: 30 20% 85%;
+    --muted-foreground: 24 10% 45%;
+    
+    /* Accent with richer tone */
+    --accent: 33 50% 60%; /* Richer earthy tone */
+    --accent-foreground: 0 0% 98%;
+    
+    /* Destructive with better visibility */
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 30 30% 85%;
-    --input: 30 30% 85%;
-    --ring: 15 100% 64%;
-    --radius: 0.5rem;
-    --chart-1: 15 100% 64%;
-    --chart-2: 36 59% 65%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders with subtle depth */
+    --border: 30 25% 82%;
+    --input: 30 25% 82%;
+    --ring: 18 95% 58%;
+    
+    /* Radius with more dimension */
+    --radius: 0.75rem;
+    
+    /* Chart colors with better contrast */
+    --chart-1: 18 95% 58%;
+    --chart-2: 33 50% 60%;
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 30 50% 93%;
-    --sidebar-foreground: 24 9.8% 10%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 40% 88%;
-    --sidebar-accent-foreground: 24 9.8% 10%;
-    --sidebar-border: 30 30% 85%;
-    --sidebar-ring: 15 100% 64%;
+    
+    /* Sidebar with enhanced depth */
+    --sidebar-background: 30 40% 92%;
+    --sidebar-foreground: 24 15% 12%;
+    --sidebar-primary: 18 95% 58%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 30 30% 85%;
+    --sidebar-accent-foreground: 24 15% 12%;
+    --sidebar-border: 30 25% 80%;
+    --sidebar-ring: 18 95% 58%;
   }
 
   .dark {
-    --background: 24 9.8% 10%;
-    --foreground: 30 50% 95%;
-    --card: 24 9.8% 12%;
-    --card-foreground: 30 50% 95%;
-    --popover: 24 9.8% 10%;
-    --popover-foreground: 30 50% 95%;
-    --primary: 15 100% 64%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 24 9.8% 20%;
-    --secondary-foreground: 30 50% 95%;
-    --muted: 24 9.8% 20%;
-    --muted-foreground: 30 50% 75%;
-    --accent: 36 59% 65%;
-    --accent-foreground: 30 50% 95%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 24 9.8% 20%;
-    --input: 24 9.8% 20%;
-    --ring: 15 100% 64%;
-    --sidebar-background: 24 9.8% 12%;
-    --sidebar-foreground: 30 50% 95%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 9.8% 20%;
-    --sidebar-accent-foreground: 30 50% 95%;
-    --sidebar-border: 24 9.8% 20%;
-    --sidebar-ring: 15 100% 64%;
+    /* Enhanced dark theme with better depth */
+    --background: 24 12% 8%; /* Deeper background */
+    --foreground: 30 30% 92%; /* Brighter text */
+    
+    /* Card with subtle elevation effect */
+    --card: 24 12% 12%;
+    --card-foreground: 30 30% 92%;
+    
+    /* Popover with elevated appearance */
+    --popover: 24 15% 10%;
+    --popover-foreground: 30 30% 92%;
+    
+    /* Primary with enhanced vibrancy */
+    --primary: 18 95% 60%;
+    --primary-foreground: 0 0% 98%;
+    
+    /* Secondary with better contrast */
+    --secondary: 24 10% 20%;
+    --secondary-foreground: 30 30% 92%;
+    
+    /* Muted with better readability */
+    --muted: 24 10% 25%;
+    --muted-foreground: 30 20% 75%;
+    
+    /* Accent with richer tone */
+    --accent: 33 50% 55%;
+    --accent-foreground: 0 0% 98%;
+    
+    /* Destructive with better visibility */
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders with better contrast */
+    --border: 24 10% 22%;
+    --input: 24 10% 22%;
+    --ring: 18 95% 60%;
+    
+    /* Sidebar with enhanced depth */
+    --sidebar-background: 24 12% 10%;
+    --sidebar-foreground: 30 30% 92%;
+    --sidebar-primary: 18 95% 60%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 24 10% 20%;
+    --sidebar-accent-foreground: 30 30% 92%;
+    --sidebar-border: 24 10% 20%;
+    --sidebar-ring: 18 95% 60%;
   }
 }
 
@@ -76,5 +118,103 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Enhanced 3D effects for cards and containers */
+  .card {
+    @apply shadow-sm transition-all duration-300 hover:shadow-md;
+  }
+  
+  /* Subtle depth effects for interactive elements */
+  .btn-primary {
+    @apply shadow transition-transform duration-200 active:scale-95 hover:shadow-md;
+  }
+  
+  /* Enhanced depth for popover elements */
+  .popover {
+    @apply shadow-lg;
+  }
+  
+  /* Floating animation for 3D effect */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  /* Enhanced 3D hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Smooth fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
+
+@layer utilities {
+  /* 3D transform utilities */
+  .transform-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .rotate-y-12 {
+    transform: rotateY(12deg);
+  }
+  
+  .rotate-x-12 {
+    transform: rotateX(12deg);
+  }
+  
+  /* Depth shadows */
+  .shadow-depth-1 {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+  
+  .shadow-depth-2 {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  }
+  
+  .shadow-depth-3 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  }
+  
+  .shadow-depth-4 {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+  
+  .shadow-depth-5 {
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
   }
 }

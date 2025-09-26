@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -79,6 +78,9 @@ export const Header = React.memo(function Header() {
         </Button>
          <Button variant="ghost" asChild>
           <Link href="/discover">Discover</Link>
+        </Button>
+        <Button variant="ghost" asChild>
+          <Link href="/demo">Demo</Link>
         </Button>
         <Button variant="ghost" asChild>
           <Link href="/login/admin">Sell on Loki</Link>

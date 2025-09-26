@@ -1,9 +1,12 @@
+"use client";
+
 import { Suspense } from 'react';
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
 import { RecentlyViewedLoader } from '@/components/home/RecentlyViewedLoader';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { motion } from 'framer-motion';
 
 // Dynamically import components with optimized loading
 const HeroSlider = dynamic(() => import('@/components/home/HeroSlider').then(mod => mod.HeroSlider), {
@@ -44,74 +47,119 @@ export default function HomePage() {
       </ErrorBoundary>
       
       <div className="space-y-24">
-        <section className="py-12">
+        <motion.section 
+          className="py-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <div className="px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl text-left">
+            <motion.h1 
+              className="text-4xl font-bold font-headline tracking-tight lg:text-5xl text-left"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               Discover Local Treasures
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg text-muted-foreground text-left">
+            </motion.h1>
+            <motion.p 
+              className="mt-4 max-w-2xl text-lg text-muted-foreground text-left"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
               Explore unique, handcrafted products from local artisans and manufacturers near you.
-            </p>
+            </motion.p>
           </div>
-        </section>
+        </motion.section>
 
         <ErrorBoundary>
-          <section className="py-12">
+          <motion.section 
+            className="py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
             <div className="px-4 sm:px-6 lg:px-8">
               <Suspense fallback={<div className="h-48" />}>
                 <BannerAds placement="homepage_top" />
               </Suspense>
             </div>
-          </section>
+          </motion.section>
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <section className="py-12">
+          <motion.section 
+            className="py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+          >
             <div className="px-4 sm:px-6 lg:px-8">
               <Suspense fallback={<FeaturedCategoriesSkeleton />}>
                 <FeaturedCategories />
               </Suspense>
             </div>
-          </section>
+          </motion.section>
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <section className="py-12">
+          <motion.section 
+            className="py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+          >
             <div className="px-4 sm:px-6 lg:px-8">
               <Suspense fallback={<div className="h-64" />}>
                 <Promotions />
               </Suspense>
             </div>
-          </section>
+          </motion.section>
         </ErrorBoundary>
         
         <ErrorBoundary>
-          <section className="py-12">
+          <motion.section 
+            className="py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+          >
             <div className="px-4 sm:px-6 lg:px-8">
                <Suspense fallback={<ProductGridSkeleton />}>
                     <PopularProducts />
                   </Suspense>
             </div>
-          </section>
+          </motion.section>
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <section className="py-12">
+          <motion.section 
+            className="py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.6 }}
+          >
             <div className="px-4 sm:px-6 lg:px-8">
               <RecentlyViewedLoader />
             </div>
-          </section>
+          </motion.section>
         </ErrorBoundary>
 
         <ErrorBoundary>
-          <section className="py-12">
+          <motion.section 
+            className="py-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.8 }}
+          >
             <div className="px-4 sm:px-6 lg:px-8">
               <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
               <Suspense fallback={<ProductGridSkeleton />}>
                 <ProductGrid />
               </Suspense>
             </div>
-          </section>
+          </motion.section>
         </ErrorBoundary>
       </div>
     </div>

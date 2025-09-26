@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,6 +10,7 @@ import { MessageSquare, ShoppingCart, ThumbsUp, Truck, Warehouse, Zap, Share2, S
 import { ProductCard } from '@/components/products/ProductCard';
 import type { Product, Seller } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 
 const RECENTLY_VIEWED_KEY = 'recentlyViewed';
 const MAX_RECENTLY_VIEWED = 8;
@@ -68,7 +68,12 @@ export function ProductDetails({ product, seller, relatedProducts }: { product: 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-        <div className="flex flex-col gap-4">
+        <motion.div
+          className="flex flex-col gap-4"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+        >
             <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
                 <Image
                 src={product.images[0].url}
@@ -79,21 +84,49 @@ export function ProductDetails({ product, seller, relatedProducts }: { product: 
                 priority
                 />
             </div>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col gap-6">
+        <motion.div 
+          className="flex flex-col gap-6"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 100 }}
+        >
             <div>
-                <Badge variant="secondary">{product.category}</Badge>
-                <h1 className="mt-2 text-3xl font-bold font-headline lg:text-4xl">{product.name}</h1>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                    <Badge variant="secondary">{product.category}</Badge>
+                </motion.div>
+                <motion.h1 
+                  className="mt-2 text-3xl font-bold font-headline lg:text-4xl"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  {product.name}
+                </motion.h1>
+                <motion.p 
+                  className="mt-2 text-sm text-muted-foreground"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
                     Sold by{' '}
                     <Link href={`/sellers/${seller.id}`} className="text-accent-foreground font-medium hover:underline">
                         {seller.name}
                     </Link>
-                </p>
+                </motion.p>
             </div>
             
-            <div className="flex items-center gap-4">
+            <motion.div 
+              className="flex items-center gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
                 <p className="text-4xl font-bold text-primary">₹{product.price.toLocaleString('en-IN')}</p>
                 <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
@@ -101,31 +134,79 @@ export function ProductDetails({ product, seller, relatedProducts }: { product: 
                     ))}
                     <span className="text-sm text-muted-foreground ml-2">(12 reviews)</span>
                 </div>
-            </div>
+            </motion.div>
 
-            <p className="text-foreground/80 leading-relaxed">{product.description}</p>
+            <motion.p 
+              className="text-foreground/80 leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              {product.description}
+            </motion.p>
             
-            <div className="flex flex-col sm:flex-row gap-3">
-                <Button size="lg" className="flex-1" onClick={handleAddToCart}>
-                    <ShoppingCart className="mr-2" /> Add to Cart
-                </Button>
-                <Button size="lg" variant="outline" className="flex-1 bg-primary/10 border-primary/50 text-primary hover:bg-primary/20 hover:text-primary" onClick={handleAddToCart}>
-                    <Zap className="mr-2" /> Buy Now (UPI)
-                </Button>
-            </div>
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                    <Button size="lg" className="flex-1" onClick={handleAddToCart}>
+                        <ShoppingCart className="mr-2" /> Add to Cart
+                    </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                    <Button size="lg" variant="outline" className="flex-1 bg-primary/10 border-primary/50 text-primary hover:bg-primary/20 hover:text-primary" onClick={handleAddToCart}>
+                        <Zap className="mr-2" /> Buy Now (UPI)
+                    </Button>
+                </motion.div>
+            </motion.div>
 
-             <div className="flex items-center justify-between gap-4 text-sm">
-                <Button variant="ghost" className="text-muted-foreground" onClick={handleChat}>
-                    <MessageSquare className="mr-2 h-4 w-4" /> Chat with Seller
-                </Button>
-                 <Button variant="ghost" className="text-muted-foreground" onClick={handleShare}>
-                    <Share2 className="mr-2 h-4 w-4" /> Share
-                </Button>
-            </div>
+             <motion.div 
+               className="flex items-center justify-between gap-4 text-sm"
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.5, delay: 0.9 }}
+             >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                    <Button variant="ghost" className="text-muted-foreground" onClick={handleChat}>
+                        <MessageSquare className="mr-2 h-4 w-4" /> Chat with Seller
+                    </Button>
+                </motion.div>
+                 <motion.div
+                   whileHover={{ scale: 1.05 }}
+                   whileTap={{ scale: 0.95 }}
+                 >
+                    <Button variant="ghost" className="text-muted-foreground" onClick={handleShare}>
+                        <Share2 className="mr-2 h-4 w-4" /> Share
+                    </Button>
+                </motion.div>
+            </motion.div>
 
-            <Separator />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.0 }}
+            >
+                <Separator />
+            </motion.div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <motion.div 
+              className="grid grid-cols-2 gap-4 text-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.1 }}
+            >
                 <div className="flex items-center gap-3">
                     <Warehouse className="h-6 w-6 text-muted-foreground" />
                     <div>
@@ -147,17 +228,45 @@ export function ProductDetails({ product, seller, relatedProducts }: { product: 
                         <p className="text-muted-foreground">Check availability</p>
                     </div>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
       </div>
       
       {relatedProducts.length > 0 && (
-        <section className="mt-20" aria-labelledby="related-products-heading">
-          <h2 id="related-products-heading" className="text-2xl font-bold font-headline mb-6">Related Products</h2>
+        <motion.section 
+          className="mt-20" 
+          aria-labelledby="related-products-heading"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+        >
+          <motion.h2 
+            id="related-products-heading" 
+            className="text-2xl font-bold font-headline mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.3 }}
+          >
+            Related Products
+          </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
+            {relatedProducts.map((p, index) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: 1.4 + index * 0.1,
+                  type: "spring",
+                  stiffness: 100
+                }}
+              >
+                <ProductCard product={p} />
+              </motion.div>
+            ))}
           </div>
-        </section>
+        </motion.section>
       )}
     </div>
   );

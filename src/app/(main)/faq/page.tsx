@@ -1,3 +1,4 @@
+"use client";
 
 import {
   Accordion,
@@ -6,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import type { Metadata } from 'next';
+import { motion } from 'framer-motion';
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions (FAQ)',
@@ -45,42 +47,95 @@ export default function FAQPage() {
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8">
-      <section className="text-center">
-        <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
+      <motion.section 
+        className="text-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.h1 
+          className="text-4xl font-bold font-headline tracking-tight lg:text-5xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           Frequently Asked Questions
-        </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+        </motion.h1>
+        <motion.p 
+          className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
           Find answers to common questions about buying and selling on Loki.
-        </p>
-      </section>
+        </motion.p>
+      </motion.section>
 
-      <section className="mt-16 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold font-headline mb-6">For Buyers</h2>
+      <motion.section 
+        className="mt-16 max-w-4xl mx-auto"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.6 }}
+      >
+        <motion.h2 
+          className="text-2xl font-bold font-headline mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+        >
+          For Buyers
+        </motion.h2>
         <Accordion type="single" collapsible className="w-full">
           {buyerFaqs.map((faq, index) => (
-            <AccordionItem value={`buyer-${index}`} key={index}>
-              <AccordionTrigger className="text-lg">{faq.question}</AccordionTrigger>
-              <AccordionContent className="text-base text-muted-foreground">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.0 + index * 0.1 }}
+            >
+              <AccordionItem value={`buyer-${index}`}>
+                <AccordionTrigger className="text-lg">{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
           ))}
         </Accordion>
-      </section>
+      </motion.section>
 
-       <section className="mt-16 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold font-headline mb-6">For Sellers</h2>
+       <motion.section 
+         className="mt-16 max-w-4xl mx-auto"
+         initial={{ opacity: 0, y: 30 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.6, delay: 1.4 }}
+       >
+        <motion.h2 
+          className="text-2xl font-bold font-headline mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.6 }}
+        >
+          For Sellers
+        </motion.h2>
         <Accordion type="single" collapsible className="w-full">
           {sellerFaqs.map((faq, index) => (
-            <AccordionItem value={`seller-${index}`} key={index}>
-              <AccordionTrigger className="text-lg">{faq.question}</AccordionTrigger>
-              <AccordionContent className="text-base text-muted-foreground">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1.8 + index * 0.1 }}
+            >
+              <AccordionItem value={`seller-${index}`}>
+                <AccordionTrigger className="text-lg">{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            </motion.div>
           ))}
         </Accordion>
-      </section>
+      </motion.section>
     </div>
   );
 }

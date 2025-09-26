@@ -1,4 +1,3 @@
-
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -7,6 +6,7 @@ import { getBannerAds } from '@/lib/firebase/firestore';
 import type { BannerAd } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from 'framer-motion';
 
 interface BannerAdsProps {
   placement: BannerAd['placement'];
@@ -45,20 +45,43 @@ export function BannerAds({ placement }: BannerAdsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {ads.map((ad) => (
-        <Link href={ad.linkUrl} key={ad.id} className="group block">
-          <Card className="overflow-hidden">
-            <div className="relative aspect-[2/1] w-full">
-              <Image
-                src={ad.imageUrl}
-                alt={ad.title}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          </Card>
-        </Link>
+      {ads.map((ad, index) => (
+        <motion.div
+          key={ad.id}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.6, 
+            delay: index * 0.2,
+            type: "spring",
+            stiffness: 100
+          }}
+          whileHover={{ 
+            y: -5,
+            transition: { duration: 0.3 }
+          }}
+          className="group block"
+        >
+          <Link href={ad.linkUrl} className="group block">
+            <Card className="overflow-hidden">
+              <div className="relative aspect-[2/1] w-full">
+                <motion.div
+                  className="absolute inset-0"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Image
+                    src={ad.imageUrl}
+                    alt={ad.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </motion.div>
+              </div>
+            </Card>
+          </Link>
+        </motion.div>
       ))}
     </div>
   );
