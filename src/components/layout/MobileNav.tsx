@@ -11,48 +11,32 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '../ui
 import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
-import { mockSellers } from '@/lib/placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { placeholderImages } from '@/lib/placeholder-images';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
-const prod101 = placeholderImages.find(p => p.id === 'prod_101');
-const prod115 = placeholderImages.find(p => p.id === 'prod_115');
-
-const cartItems: any[] = [];
-
-if (prod101) {
-  const seller = mockSellers.find(s => s.id === 'seller_101');
-  if (seller) {
-    cartItems.push({
-      id: prod101.id,
-      name: prod101.name,
+const cartItems = [
+    {
+      id: 'prod_101',
+      name: 'Handwoven Cotton Scarf',
       quantity: 1,
       price: 499,
-      images: [{ url: prod101.url, hint: prod101.hint }],
-      seller: { name: seller.name }
-    });
-  }
-}
-
-if (prod115) {
-  const seller = mockSellers.find(s => s.id === 'seller_103');
-  if (seller) {
-    cartItems.push({
-      id: prod115.id,
-      name: prod115.name,
+      images: [{ url: "https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080", hint: "cotton scarf" }],
+      seller: { name: 'Artisan Fabrics Co.' }
+    },
+    {
+      id: 'prod_115',
+      name: 'Bamboo Toothbrush Set',
       quantity: 1,
       price: 399,
-      images: [{ url: prod115.url, hint: prod115.hint }],
-      seller: { name: seller.name }
-    });
-  }
-}
-  
+      images: [{ url: "https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop", hint: "bamboo toothbrush" }],
+      seller: { name: 'GreenEarth' }
+    }
+];
+
 const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 const shipping = 50;
 const total = subtotal + shipping;
