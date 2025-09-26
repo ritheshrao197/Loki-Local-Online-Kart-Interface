@@ -30,14 +30,14 @@ export default function SellerAdminLoginPage() {
       sessionStorage.clear(); // Clear any previous session
       if (user === 'admin') {
         sessionStorage.setItem('userRole', 'admin');
-        toast({ title: 'Admin Login Successful' });
         router.push('/admin');
+        toast({ title: 'Admin Login Successful' });
       } else if (user) {
         // Assume any other username is a seller ID for testing
         sessionStorage.setItem('userRole', 'seller');
         sessionStorage.setItem('userId', user);
-        toast({ title: 'Seller Login Successful' });
         router.push(`/dashboard/${user}`);
+        toast({ title: 'Seller Login Successful' });
       } else {
         toast({
           title: 'Invalid Credentials',

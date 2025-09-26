@@ -96,8 +96,8 @@ export default function BuyerLoginPage() {
 
     try {
         await window.confirmationResult.confirm(otp);
-        toast({ title: 'Login Successful', description: 'Welcome back!' });
         router.push('/');
+        toast({ title: 'Login Successful', description: 'Welcome back!' });
     } catch (error: any) {
          console.error("Error verifying OTP:", error);
         toast({
