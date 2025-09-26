@@ -1,6 +1,7 @@
 
 import type { Product, Seller, Order, Blog } from './types';
 import { Timestamp } from 'firebase/firestore';
+import { placeholderImages } from './placeholder-images';
 
 
 export const mockSellers: Seller[] = [
@@ -26,7 +27,7 @@ export const mockProducts: Product[] = [
         isFeatured: true,
         isPromoted: false,
         videoUrl: 'https://youtu.be/abc123',
-        images: [{ url: 'https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'cotton scarf' }],
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_101')?.url!, hint: placeholderImages.find(p => p.id === 'prod_101')?.hint! }],
         description: 'A soft, beautifully handwoven cotton scarf with a simple, elegant pattern, perfect for all seasons.',
         status: 'approved',
         unitOfMeasure: 'piece',
@@ -44,7 +45,7 @@ export const mockProducts: Product[] = [
         isFeatured: false,
         isPromoted: true,
         videoUrl: 'https://youtu.be/turmeric1',
-        images: [{ url: 'https://images.unsplash.com/photo-1596039166270-3e8266746816?q=80&w=774&auto=format&fit=crop', hint: 'turmeric powder' }],
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_103')?.url!, hint: placeholderImages.find(p => p.id === 'prod_103')?.hint! }],
         description: 'Pure, vibrant organic turmeric powder sourced from local farms, finely ground for culinary use.',
         status: 'approved',
         unitOfMeasure: 'kg',
@@ -61,7 +62,7 @@ export const mockProducts: Product[] = [
         keywords: 'jute, eco-friendly, bag',
         isFeatured: true,
         isPromoted: false,
-        images: [{ url: 'https://images.unsplash.com/photo-1506094222795-f04d8e06ed23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxqdXRlJTIwYmFnfGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080', hint: 'jute bag' }],
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_110')?.url!, hint: placeholderImages.find(p => p.id === 'prod_110')?.hint! }],
         description: 'An eco-friendly and durable jute shopping bag, perfect for groceries and daily use, promoting a sustainable lifestyle.',
         status: 'approved',
         unitOfMeasure: 'piece',
@@ -79,7 +80,7 @@ export const mockProducts: Product[] = [
         isFeatured: true,
         isPromoted: true,
         videoUrl: 'https://youtu.be/bamboo15',
-        images: [{ url: 'https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop', hint: 'bamboo toothbrush' }],
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_115')?.url!, hint: placeholderImages.find(p => p.id === 'prod_115')?.hint! }],
         description: 'A set of three biodegradable bamboo toothbrushes, a great alternative to plastic for your personal care routine.',
         status: 'approved',
         unitOfMeasure: 'piece',
@@ -96,7 +97,7 @@ export const mockProducts: Product[] = [
         keywords: 'ceramic, vase, handmade',
         isFeatured: false,
         isPromoted: false,
-        images: [{ url: 'https://images.unsplash.com/photo-1675604587136-f91dc1a4473b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoYW5kbWFkZSUyMHBvdHRlcnl8ZW58MHx8fHwxNzU4NjIwNjkxfDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'ceramic vase' }],
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_120')?.url!, hint: placeholderImages.find(p => p.id === 'prod_120')?.hint! }],
         description: 'A beautiful handmade ceramic vase, crafted by local artisans with a unique, rustic glaze.',
         status: 'pending',
         unitOfMeasure: 'piece',
@@ -113,7 +114,7 @@ export const mockProducts: Product[] = [
         keywords: 'khadi, shirt, cotton',
         isFeatured: false,
         isPromoted: true,
-        images: [{ url: 'https://images.unsplash.com/photo-1621335829175-95f363883515?q=80&w=870&auto=format&fit=crop', hint: 'khadi shirt' }],
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_131')?.url!, hint: placeholderImages.find(p => p.id === 'prod_131')?.hint! }],
         description: 'A pure cotton, handwoven Khadi shirt that is comfortable, breathable, and stylish.',
         status: 'approved',
         unitOfMeasure: 'piece',
@@ -125,7 +126,7 @@ export const mockOrders: (Omit<Order, 'id'> & { id: string, orderDate: Date })[]
         id: 'order_001',
         buyer: { id: 'buyer_01', name: 'Rahul Sharma' },
         sellerId: 'seller_101',
-        product: { id: 'prod_101', name: 'Handwoven Cotton Scarf', images: [{ url: 'https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'cotton scarf' }], price: 499 },
+        product: { id: 'prod_101', name: 'Handwoven Cotton Scarf', images: [{ url: placeholderImages.find(p => p.id === 'prod_101')?.url!, hint: placeholderImages.find(p => p.id === 'prod_101')?.hint! }], price: 499 },
         quantity: 2,
         total: 998,
         status: 'delivered',
@@ -137,7 +138,7 @@ export const mockOrders: (Omit<Order, 'id'> & { id: string, orderDate: Date })[]
         id: 'order_002',
         buyer: { id: 'buyer_02', name: 'Priya Mehta' },
         sellerId: 'seller_102',
-        product: { id: 'prod_103', name: 'Organic Turmeric Powder', images: [{ url: 'https://images.unsplash.com/photo-1596039166270-3e8266746816?q=80&w=774&auto=format&fit=crop', hint: 'turmeric powder' }], price: 250 },
+        product: { id: 'prod_103', name: 'Organic Turmeric Powder', images: [{ url: placeholderImages.find(p => p.id === 'prod_103')?.url!, hint: placeholderImages.find(p => p.id === 'prod_103')?.hint! }], price: 250 },
         quantity: 1,
         total: 250,
         status: 'pending',
@@ -149,7 +150,7 @@ export const mockOrders: (Omit<Order, 'id'> & { id: string, orderDate: Date })[]
         id: 'order_003',
         buyer: { id: 'buyer_03', name: 'Anil Kumar' },
         sellerId: 'seller_103',
-        product: { id: 'prod_110', name: 'Jute Shopping Bag', images: [{ url: 'https://images.unsplash.com/photo-1506094222795-f04d8e06ed23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxqdXRlJTIwYmFnfGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080', hint: 'jute bag' }], price: 299 },
+        product: { id: 'prod_110', name: 'Jute Shopping Bag', images: [{ url: placeholderImages.find(p => p.id === 'prod_110')?.url!, hint: placeholderImages.find(p => p.id === 'prod_110')?.hint! }], price: 299 },
         quantity: 1,
         total: 698, // This is incorrect, should be 299 for 1, or 2 products
         status: 'confirmed',

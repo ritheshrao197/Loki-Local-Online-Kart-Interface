@@ -1,64 +1,41 @@
+
 {
   "placeholderImages": [
     {
-      "id": "prod_001",
-      "description": "A soft, beautifully handwoven cotton scarf with a simple, elegant pattern, perfect for all seasons.",
-      "imageUrl": "https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "cotton scarf"
+      "id": "prod_101",
+      "name": "Handwoven Cotton Scarf",
+      "url": "https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "hint": "cotton scarf"
     },
     {
-      "id": "prod_002",
-      "description": "Pure, vibrant organic turmeric powder sourced from local farms, finely ground for culinary use.",
-      "imageUrl": "https://images.unsplash.com/photo-1596039166270-3e8266746816?q=80&w=774&auto=format&fit=crop",
-      "imageHint": "turmeric powder"
+      "id": "prod_103",
+      "name": "Organic Turmeric Powder",
+      "url": "https://images.unsplash.com/photo-1596039166270-3e8266746816?q=80&w=774&auto=format&fit=crop",
+      "hint": "turmeric powder"
     },
     {
-      "id": "prod_003",
-      "description": "An eco-friendly and durable jute shopping bag, perfect for groceries and daily use, promoting a sustainable lifestyle.",
-      "imageUrl": "https://images.unsplash.com/photo-1506094222795-f04d8e06ed23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxqdXRlJTIwYmFnfGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "jute bag"
+      "id": "prod_110",
+      "name": "Jute Shopping Bag",
+      "url": "https://images.unsplash.com/photo-1506094222795-f04d8e06ed23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxqdXRlJTIwYmFnfGVufDB8fHx8MTc1ODY2MDU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "hint": "jute bag"
     },
     {
-      "id": "prod_004",
-      "description": "A set of three biodegradable bamboo toothbrushes, a great alternative to plastic for your personal care routine.",
-      "imageUrl": "https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop",
-      "imageHint": "bamboo toothbrush"
+      "id": "prod_115",
+      "name": "Bamboo Toothbrush Set",
+      "url": "https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop",
+      "hint": "bamboo toothbrush"
     },
     {
-      "id": "prod_005",
-      "description": "A beautiful handmade ceramic vase, crafted by local artisans with a unique, rustic glaze.",
-      "imageUrl": "https://images.unsplash.com/photo-1675604587136-f91dc1a4473b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoYW5kbWFkZSUyMHBvdHRlcnl8ZW58MHx8fHwxNzU4NjIwNjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ceramic vase"
+      "id": "prod_120",
+      "name": "Handmade Ceramic Vase",
+      "url": "https://images.unsplash.com/photo-1675604587136-f91dc1a4473b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxoYW5kbWFkZSUyMHBvdHRlcnl8ZW58MHx8fHwxNzU4NjIwNjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "hint": "ceramic vase"
     },
     {
-      "id": "prod_006",
-      "description": "A bottle of natural herbal hair oil made with a traditional recipe to nourish and strengthen your hair.",
-      "imageUrl": "https://images.unsplash.com/photo-1556912921-2b635f75f73c?q=80&w=870&auto=format&fit=crop",
-      "imageHint": "herbal oil"
-    },
-    {
-      "id": "prod_007",
-      "description": "A premium, handcrafted leather wallet for men, offering both style and durability.",
-      "imageUrl": "https://images.unsplash.com/photo-1615395884848-03fa4681628d?q=80&w=815&auto=format&fit=crop",
-      "imageHint": "leather wallet"
-    },
-    {
-      "id": "prod_008",
-      "description": "A pure cotton, handwoven Khadi shirt that is comfortable, breathable, and stylish.",
-      "imageUrl": "https://images.unsplash.com/photo-1621335829175-95f363883515?q=80&w=870&auto=format&fit=crop",
-      "imageHint": "khadi shirt"
-    },
-    {
-      "id": "prod_009",
-      "description": "A 500g jar of raw, unprocessed honey collected from organic farms in the countryside.",
-      "imageUrl": "https://images.unsplash.com/photo-1558642158-424b6142c5f8?q=80&w=774&auto=format&fit=crop",
-      "imageHint": "honey jar"
-    },
-    {
-      "id": "prod_010",
-      "description": "A set of eco-friendly terracotta planters, perfect for adding a touch of nature to your home.",
-      "imageUrl": "https://images.unsplash.com/photo-1590112153697-3932a338c949?q=80&w=870&auto=format&fit=crop",
-      "imageHint": "terracotta planters"
+      "id": "prod_131",
+      "name": "Traditional Khadi Shirt",
+      "url": "https://images.unsplash.com/photo-1621335829175-95f363883515?q=80&w=870&auto=format&fit=crop",
+      "hint": "khadi shirt"
     }
   ]
 }

@@ -123,4 +123,11 @@ export type Buyer = {
   language: string;
   loyaltyPoints: number;
   wishlist: string[];
-}
+};
+
+export type ImagePlaceholder = {
+  id: string;
+  name: string;
+  url: string;
+  hint: string;
+};
