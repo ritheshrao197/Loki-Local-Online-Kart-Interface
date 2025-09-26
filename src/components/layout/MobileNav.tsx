@@ -1,9 +1,9 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, LogOut } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -16,6 +16,9 @@ import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { placeholderImages } from '@/lib/placeholder-images';
+import { getAuth, signOut } from 'firebase/auth';
+import { app } from '@/lib/firebase/firebase';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -23,7 +26,9 @@ type UserRole = 'admin' | 'seller' | 'buyer' | null;
 export function MobileNav() {
   const pathname = usePathname();
   const { toast } = useToast();
+  const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -61,6 +66,22 @@ export function MobileNav() {
     }
   }, []);
 
+  const handleLogout = async () => {
+    const auth = getAuth(app);
+    try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear();
+      }
+      setIsProfileOpen(false);
+      router.push('/login/admin');
+      await signOut(auth);
+      toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
+    }
+  };
+
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 50;
   const total = subtotal + shipping;
@@ -78,7 +99,7 @@ export function MobileNav() {
     { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
     { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: `/sellers/${userId}`, label: 'Profile', icon: User },
+    { href: '#', label: 'Profile', icon: User, isAction: true, isProfile: true },
   ];
 
   const navItems = isDashboard ? sellerNavItems : buyerNavItems;
@@ -90,6 +111,8 @@ export function MobileNav() {
     }
     if ('isCart' in item && item.isCart) {
       setIsCartOpen(true);
+    } else if ('isProfile' in item && item.isProfile) {
+      setIsProfileOpen(true);
     } else if (item.label === 'Search') {
       toast({
         title: `${item.label} feature is coming soon!`,
@@ -118,7 +141,7 @@ export function MobileNav() {
       <div className="fixed bottom-0 left-0 z-40 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <nav className="grid h-16 grid-cols-5 items-center text-xs">
           {navItems.map((item) => {
-            const isActive = item.href === '/' ? pathname === item.href : pathname.startsWith(item.href);
+            const isActive = item.href === '/' ? pathname === item.href : (item.href !== '#' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.label}
@@ -142,6 +165,7 @@ export function MobileNav() {
         </nav>
       </div>
 
+      {/* Cart Sheet */}
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
         <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">
           <SheetHeader className="px-6">
@@ -198,6 +222,35 @@ export function MobileNav() {
               <Link href="/cart">Proceed to Checkout</Link>
             </Button>
           </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* Seller Profile Sheet */}
+      <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+        <SheetContent side="right" className="w-[280px] p-0">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>
+              <div className="flex items-center gap-3">
+                 <Avatar className="size-9">
+                  <AvatarImage src={`https://picsum.photos/seed/${userId}/100/100`} />
+                  <AvatarFallback>{'S'}</AvatarFallback>
+                </Avatar>
+                <span>Seller Menu</span>
+              </div>
+            </SheetTitle>
+          </SheetHeader>
+          <div className="p-4">
+            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4"/>
+              Logout
+            </Button>
+             <Button variant="outline" asChild className="w-full justify-start mt-4">
+                <Link href={`/sellers/${userId}`}>
+                    <User className="mr-2 h-4 w-4"/>
+                    View Public Profile
+                </Link>
+            </Button>
+          </div>
         </SheetContent>
       </Sheet>
     </>
