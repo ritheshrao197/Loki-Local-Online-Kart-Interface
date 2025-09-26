@@ -17,65 +17,79 @@ function DiscoverMap({ sellers, selectedSeller }: DiscoverMapProps) {
   // Filter sellers with valid locations
   const validSellers = sellers.filter(seller => seller.location);
 
-  // Effect for initializing and cleaning up the map
+  // Effect for initializing and managing the map
   useEffect(() => {
-    if (typeof window === 'undefined' || !mapContainerRef.current || (mapContainerRef.current as any)._leaflet_id) {
+    if (typeof window === 'undefined' || !mapContainerRef.current) {
       return;
     }
     
-    let map: any;
+    // Initialize map only if it doesn't already exist
+    if (!mapInstanceRef.current) {
+      const initMap = async () => {
+        try {
+          const L = await import('leaflet');
 
-    const initMap = async () => {
-      try {
-        const L = await import('leaflet');
+          // Fix for Leaflet marker icons in Next.js
+          delete (L.Icon.Default.prototype as any)._getIconUrl;
+          L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+          });
+          
+          const center = (validSellers.length > 0 && validSellers[0].location)
+            ? [validSellers[0].location.lat, validSellers[0].location.lng]
+            : [20.5937, 78.9629]; // Default to center of India
 
-        // Fix for Leaflet marker icons in Next.js
-        delete (L.Icon.Default.prototype as any)._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+          mapInstanceRef.current = L.map(mapContainerRef.current!).setView(center as L.LatLngExpression, 5);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(mapInstanceRef.current);
+          
+        } catch (error) {
+          console.error('Error initializing map:', error);
+        }
+      };
+
+      initMap();
+    }
+    
+    // Add markers
+    if(mapInstanceRef.current) {
+        // Clear existing markers
+        mapInstanceRef.current.eachLayer((layer: any) => {
+            if (layer instanceof import('leaflet').Marker) {
+                mapInstanceRef.current.removeLayer(layer);
+            }
         });
         
-        const center = (validSellers.length > 0 && validSellers[0].location)
-          ? [validSellers[0].location.lat, validSellers[0].location.lng]
-          : [20.5937, 78.9629]; // Default to center of India
-
-        map = L.map(mapContainerRef.current!).setView(center as L.LatLngExpression, 5);
-        mapInstanceRef.current = map;
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
+        // Add new markers
         validSellers.forEach(seller => {
           if (seller.location) {
-            L.marker([seller.location.lat, seller.location.lng])
-              .addTo(map)
+            import('leaflet').then(L => {
+                L.marker([seller.location!.lat, seller.location!.lng])
+              .addTo(mapInstanceRef.current)
               .bindPopup(seller.name);
+            });
           }
         });
-        
-      } catch (error) {
-        console.error('Error initializing map:', error);
-      }
-    };
+    }
 
-    initMap();
 
     // Cleanup function
     return () => {
-      if (map) {
-        map.remove();
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, [validSellers]);
 
   // Effect for updating the map view when selectedSeller changes
   useEffect(() => {
     if (mapInstanceRef.current && selectedSeller?.location) {
-      import('leaflet').then(L => {
+      import('leaflet').then(() => {
         const center: [number, number] = [selectedSeller.location!.lat, selectedSeller.location!.lng];
         mapInstanceRef.current.setView(center, 13);
       });
