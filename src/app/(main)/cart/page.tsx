@@ -6,15 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Trash2, ShoppingCart } from "lucide-react";
-import { mockProducts } from "@/lib/placeholder-data";
+import { placeholderImages } from "@/lib/placeholder-images";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Shopping Cart',
+  description: 'Review items in your shopping cart and proceed to checkout.',
+};
 
 export default function CartPage() {
   const cartItems = [
-    { ...mockProducts[0], quantity: 1 },
-    { ...mockProducts[4], quantity: 1 },
+    { ...placeholderImages.find(p => p.id === 'prod_101'), quantity: 1, price: 499, seller: { name: 'Artisan Fabrics Co.' } },
+    { ...placeholderImages.find(p => p.id === 'prod_115'), quantity: 1, price: 399, seller: { name: 'GreenEarth' } },
   ];
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price! * item.quantity, 0);
   const shipping = 50;
   const total = subtotal + shipping;
 
@@ -30,17 +36,17 @@ export default function CartPage() {
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-start gap-4">
                     <Image
-                      src={item.images[0].url}
-                      alt={item.name}
+                      src={item.url!}
+                      alt={item.name!}
                       width={100}
                       height={100}
                       className="rounded-md object-cover aspect-square"
-                      data-ai-hint={item.images[0].hint}
+                      data-ai-hint={item.hint}
                     />
                     <div className="flex-1">
                       <h3 className="font-semibold">{item.name}</h3>
                       <p className="text-sm text-muted-foreground">Sold by {item.seller.name}</p>
-                      <p className="text-lg font-bold mt-1">₹{item.price.toLocaleString('en-IN')}</p>
+                      <p className="text-lg font-bold mt-1">₹{item.price!.toLocaleString('en-IN')}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Input

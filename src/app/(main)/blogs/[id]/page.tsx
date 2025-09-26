@@ -9,6 +9,7 @@ import type { Blog } from '@/lib/types';
 import React, { Suspense } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Video } from 'lucide-react';
+import type { Metadata } from 'next';
 
 interface StoryPageProps {
   params: { id: string };
@@ -25,6 +26,28 @@ async function getStoryData(id: string): Promise<Blog | null> {
     console.error("Failed to fetch story:", error);
     return null;
   }
+}
+
+export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
+  const story = await getStoryData(params.id);
+
+  if (!story) {
+    return {
+      title: 'Story Not Found',
+    };
+  }
+  
+  const description = story.content.replace(/<[^>]+>/g, '').substring(0, 160);
+
+  return {
+    title: `${story.title} by ${story.author.name}`,
+    description: `${description}...`,
+    openGraph: {
+      title: story.title,
+      description: `${description}...`,
+      images: story.featuredImage ? [story.featuredImage.url] : [],
+    },
+  };
 }
 
 export default async function StoryPage({ params }: StoryPageProps) {

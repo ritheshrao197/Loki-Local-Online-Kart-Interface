@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, Suspense, lazy } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,12 +14,8 @@ import { getDistance, type Coordinates } from '@/lib/location';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import dynamic from 'next/dynamic';
 
-const DiscoverMap = dynamic(() => import('@/components/discover/DiscoverMap'), {
-  ssr: false,
-  loading: () => <div className="w-full h-full bg-muted animate-pulse rounded-lg"></div>,
-});
+const DiscoverMap = lazy(() => import('@/components/discover/DiscoverMap'));
 
 type SellerWithDistance = Seller & { distance: number | null };
 
@@ -185,7 +181,9 @@ export default function DiscoverPage() {
             )}
         </div>
         <div className="lg:col-span-2 h-96 lg:h-[600px] rounded-lg overflow-hidden">
-             <DiscoverMap sellers={filteredSellers} selectedSeller={selectedSeller} />
+             <Suspense fallback={<div className="w-full h-full bg-muted animate-pulse rounded-lg"></div>}>
+                <DiscoverMap sellers={filteredSellers} selectedSeller={selectedSeller} />
+             </Suspense>
         </div>
        </div>
     </div>

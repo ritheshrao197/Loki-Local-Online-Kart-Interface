@@ -8,6 +8,12 @@ import type { Blog } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Newspaper } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Seller Stories',
+  description: 'Discover the inspiration and craftsmanship behind the products on Loki, told by the sellers themselves.',
+};
 
 async function fetchStories() {
   try {

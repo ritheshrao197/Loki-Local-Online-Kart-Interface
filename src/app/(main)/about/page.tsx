@@ -2,6 +2,12 @@
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Handshake } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About Loki',
+  description: 'Learn about our mission to connect local manufacturers and artisans with buyers, empowering small businesses and celebrating craftsmanship.',
+};
 
 export default function AboutUsPage() {
   return (
