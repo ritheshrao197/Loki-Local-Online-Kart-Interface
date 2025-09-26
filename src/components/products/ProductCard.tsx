@@ -1,5 +1,6 @@
 
 'use client';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +14,7 @@ interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export const ProductCard = React.memo(function ProductCard({ product }: ProductCardProps) {
   const { toast } = useToast();
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -77,4 +78,4 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
     </Card>
   );
-}
+});

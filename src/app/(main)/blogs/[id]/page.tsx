@@ -6,6 +6,7 @@ import { getBlogById } from '@/lib/firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Blog } from '@/lib/types';
+import React from 'react';
 
 interface StoryPageProps {
   params: { id: string };

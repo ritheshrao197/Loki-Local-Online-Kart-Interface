@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { LayoutDashboard, Search, ShoppingCart, User, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
-export function Header() {
+export const Header = React.memo(function Header() {
   const isMobile = useIsMobile();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -125,4 +125,4 @@ export function Header() {
       </div>
     </header>
   );
-}
+});

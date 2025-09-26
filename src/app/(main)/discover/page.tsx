@@ -14,6 +14,12 @@ import { getDistance, type Coordinates } from '@/lib/location';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import dynamic from 'next/dynamic';
+
+const DiscoverMap = dynamic(() => import('@/components/discover/DiscoverMap'), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-muted animate-pulse rounded-lg"></div>,
+});
 
 type SellerWithDistance = Seller & { distance: number | null };
 
@@ -24,6 +30,7 @@ export default function DiscoverPage() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSeller, setSelectedSeller] = useState<Seller | null>(null);
   const { toast } = useToast();
 
   const fetchSellersData = async (location: Coordinates | null) => {
@@ -116,58 +123,71 @@ export default function DiscoverPage() {
           {locationError && <p className="text-sm text-center text-destructive mt-2">{locationError}</p>}
        </div>
 
-      {loading ? (
-         <div className="space-y-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="p-4">
-                <div className="flex gap-4 items-center">
-                  <Skeleton className="h-14 w-14 rounded-md" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                   <Skeleton className="h-5 w-24" />
+       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1 h-96 lg:h-[600px]">
+             {loading ? (
+                <div className="space-y-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="p-4">
+                        <div className="flex gap-4 items-center">
+                        <Skeleton className="h-14 w-14 rounded-md" />
+                        <div className="flex-1 space-y-2">
+                            <Skeleton className="h-5 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                        </div>
+                        <Skeleton className="h-5 w-24" />
+                        </div>
+                    </Card>
+                    ))}
                 </div>
-              </Card>
-            ))}
-          </div>
-      ) : filteredSellers.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSellers.map(seller => (
-            <Card key={seller.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                     <div className="p-3 bg-background rounded-md border">
-                        <Store className="h-6 w-6 text-primary" />
-                     </div>
-                     <div className="flex-1">
-                        <Link href={`/sellers/${seller.id}`} className="font-semibold text-lg hover:underline">
-                          {seller.name}
-                        </Link>
-                        {seller.location && (
-                           <p className="text-sm text-muted-foreground line-clamp-1">{seller.location.address}</p>
-                        )}
-                     </div>
-                     {seller.distance !== null && (
-                       <Badge variant="outline" className="flex items-center gap-1.5 shrink-0">
-                          <MapPin className="h-3.5 w-3.5" />
-                          {seller.distance.toFixed(1)} km
-                       </Badge>
-                     )}
+            ) : filteredSellers.length > 0 ? (
+                <ScrollArea className="h-full pr-4">
+                  <div className="space-y-4">
+                    {filteredSellers.map(seller => (
+                        <Card 
+                            key={seller.id} 
+                            className="hover:shadow-md transition-shadow cursor-pointer"
+                            onClick={() => setSelectedSeller(seller)}
+                        >
+                        <CardContent className="p-4">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-background rounded-md border">
+                                    <Store className="h-6 w-6 text-primary" />
+                                </div>
+                                <div className="flex-1">
+                                    <Link href={`/sellers/${seller.id}`} className="font-semibold text-lg hover:underline">
+                                    {seller.name}
+                                    </Link>
+                                    {seller.location && (
+                                    <p className="text-sm text-muted-foreground line-clamp-1">{seller.location.address}</p>
+                                    )}
+                                </div>
+                                {seller.distance !== null && (
+                                <Badge variant="outline" className="flex items-center gap-1.5 shrink-0">
+                                    <MapPin className="h-3.5 w-3.5" />
+                                    {seller.distance.toFixed(1)} km
+                                </Badge>
+                                )}
+                            </div>
+                        </CardContent>
+                        </Card>
+                    ))}
                   </div>
-              </CardContent>
-            </Card>
-          ))}
+                </ScrollArea>
+            ) : (
+                <div className="text-center py-20 border-2 border-dashed rounded-lg h-full flex flex-col justify-center">
+                    <Search className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <h2 className="mt-6 text-xl font-semibold">No Sellers Found</h2>
+                    <p className="mt-2 text-muted-foreground">
+                        Your search for "{searchTerm}" did not match any sellers.
+                    </p>
+                </div>
+            )}
         </div>
-      ) : (
-         <div className="text-center py-20 border-2 border-dashed rounded-lg">
-            <Search className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h2 className="mt-6 text-xl font-semibold">No Sellers Found</h2>
-            <p className="mt-2 text-muted-foreground">
-                Your search for "{searchTerm}" did not match any sellers.
-            </p>
-         </div>
-      )}
+        <div className="lg:col-span-2 h-96 lg:h-[600px] rounded-lg overflow-hidden">
+             <DiscoverMap sellers={filteredSellers} selectedSeller={selectedSeller} />
+        </div>
+       </div>
     </div>
   );
 }

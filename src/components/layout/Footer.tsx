@@ -1,12 +1,13 @@
 
 'use client';
+import React from 'react';
 import Link from 'next/link';
 import Logo from '@/components/common/logo';
 
-export function Footer() {
+export const Footer = React.memo(function Footer() {
   return (
     <footer className="border-t bg-card">
-      <div className="container py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center space-x-2">
@@ -47,4 +48,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});

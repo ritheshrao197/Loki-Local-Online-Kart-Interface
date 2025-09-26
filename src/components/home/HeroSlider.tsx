@@ -44,14 +44,14 @@ export function HeroSlider() {
         }}
       >
         <CarouselContent>
-          {slides.map((slide) => (
+          {slides.map((slide, index) => (
             <CarouselItem key={slide.id}>
               <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full">
                 <Image
                   src={slide.imageUrl}
                   alt={slide.title}
                   fill
-                  priority
+                  priority={index === 0}
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
