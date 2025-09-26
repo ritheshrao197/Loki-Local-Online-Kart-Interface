@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { collection, getDocs, writeBatch, doc, Timestamp, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
-import { mockProducts, mockSellers, mockOrders } from '@/lib/placeholder-data';
+import { mockProducts, mockSellers, mockOrders, mockBlogs } from '@/lib/placeholder-data';
 import Link from 'next/link';
 import { CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -24,7 +24,7 @@ export default function SeedDbPage() {
     setResult(null);
 
     try {
-      const collectionsToDelete = ['products', 'sellers', 'orders'];
+      const collectionsToDelete = ['products', 'sellers', 'orders', 'blogs'];
       setStatus('Clearing existing data...');
 
       for (const col of collectionsToDelete) {
@@ -51,24 +51,38 @@ export default function SeedDbPage() {
       setStatus('Preparing products...');
       mockProducts.forEach((product) => {
         const docRef = doc(db, 'products', product.id);
-        seedBatch.set(docRef, product);
+        const { id, ...productData } = product; // Firestore complains if 'id' is in the data
+        seedBatch.set(docRef, productData);
       });
 
       setStatus('Preparing orders...');
       mockOrders.forEach((order) => {
-        const docRef = doc(collection(db, 'orders')); // Create a new doc with a random ID
+        const {id, ...orderData} = order;
+        const docRef = doc(db, 'orders', id);
         const orderDataWithTimestamp = {
-            ...order,
+            ...orderData,
             orderDate: Timestamp.fromDate(order.orderDate)
         };
         seedBatch.set(docRef, orderDataWithTimestamp);
+      });
+
+      setStatus('Preparing blogs...');
+      mockBlogs.forEach((blog) => {
+          const {id, ...blogData} = blog;
+          const docRef = doc(db, 'blogs', id);
+          const blogDataWithTimestamp = {
+              ...blogData,
+              createdAt: Timestamp.fromDate(new Date(blog.createdAt)),
+              updatedAt: Timestamp.fromDate(new Date(blog.createdAt)),
+          };
+          seedBatch.set(docRef, blogDataWithTimestamp);
       });
       
       setStatus('Committing to database...');
       await seedBatch.commit();
       
       setStatus('Seeding complete!');
-      const totalCount = mockProducts.length + mockSellers.length + mockOrders.length;
+      const totalCount = mockProducts.length + mockSellers.length + mockOrders.length + mockBlogs.length;
       setResult({
         status: 'success',
         message: `Successfully cleared and seeded ${totalCount} documents.`,
@@ -98,13 +112,13 @@ export default function SeedDbPage() {
         <CardHeader>
           <CardTitle>Seed Firestore Database</CardTitle>
           <CardDescription>
-            Populate your Firestore collections with mock data for products, sellers, and orders.
+            Populate your Firestore collections with mock data for products, sellers, orders, and blogs.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground text-center">
-              Clicking the button will first <span className="font-bold text-destructive">delete all data</span> in the products, sellers, and orders collections, then re-populate them with fresh mock data.
+              Clicking the button will first <span className="font-bold text-destructive">delete all data</span> in the products, sellers, orders, and blogs collections, then re-populate them with fresh mock data.
             </p>
             <Button onClick={handleSeed} disabled={loading} variant="destructive">
               {loading ? (

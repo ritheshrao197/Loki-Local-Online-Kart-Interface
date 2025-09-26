@@ -37,6 +37,9 @@ export type Product = {
   returnPolicy?: 'none' | '7-day' | '15-day';
   isPromoted?: boolean;
   isFeatured?: boolean;
+  rating?: number;
+  reviewsCount?: number;
+  videoUrl?: string;
 };
 
 export type Seller = {
@@ -51,20 +54,23 @@ export type Seller = {
     lat: number;
     lng: number;
   };
+  storyAvailable?: boolean;
 };
 
 export type Order = {
   id: string;
   product: Pick<Product, 'id' | 'name' | 'images' | 'price'>;
+  quantity: number;
+  total: number;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
+  orderDate: string | Date;
   buyer: {
     id: string;
     name: string;
   };
   sellerId: string;
-  quantity: number;
-  total: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
-  orderDate: string | Date;
+  paymentMethod: 'UPI' | 'COD' | 'Wallet';
+  deliveryAddress: string;
 };
 
 export type Blog = {
@@ -84,6 +90,8 @@ export type Blog = {
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
   updatedAt?: string;
+  imagesCount?: number;
+  videosCount?: number;
 };
 
 export type HeroSlide = {
@@ -105,3 +113,14 @@ export type BannerAd = {
   isActive: boolean;
   placement: 'homepage_top' | 'homepage_middle' | 'homepage_bottom';
 };
+
+export type Buyer = {
+  id: string;
+  name: string;
+  mobile: string;
+  email: string;
+  location: string;
+  language: string;
+  loyaltyPoints: number;
+  wishlist: string[];
+}
