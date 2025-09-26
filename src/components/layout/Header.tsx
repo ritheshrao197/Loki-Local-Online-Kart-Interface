@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 export const Header = React.memo(function Header() {
-  const isMobile = useIsMobile();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -24,32 +23,25 @@ export const Header = React.memo(function Header() {
   
   useEffect(() => {
     setIsMounted(true);
-    if (typeof window !== 'undefined') {
-      const role = sessionStorage.getItem('userRole') as UserRole;
-      const id = sessionStorage.getItem('userId');
-      setUserRole(role);
-      setUserId(id);
+    const role = sessionStorage.getItem('userRole') as UserRole;
+    const id = sessionStorage.getItem('userId');
+    setUserRole(role);
+    setUserId(id);
 
-      // Prefetch important pages for buyers/guests
-      if (!role || role === 'buyer') {
-          router.prefetch('/blogs');
-          router.prefetch('/discover');
-      }
+    // Prefetch important pages for buyers/guests
+    if (!role || role === 'buyer') {
+        router.prefetch('/blogs');
+        router.prefetch('/discover');
     }
   }, [router]);
 
   const cartItemCount = 2; // Mock count
 
   if (!isMounted) {
-    return <div className="h-16 border-b" />; // Render a consistent placeholder on server and initial client render
-  }
-
-  if (isMobile) {
-    return <MobileNav />;
+    return <div className="h-16 border-b" />;
   }
 
   const renderActionButtons = () => {
-    // Always render the same structure to prevent hydration mismatches
     return (
       <>
         {/* Admin buttons - conditionally visible */}
@@ -119,7 +111,7 @@ export const Header = React.memo(function Header() {
           </Button>
           <Button variant="ghost" size="icon" asChild className="rounded-full relative">
             <Link href="/cart">
-              {cartItemCount > 0 && (
+              {isMounted && cartItemCount > 0 && (
                 <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs bg-primary text-primary-foreground border-0">
                   {cartItemCount}
                 </Badge>
