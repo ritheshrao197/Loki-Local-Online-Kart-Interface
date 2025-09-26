@@ -79,7 +79,7 @@ export function MobileNav() {
     { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
     { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: `#`, label: 'Seller', icon: User, isAction: true, action: () => setIsProfileOpen(true) },
+    { href: '#', label: 'Seller', icon: User, isAction: true, action: () => setIsProfileOpen(true) },
   ];
   
   const navItems = isDashboard ? sellerNavItems : buyerNavItems;
@@ -97,7 +97,7 @@ export function MobileNav() {
 
 
   const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
-    if ('isAction' in item && item.action) {
+    if (item.href === '#' && 'action' in item && item.action) {
       e.preventDefault();
       item.action();
     }
