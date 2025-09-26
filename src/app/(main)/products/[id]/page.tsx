@@ -78,9 +78,13 @@ export default function ProductDetailPage() {
           url: window.location.href,
         });
       } catch (error) {
-        // This can happen if the user dismisses the share sheet or if sharing fails.
-        // We can safely ignore this error.
-        console.log('Share was cancelled or failed', error);
+        // This can happen if the user dismisses the share sheet.
+        // We'll fall back to copying the link to the clipboard.
+        navigator.clipboard.writeText(window.location.href);
+        toast({
+            title: "Link Copied!",
+            description: "Product link copied to your clipboard.",
+        });
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
