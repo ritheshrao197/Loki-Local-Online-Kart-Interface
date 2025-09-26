@@ -40,19 +40,13 @@ export const Header = React.memo(function Header() {
 
   const cartItemCount = 2; // Mock count
 
-  // Prevent layout shift by rendering a placeholder when isMobile is undefined
-  if (isMobile === undefined) {
-    return <div className="h-16 border-b" />; // Prevent layout shift
+  if (!isMounted) {
+    return <div className="h-16 border-b" />; // Render a consistent placeholder on server and initial client render
   }
 
   if (isMobile) {
     return <MobileNav />;
   }
-  
-  if (!isMounted) {
-     return <div className="h-16 border-b" />; // or a skeleton loader
-  }
-
 
   const renderActionButtons = () => {
     // Always render the same structure to prevent hydration mismatches
