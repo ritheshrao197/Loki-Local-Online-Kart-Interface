@@ -33,6 +33,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -41,11 +42,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   
   const handleLogout = async () => {
     try {
-      await signOut(auth);
       if (typeof window !== 'undefined') {
         sessionStorage.clear();
       }
       router.push('/login/admin');
+      await signOut(auth);
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
     } catch (error) {
       console.error("Logout error:", error);
@@ -135,7 +136,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-             <SidebarMenuItem>
+             <SidebarMenuItem className="flex justify-between items-center">
+              <ThemeToggle />
               <SidebarMenuButton onClick={handleLogout}>
                 <LogOut />
                 <span>Logout</span>
