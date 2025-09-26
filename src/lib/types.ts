@@ -46,6 +46,11 @@ export type Seller = {
   pan: string;
   status: 'pending' | 'approved' | 'rejected' | 'suspended';
   commissionRate: number;
+  location?: {
+    address: string;
+    lat: number;
+    lng: number;
+  };
 };
 
 export type Order = {

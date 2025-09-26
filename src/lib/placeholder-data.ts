@@ -5,16 +5,16 @@ import { Timestamp } from 'firebase/firestore';
 
 
 export const mockSellers: Seller[] = [
-  { id: 'seller_1', name: 'Artisan Fabrics Co.', mobile: '9876543210', pan: 'ABCDE1234F', status: 'approved', commissionRate: 15 },
-  { id: 'seller_2', name: 'FarmFresh Spices', mobile: '9123456789', pan: 'XYZAB5678D', status: 'approved', commissionRate: 15 },
-  { id: 'seller_3', name: 'GreenEarth Products', mobile: '9988776655', pan: 'LMNOP9876K', status: 'approved', commissionRate: 12 },
-  { id: 'seller_4', name: 'EcoSmile', mobile: '9871234560', pan: 'KJHGF6543T', status: 'pending', commissionRate: 15 },
-  { id: 'seller_5', name: 'ClayCraft Studio', mobile: '9001122334', pan: 'QWERTY4321P', status: 'pending', commissionRate: 15 },
-  { id: 'seller_6', name: 'Nature\'s Essence', mobile: '9112233445', pan: 'ASDFGH6789Z', status: 'rejected', commissionRate: 15 },
-  { id: 'seller_7', name: 'Urban Leatherworks', mobile: '9233445566', pan: 'ZXCVBN0987R', status: 'approved', commissionRate: 15 },
-  { id: 'seller_8', name: 'Khadi Creations', mobile: '9874321655', pan: 'HJKLPO7654Y', status: 'approved', commissionRate: 15 },
-  { id: 'seller_9', name: 'HoneyBee Farms', mobile: '9456781234', pan: 'PLMNQX4321J', status: 'suspended', commissionRate: 15 },
-  { id: 'seller_10', name: 'EarthTone Creations', mobile: '9876501234', pan: 'UYTRE6543W', status: 'approved', commissionRate: 15 },
+  { id: 'seller_1', name: 'Artisan Fabrics Co.', mobile: '9876543210', pan: 'ABCDE1234F', status: 'approved', commissionRate: 15, location: { address: '123 Weavers Lane, Jaipur, Rajasthan', lat: 26.9124, lng: 75.7873 } },
+  { id: 'seller_2', name: 'FarmFresh Spices', mobile: '9123456789', pan: 'XYZAB5678D', status: 'approved', commissionRate: 15, location: { address: '45 Spice Market, Kochi, Kerala', lat: 9.9312, lng: 76.2673 } },
+  { id: 'seller_3', name: 'GreenEarth Products', mobile: '9988776655', pan: 'LMNOP9876K', status: 'approved', commissionRate: 12, location: { address: '78 Organic Avenue, Pune, Maharashtra', lat: 18.5204, lng: 73.8567 } },
+  { id: 'seller_4', name: 'EcoSmile', mobile: '9871234560', pan: 'KJHGF6543T', status: 'pending', commissionRate: 15, location: { address: '90 Green Way, Bengaluru, Karnataka', lat: 12.9716, lng: 77.5946 } },
+  { id: 'seller_5', name: 'ClayCraft Studio', mobile: '9001122334', pan: 'QWERTY4321P', status: 'pending', commissionRate: 15, location: { address: '21 Pottery Road, Kolkata, West Bengal', lat: 22.5726, lng: 88.3639 } },
+  { id: 'seller_6', name: 'Nature\'s Essence', mobile: '9112233445', pan: 'ASDFGH6789Z', status: 'rejected', commissionRate: 15, location: { address: '34 Herbal Garden, Dehradun, Uttarakhand', lat: 30.3165, lng: 78.0322 } },
+  { id: 'seller_7', name: 'Urban Leatherworks', mobile: '9233445566', pan: 'ZXCVBN0987R', status: 'approved', commissionRate: 15, location: { address: '56 Leather Complex, Kanpur, Uttar Pradesh', lat: 26.4499, lng: 80.3319 } },
+  { id: 'seller_8', name: 'Khadi Creations', mobile: '9874321655', pan: 'HJKLPO7654Y', status: 'approved', commissionRate: 15, location: { address: '89 Freedom Marg, Ahmedabad, Gujarat', lat: 23.0225, lng: 72.5714 } },
+  { id: 'seller_9', name: 'HoneyBee Farms', mobile: '9456781234', pan: 'PLMNQX4321J', status: 'suspended', commissionRate: 15, location: { address: '10 Apiary Hills, Coorg, Karnataka', lat: 12.3375, lng: 75.8069 } },
+  { id: 'seller_10', name: 'EarthTone Creations', mobile: '9876501234', pan: 'UYTRE6543W', status: 'approved', commissionRate: 15, location: { address: '65 Earthy Lane, Bhopal, Madhya Pradesh', lat: 23.2599, lng: 77.4126 } },
 ];
 
 
