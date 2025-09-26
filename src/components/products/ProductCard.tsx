@@ -48,8 +48,12 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                   alt={product.name}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   data-ai-hint={product.images[0].hint}
+                  quality={80}
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL={`/_next/image?url=${product.images[0].url}&w=16&q=1`}
                 />
                 {product.status === 'pending' && (
                   <Badge variant="secondary" className="absolute top-2 left-2">Pending</Badge>

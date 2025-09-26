@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Target, Handshake } from 'lucide-react';
@@ -8,6 +7,9 @@ export const metadata: Metadata = {
   title: 'About Loki',
   description: 'Learn about our mission to connect local manufacturers and artisans with buyers, empowering small businesses and celebrating craftsmanship.',
 };
+
+// Add revalidation for ISR
+export const revalidate = 86400; // Revalidate once per day
 
 export default function AboutUsPage() {
   return (
@@ -29,6 +31,10 @@ export default function AboutUsPage() {
             fill
             className="object-cover"
             data-ai-hint="artisans community"
+            quality={85}
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYwMCIgaGVpZ2h0PSI2MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjZGRkIi8+PC9zdmc+"
             />
         </div>
       </section>
