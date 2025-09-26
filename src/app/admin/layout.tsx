@@ -56,8 +56,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       if (typeof window !== 'undefined') {
         sessionStorage.clear();
       }
-      router.push('/login/admin');
       await signOut(auth);
+      router.push('/login/admin');
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
     } catch (error) {
       console.error("Logout error:", error);
@@ -66,10 +66,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   if (!isClient) {
-     return (
+    return (
       <div className="flex flex-col min-h-screen">
         <div className="h-16 border-b" />
-        <main className="flex-1 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     );
   }
