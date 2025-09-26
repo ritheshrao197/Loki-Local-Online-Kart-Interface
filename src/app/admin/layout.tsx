@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <Link href="/admin" className="flex items-center gap-2 font-headline text-lg font-semibold">
+            <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
               <ShieldCheck className="size-6 text-primary" />
               <span>Loki Admin</span>
             </Link>
