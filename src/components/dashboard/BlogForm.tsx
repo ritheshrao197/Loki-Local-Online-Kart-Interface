@@ -67,16 +67,16 @@ export function BlogForm({ blog, sellerId }: BlogFormProps) {
 
       if (isEditMode) {
         await updateBlog(blog.id, blogData);
-        toast({ title: 'Blog Post Updated', description: 'Your changes are pending re-approval.' });
+        toast({ title: 'Seller Story Updated', description: 'Your changes are pending re-approval.' });
       } else {
         await addBlog({ ...blogData, status: 'pending' });
-        toast({ title: 'Blog Post Submitted', description: 'Your post is pending admin approval.' });
+        toast({ title: 'Seller Story Submitted', description: 'Your story is pending admin approval.' });
       }
       router.push(`/dashboard/${sellerId}/blogs`);
       router.refresh();
     } catch (error) {
       console.error("Form submission error:", error);
-      toast({ title: "Submission Error", description: "Could not save the blog post.", variant: "destructive" });
+      toast({ title: "Submission Error", description: "Could not save the story.", variant: "destructive" });
       setIsSubmitting(false);
     }
   };
@@ -86,8 +86,8 @@ export function BlogForm({ blog, sellerId }: BlogFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Blog Post Details</CardTitle>
-            <CardDescription>Fill in the details for your new post.</CardDescription>
+            <CardTitle>Story Details</CardTitle>
+            <CardDescription>Share the inspiration and craftsmanship behind your work.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
@@ -95,9 +95,9 @@ export function BlogForm({ blog, sellerId }: BlogFormProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Post Title</FormLabel>
+                  <FormLabel>Story Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="A catchy title for your post" {...field} />
+                    <Input placeholder="A catchy title for your story" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

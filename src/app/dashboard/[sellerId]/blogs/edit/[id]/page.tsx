@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditBlogPage() {
+export default function EditStoryPage() {
   const params = useParams();
   const router = useRouter();
   const blogId = params.id as string;
@@ -51,7 +51,7 @@ export default function EditBlogPage() {
             <span className="sr-only">Back</span>
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold font-headline">Edit Blog Post</h1>
+        <h1 className="text-3xl font-bold font-headline">Edit Story</h1>
       </div>
       <BlogForm blog={blog} sellerId={sellerId} />
     </div>

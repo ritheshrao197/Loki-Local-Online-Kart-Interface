@@ -25,8 +25,8 @@ export default function AdminBlogsPage() {
       const fetchedBlogs = await getBlogs(status);
       setBlogs(fetchedBlogs);
     } catch (error) {
-      console.error(`Error fetching ${status} blogs:`, error);
-      toast({ title: "Error", description: `Could not fetch ${status} blogs.`, variant: "destructive" });
+      console.error(`Error fetching ${status} stories:`, error);
+      toast({ title: "Error", description: `Could not fetch ${status} stories.`, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -43,9 +43,9 @@ export default function AdminBlogsPage() {
 
     try {
       await updateBlogStatus(blogId, newStatus);
-      toast({ title: `Blog ${newStatus}`, description: `The blog post has been ${newStatus}.` });
+      toast({ title: `Story ${newStatus}`, description: `The seller story has been ${newStatus}.` });
     } catch (error) {
-      console.error("Error updating blog status:", error);
+      console.error("Error updating story status:", error);
       toast({ title: 'Update Failed', description: 'Could not update status.', variant: 'destructive' });
       setBlogs(originalBlogs);
     }
@@ -64,7 +64,7 @@ export default function AdminBlogsPage() {
       <div className="text-center py-12 border-2 border-dashed rounded-lg">
         <Newspaper className="mx-auto h-12 w-12 text-muted-foreground" />
         <h3 className="mt-4 text-lg font-semibold">All Clear!</h3>
-        <p className="text-muted-foreground mt-1">There are no {currentTab} blog posts.</p>
+        <p className="text-muted-foreground mt-1">There are no {currentTab} seller stories.</p>
       </div>
     );
   };
@@ -72,8 +72,8 @@ export default function AdminBlogsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold font-headline">Blog Moderation</h1>
-        <p className="text-muted-foreground">Review and manage blog posts submitted by sellers.</p>
+        <h1 className="text-3xl font-bold font-headline">Seller Story Moderation</h1>
+        <p className="text-muted-foreground">Review and manage stories submitted by sellers.</p>
       </div>
 
       <Tabs value={currentTab} onValueChange={(value) => setCurrentTab(value as BlogStatus)}>
@@ -109,7 +109,7 @@ function BlogModerationCard({ blog, onStatusChange }: { blog: Blog, onStatusChan
       </CardContent>
       <CardContent className="flex justify-end gap-2 flex-wrap">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={`/blogs/${blog.id}`} target="_blank">View Post</Link>
+          <Link href={`/blogs/${blog.id}`} target="_blank">View Story</Link>
         </Button>
         {blog.status === 'pending' && (
           <>

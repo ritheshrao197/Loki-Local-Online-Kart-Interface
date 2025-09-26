@@ -51,7 +51,7 @@ export function MobileNav() {
 
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/blogs', label: 'Blogs', icon: Newspaper },
+    { href: '/blogs', label: 'Stories', icon: Newspaper },
     { href: '#', label: 'Search', icon: Search, isAction: true },
     { href: getProfileLink(), label: 'Profile', icon: (userRole === 'admin' || userRole === 'seller') ? LayoutDashboard : User },
     { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },

@@ -9,19 +9,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Newspaper } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-async function fetchBlogs() {
+async function fetchStories() {
   try {
-    const blogs = await getBlogs('approved');
-    blogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    return blogs;
+    const stories = await getBlogs('approved');
+    stories.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return stories;
   } catch (error) {
-    console.error("Failed to fetch blogs:", error);
+    console.error("Failed to fetch stories:", error);
     return [];
   }
 }
 
-export default async function BlogsPage() {
-  const approvedBlogs = await fetchBlogs();
+export default async function StoriesPage() {
+  const approvedStories = await fetchStories();
 
   return (
     <div className="container py-12">
@@ -34,16 +34,16 @@ export default async function BlogsPage() {
         </p>
       </div>
 
-      {approvedBlogs.length > 0 ? (
+      {approvedStories.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {approvedBlogs.map((blog) => (
-            <BlogCard key={blog.id} blog={blog} />
+          {approvedStories.map((story) => (
+            <StoryCard key={story.id} story={story} />
           ))}
         </div>
       ) : (
         <div className="text-center py-20 border-2 border-dashed rounded-lg">
           <Newspaper className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h2 className="mt-6 text-xl font-semibold">No Blog Posts Yet</h2>
+          <h2 className="mt-6 text-xl font-semibold">No Stories Yet</h2>
           <p className="mt-2 text-muted-foreground">
             There are no stories to share right now. Please check back later!
           </p>
@@ -53,19 +53,19 @@ export default async function BlogsPage() {
   );
 }
 
-function BlogCard({ blog }: { blog: Blog }) {
+function StoryCard({ story }: { story: Blog }) {
   return (
     <Card className="h-full flex flex-col group">
-      <Link href={`/blogs/${blog.id}`} className="block">
-        {blog.featuredImage ? (
+      <Link href={`/blogs/${story.id}`} className="block">
+        {story.featuredImage ? (
             <div className="relative aspect-video w-full overflow-hidden rounded-t-lg">
                 <Image
-                src={blog.featuredImage.url}
-                alt={blog.title}
+                src={story.featuredImage.url}
+                alt={story.title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                data-ai-hint={blog.featuredImage.hint}
+                data-ai-hint={story.featuredImage.hint}
                 />
             </div>
         ) : (
@@ -74,20 +74,20 @@ function BlogCard({ blog }: { blog: Blog }) {
       </Link>
       <CardHeader>
         <CardTitle className="leading-snug group-hover:text-primary">
-          <Link href={`/blogs/${blog.id}`}>{blog.title}</Link>
+          <Link href={`/blogs/${story.id}`}>{story.title}</Link>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-sm text-muted-foreground line-clamp-3" dangerouslySetInnerHTML={{ __html: blog.content.replace(/<[^>]+>/g, '') }} />
+        <p className="text-sm text-muted-foreground line-clamp-3" dangerouslySetInnerHTML={{ __html: story.content.replace(/<[^>]+>/g, '') }} />
       </CardContent>
       <CardFooter className="flex items-center gap-3 text-sm text-muted-foreground">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={`https://picsum.photos/seed/${blog.author.id}/100`} />
-          <AvatarFallback>{blog.author.name.charAt(0)}</AvatarFallback>
+          <AvatarImage src={`https://picsum.photos/seed/${story.author.id}/100`} />
+          <AvatarFallback>{story.author.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-medium text-foreground">{blog.author.name}</p>
-          <time dateTime={blog.createdAt}>{format(new Date(blog.createdAt), 'MMM d, yyyy')}</time>
+          <p className="font-medium text-foreground">{story.author.name}</p>
+          <time dateTime={story.createdAt}>{format(new Date(story.createdAt), 'MMM d, yyyy')}</time>
         </div>
       </CardFooter>
     </Card>

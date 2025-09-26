@@ -60,7 +60,7 @@ export function Header() {
     return (
       <>
         <Button variant="ghost" asChild>
-          <Link href="/blogs">Blogs</Link>
+          <Link href="/blogs">Stories</Link>
         </Button>
         <Button variant="ghost" asChild>
           <Link href="/login/admin">Sell on Loki</Link>

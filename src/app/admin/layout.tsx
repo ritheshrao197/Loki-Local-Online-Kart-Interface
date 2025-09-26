@@ -84,10 +84,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Blogs">
+              <SidebarMenuButton asChild tooltip="Stories">
                 <Link href="/admin/blogs">
                   <Newspaper />
-                  <span>Blogs</span>
+                  <span>Stories</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

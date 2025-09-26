@@ -23,7 +23,7 @@ const statusVariant = {
   rejected: 'destructive',
 } as const;
 
-export default function BlogsPage() {
+export default function SellerStoriesPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [blogToDelete, setBlogToDelete] = useState<Blog | null>(null);
@@ -40,8 +40,8 @@ export default function BlogsPage() {
       sellerBlogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setBlogs(sellerBlogs);
     } catch (error) {
-      console.error("Error fetching blogs:", error);
-      toast({ title: "Error", description: "Could not fetch blog posts.", variant: "destructive" });
+      console.error("Error fetching stories:", error);
+      toast({ title: "Error", description: "Could not fetch your stories.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -57,9 +57,9 @@ export default function BlogsPage() {
     try {
       await deleteBlog(blogToDelete.id);
       setBlogs(blogs.filter(p => p.id !== blogToDelete.id));
-      toast({ title: 'Blog Post Deleted' });
+      toast({ title: 'Story Deleted' });
     } catch (error) {
-      toast({ title: "Delete Failed", description: "Could not delete the post.", variant: "destructive" });
+      toast({ title: "Delete Failed", description: "Could not delete the story.", variant: "destructive" });
     } finally {
       setBlogToDelete(null);
     }
@@ -70,10 +70,10 @@ export default function BlogsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold font-headline">My Blog Posts</h1>
+        <h1 className="text-3xl font-bold font-headline">My Stories</h1>
         <Button asChild>
           <Link href={`/dashboard/${sellerId}/blogs/new`}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Create Post
+            <PlusCircle className="mr-2 h-4 w-4" /> Create Story
           </Link>
         </Button>
       </div>
@@ -100,7 +100,7 @@ export default function BlogsPage() {
             ) : blogs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                  No blog posts found. <Link href={`/dashboard/${sellerId}/blogs/new`} className="text-primary underline">Create your first post</Link>.
+                  You haven't written any stories yet. <Link href={`/dashboard/${sellerId}/blogs/new`} className="text-primary underline">Create your first one</Link>.
                 </TableCell>
               </TableRow>
             ) : (
@@ -145,7 +145,7 @@ export default function BlogsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone. This will permanently delete the blog post "{blogToDelete?.title}".</AlertDialogDescription>
+            <AlertDialogDescription>This action cannot be undone. This will permanently delete the story "{blogToDelete?.title}".</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>

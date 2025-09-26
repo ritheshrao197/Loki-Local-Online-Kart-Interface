@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function NewBlogPage() {
+export default function NewStoryPage() {
   const params = useParams();
   const sellerId = params.sellerId as string;
 
@@ -24,7 +24,7 @@ export default function NewBlogPage() {
             <span className="sr-only">Back</span>
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold font-headline">Create New Blog Post</h1>
+        <h1 className="text-3xl font-bold font-headline">Create New Story</h1>
       </div>
       <BlogForm sellerId={sellerId} />
     </div>
