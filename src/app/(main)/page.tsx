@@ -51,39 +51,53 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <HeroSlider />
-      <div className="container py-12 space-y-24">
-        <section>
-          <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
-            Discover Local Treasures
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-            Explore unique, handcrafted products from local artisans and manufacturers near you.
-          </p>
+      <div className="space-y-24">
+        <section className="py-12">
+            <div className="container">
+                <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
+                    Discover Local Treasures
+                </h1>
+                <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+                    Explore unique, handcrafted products from local artisans and manufacturers near you.
+                </p>
+            </div>
         </section>
 
-        <section>
-          <BannerAds placement="homepage_top" />
+        <section className="py-12">
+            <div className="container">
+                <BannerAds placement="homepage_top" />
+            </div>
         </section>
 
-        <section>
-          <FeaturedCategories />
+        <section className="py-12">
+            <div className="container">
+                <FeaturedCategories />
+            </div>
         </section>
 
-        <section>
-          <Promotions />
+        <section className="py-12">
+            <div className="container">
+                <Promotions />
+            </div>
         </section>
 
-        <section>
-          <RecentlyViewedProducts />
+        <section className="py-12">
+            <div className="container">
+                <RecentlyViewedProducts />
+            </div>
         </section>
         
-        <section>
-          <PopularProducts />
+        <section className="py-12">
+            <div className="container">
+                <PopularProducts />
+            </div>
         </section>
 
-        <section>
-          <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
-          <ProductGrid />
+        <section className="py-12">
+            <div className="container">
+                <h2 className="text-2xl font-bold font-headline mb-6">All Products</h2>
+                <ProductGrid />
+            </div>
         </section>
       </div>
     </div>
