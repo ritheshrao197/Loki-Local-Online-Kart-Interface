@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings, Wallet, MessageSquare, LogOut } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings, Wallet, MessageSquare, LogOut, Gavel, Users, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -32,7 +32,7 @@ export function MobileNav() {
   const [seller, setSeller] = useState<Seller | null>(null);
   const [cartItems, setCartItems] = useState<any[]>([]);
 
-  const isDashboard = pathname.startsWith('/dashboard');
+  const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/admin');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -45,24 +45,27 @@ export function MobileNav() {
         getSellerById(id).then(setSeller);
       }
       
-      setCartItems([
-        { 
-          id: 'prod_101', 
-          name: 'Handwoven Cotton Scarf', 
-          quantity: 1, 
-          price: 499, 
-          seller: { name: 'Artisan Fabrics Co.' }, 
-          images: [{ url: 'https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'cotton scarf' }]
-        },
-        { 
-          id: 'prod_115', 
-          name: 'Bamboo Toothbrush Set', 
-          quantity: 1, 
-          price: 399, 
-          seller: { name: 'GreenEarth' }, 
-          images: [{ url: 'https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop', hint: 'bamboo toothbrush' }]
-        }
-      ]);
+      // Mock cart items for demonstration
+      if(role === 'buyer' || !role) {
+        setCartItems([
+          { 
+            id: 'prod_101', 
+            name: 'Handwoven Cotton Scarf', 
+            quantity: 1, 
+            price: 499, 
+            seller: { name: 'Artisan Fabrics Co.' }, 
+            images: [{ url: 'https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'cotton scarf' }]
+          },
+          { 
+            id: 'prod_115', 
+            name: 'Bamboo Toothbrush Set', 
+            quantity: 1, 
+            price: 399, 
+            seller: { name: 'GreenEarth' }, 
+            images: [{ url: 'https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop', hint: 'bamboo toothbrush' }]
+          }
+        ]);
+      }
     }
   }, []);
 
@@ -81,8 +84,24 @@ export function MobileNav() {
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
     { href: '#', label: 'Seller', icon: User, isAction: true, action: () => setIsProfileOpen(true) },
   ];
+
+  const adminNavItems = [
+    { href: `/admin`, label: 'Overview', icon: LayoutDashboard },
+    { href: `/admin/products`, label: 'Products', icon: Package },
+    { href: `/admin/blogs`, label: 'Stories', icon: Newspaper },
+    { href: `/admin/sellers`, label: 'Sellers', icon: Users },
+    { href: '#', label: 'Admin', icon: User, isAction: true, action: () => setIsProfileOpen(true) },
+  ];
   
-  const navItems = isDashboard ? sellerNavItems : buyerNavItems;
+  let navItems;
+  if(userRole === 'admin') {
+    navItems = adminNavItems;
+  } else if (userRole === 'seller') {
+    navItems = sellerNavItems;
+  } else {
+    navItems = buyerNavItems;
+  }
+
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 50;
@@ -193,28 +212,30 @@ export function MobileNav() {
         </SheetContent>
       </Sheet>
 
-      {/* Profile Sheet for Seller */}
+      {/* Profile Sheet for Seller/Admin */}
       <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
         <SheetContent side="bottom" className="flex w-full flex-col p-4 rounded-t-lg">
           <SheetHeader className="px-2 pb-2">
              <div className="flex items-center gap-3">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={`https://picsum.photos/seed/${userId}/100`} />
-                  <AvatarFallback>{seller?.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={`https://picsum.photos/seed/${userId || 'admin'}/100`} />
+                  <AvatarFallback>{userRole === 'seller' ? seller?.name.charAt(0) : 'A'}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <SheetTitle>{seller?.name}</SheetTitle>
-                    <SheetDescription>Manage your seller account</SheetDescription>
+                    <SheetTitle>{userRole === 'seller' ? seller?.name : 'Admin'}</SheetTitle>
+                    <SheetDescription>Manage your account</SheetDescription>
                 </div>
              </div>
           </SheetHeader>
           <div className="flex-1 py-2 space-y-1">
-             <Button asChild variant="ghost" className="w-full justify-start">
-                 <Link href={`/sellers/${userId}`} onClick={() => setIsProfileOpen(false)}>
-                    <User className="mr-2" />
-                    View Public Profile
-                </Link>
-            </Button>
+            {userRole === 'seller' && (
+              <Button asChild variant="ghost" className="w-full justify-start">
+                  <Link href={`/sellers/${userId}`} onClick={() => setIsProfileOpen(false)}>
+                      <User className="mr-2" />
+                      View Public Profile
+                  </Link>
+              </Button>
+            )}
             <Button variant="ghost" className="w-full justify-start text-muted-foreground" disabled>
                 <Settings className="mr-2" />
                 Settings
