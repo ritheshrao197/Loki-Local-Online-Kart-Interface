@@ -19,6 +19,7 @@ import { Separator } from '@/components/ui/separator';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
 import { app } from '@/lib/firebase/firebase';
 import { Loader2 } from 'lucide-react';
+import Logo from '@/components/common/logo';
 
 declare global {
     interface Window {
@@ -113,7 +114,8 @@ export default function BuyerLoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm">
-        <CardHeader>
+        <CardHeader className="items-center text-center">
+          <Logo className="h-10 mb-4" />
           <CardTitle className="text-2xl font-headline">Buyer Login</CardTitle>
           <CardDescription>
             {otpSent ? 'Enter the OTP sent to your mobile.' : 'Enter your mobile number to log in or create an account.'}

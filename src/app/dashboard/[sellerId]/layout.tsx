@@ -38,6 +38,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import Logo from '@/components/common/logo';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const params = useParams();
@@ -108,8 +109,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-              <Store className="size-6 text-primary" />
-              <span>Loki</span>
+              <Logo className="h-7" />
             </Link>
             <SidebarTrigger className="ml-auto" />
           </div>

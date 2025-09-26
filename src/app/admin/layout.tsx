@@ -34,6 +34,7 @@ import { app } from '@/lib/firebase/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import Logo from '@/components/common/logo';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -60,8 +61,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-              <ShieldCheck className="size-6 text-primary" />
-              <span>Loki Admin</span>
+              <Logo className="h-7" />
             </Link>
             <SidebarTrigger className="ml-auto" />
           </div>

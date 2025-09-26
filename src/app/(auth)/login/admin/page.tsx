@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import Logo from '@/components/common/logo';
 
 export default function SellerAdminLoginPage() {
   const router = useRouter();
@@ -51,7 +52,8 @@ export default function SellerAdminLoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="mx-auto max-w-sm">
-        <CardHeader>
+        <CardHeader className="items-center text-center">
+            <Logo className="h-10 mb-4" />
           <CardTitle className="text-2xl font-headline">Seller/Admin Login</CardTitle>
           <CardDescription>
             Enter your credentials to access your dashboard.

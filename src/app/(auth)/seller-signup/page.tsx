@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
+import Logo from '@/components/common/logo';
 
 export default function SellerSignupPage() {
   const router = useRouter();
@@ -25,7 +26,8 @@ export default function SellerSignupPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+        <CardHeader className="text-center items-center">
+          <Logo className="h-10 mb-4" />
           <CardTitle className="text-3xl font-bold font-headline">Become a Loki Seller</CardTitle>
           <CardDescription>
             Join our community of local manufacturers.
