@@ -19,15 +19,10 @@ function DiscoverMap({ sellers, selectedSeller }: DiscoverMapProps) {
 
   // Effect for initializing and cleaning up the map
   useEffect(() => {
-    if (typeof window === 'undefined' || !mapContainerRef.current) {
+    if (typeof window === 'undefined' || !mapContainerRef.current || (mapContainerRef.current as any)._leaflet_id) {
       return;
     }
-
-    // Prevent re-initialization
-    if (mapInstanceRef.current) {
-        return;
-    }
-
+    
     let map: any;
 
     const initMap = async () => {
@@ -70,11 +65,11 @@ function DiscoverMap({ sellers, selectedSeller }: DiscoverMapProps) {
 
     // Cleanup function
     return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
+      if (map) {
+        map.remove();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array ensures this runs only once on mount
 
   // Effect for updating the map view when selectedSeller changes
