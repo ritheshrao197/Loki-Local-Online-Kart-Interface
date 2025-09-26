@@ -14,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarInset,
+  SidebarMenuSkeleton,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -39,6 +40,45 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { useEffect, useState } from 'react';
+
+function AdminDashboardSkeleton() {
+  return (
+    <SidebarProvider>
+      <Sidebar>
+        <SidebarHeader>
+          <div className="flex items-center gap-2">
+             <Store className="size-6 text-primary" />
+             <SidebarMenuSkeleton className="h-6 w-20" />
+            <SidebarTrigger className="ml-auto" />
+          </div>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            {Array.from({length: 8}).map((_, i) => <SidebarMenuSkeleton key={i} showIcon />)}
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuSkeleton showIcon/>
+            <SidebarMenuSkeleton showIcon/>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <SidebarMenuSkeleton className="size-7 rounded-full" />
+                <SidebarMenuSkeleton className="h-5 w-24" />
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <div className="p-4 sm:p-6 lg:p-8">
+            <SidebarMenuSkeleton className="h-8 w-1/4 mb-6" />
+            <SidebarMenuSkeleton className="h-64 w-full" />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -66,12 +106,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   if (!isClient) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <div className="h-16 border-b" />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
-      </div>
-    );
+    return <AdminDashboardSkeleton />;
   }
 
   if (isMobile) {
