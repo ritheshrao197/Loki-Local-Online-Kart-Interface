@@ -60,8 +60,8 @@ const formSchema = z.object({
   // Admin-specific field
   sellerId: z.string().optional(),
 }).refine(
-    (data) => (data.discountPrice && data.discountPrice > 0) ? data.discountPrice < data.price : true,
-    { message: 'Discount price must be less than the original price.', path: ['discountPrice'] }
+    (data) => (data.discountPrice && data.discountPrice > 0) ? data.discountPrice <= data.price : true,
+    { message: 'Discount price cannot be greater than the original price.', path: ['discountPrice'] }
 );
 
 type ProductFormValues = z.infer<typeof formSchema>;
