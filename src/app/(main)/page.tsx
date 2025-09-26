@@ -51,7 +51,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <HeroSlider />
-      <div className="container py-12 space-y-20">
+      <div className="container py-12 space-y-16">
         <section className="text-center">
           <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
             Discover Local Treasures

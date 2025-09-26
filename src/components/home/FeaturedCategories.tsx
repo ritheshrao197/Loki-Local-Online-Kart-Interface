@@ -32,7 +32,7 @@ export function FeaturedCategories() {
           }
           return acc;
         }, [] as CategoryWithImage[]);
-        setCategories(uniqueCategories.slice(0, 4));
+        setCategories(uniqueCategories.slice(0, 5));
       } catch (error) {
         console.error("Failed to fetch products for categories:", error);
       } finally {
@@ -45,9 +45,9 @@ export function FeaturedCategories() {
   if (loading) {
     return (
         <div>
-            <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="aspect-square"/>)}
+            <h2 className="text-2xl font-bold font-headline mb-4">Featured Categories</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="aspect-[4/5]"/>)}
             </div>
         </div>
     )
@@ -59,22 +59,22 @@ export function FeaturedCategories() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <h2 className="text-2xl font-bold font-headline mb-4">Featured Categories</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {categories.map((category) => (
           <Link href="/" key={category.name} className="group">
             <Card className="overflow-hidden">
-              <div className="relative aspect-square">
+              <div className="relative aspect-[4/5]">
                 <Image
                   src={category.image}
                   alt={category.name}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 768px) 50vw, 25vw"
+                  sizes="(max-width: 768px) 50vw, 20vw"
                   data-ai-hint={category.hint}
                 />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <h3 className="font-headline text-white text-xl font-semibold">{category.name}</h3>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-start p-4">
+                  <h3 className="font-headline text-white text-lg font-semibold">{category.name}</h3>
                 </div>
               </div>
             </Card>

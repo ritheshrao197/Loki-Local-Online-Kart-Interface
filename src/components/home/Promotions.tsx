@@ -46,7 +46,7 @@ export function Promotions() {
     <div className="grid md:grid-cols-2 gap-6">
       {promotedProducts.map((product, index) => (
         <Link href={`/products/${product.id}`} key={product.id} className="group">
-          <Card className="relative overflow-hidden h-64">
+          <Card className="relative overflow-hidden h-80">
             <Image
               src={product.images[0].url}
               alt={product.name}
@@ -55,12 +55,12 @@ export function Promotions() {
               sizes="(max-width: 768px) 100vw, 50vw"
               data-ai-hint={product.images[0].hint}
             />
-            <div className="absolute inset-0 bg-black/50 p-6 flex flex-col justify-end">
+            <div className="absolute inset-0 bg-black/50 p-6 flex flex-col justify-end items-center text-center">
               <h3 className="text-2xl font-bold font-headline text-white">
                 {index === 0 ? 'Featured Promotion' : 'Special Offer'}
               </h3>
               <p className="text-white/90 mt-2">{product.name}</p>
-              <Button variant="secondary" className="mt-4 w-fit">View Product</Button>
+              <Button variant="secondary" className="mt-4">View Product</Button>
             </div>
           </Card>
         </Link>
