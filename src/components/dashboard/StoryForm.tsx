@@ -18,6 +18,8 @@ const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long.'),
   content: z.string().min(100, 'Content must be at least 100 characters long.'),
   featuredImageUrl: z.string().url('Please enter a valid image URL.').optional().or(z.literal('')),
+  videoUrl: z.string().url('Please enter a valid video URL.').optional().or(z.literal('')),
+  shortVideoUrl: z.string().url('Please enter a valid video URL.').optional().or(z.literal('')),
 });
 
 type StoryFormValues = z.infer<typeof formSchema>;
@@ -41,11 +43,15 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
           title: story.title,
           content: story.content,
           featuredImageUrl: story.featuredImage?.url || '',
+          videoUrl: story.videoUrl || '',
+          shortVideoUrl: story.shortVideoUrl || '',
         }
       : {
           title: '',
           content: '',
           featuredImageUrl: '',
+          videoUrl: '',
+          shortVideoUrl: '',
         },
   });
 
@@ -62,6 +68,8 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
         ...(data.featuredImageUrl && { 
             featuredImage: { url: data.featuredImageUrl, hint: 'blog post' } 
         }),
+        ...(data.videoUrl && { videoUrl: data.videoUrl }),
+        ...(data.shortVideoUrl && { shortVideoUrl: data.shortVideoUrl }),
       };
 
       if (isEditMode) {
@@ -131,6 +139,38 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
                   <FormControl>
                     <Input placeholder="https://example.com/image.jpg" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="videoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Video URL (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://youtube.com/watch?v=..." {...field} />
+                  </FormControl>
+                   <FormDescription>
+                    Link to a longer video about your brand or process.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="shortVideoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Short Video URL (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://youtube.com/shorts/..." {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Link to a short, vertical video (e.g., YouTube Short, Instagram Reel).
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

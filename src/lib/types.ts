@@ -75,6 +75,8 @@ export type Blog = {
     url: string;
     hint: string;
   };
+  videoUrl?: string;
+  shortVideoUrl?: string;
   author: {
     id: string;
     name: string;
