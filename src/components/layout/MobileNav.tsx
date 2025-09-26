@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings, Wallet, MessageSquare } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings, Wallet, MessageSquare, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
