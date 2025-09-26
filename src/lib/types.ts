@@ -72,11 +72,11 @@ export type Blog = {
   title: string;
   content: string; // HTML content from a rich text editor
   featuredImage?: {
-    url: string;
+    url: string; // Can be a public URL or a data URI
     hint: string;
   };
-  videoUrl?: string;
-  shortVideoUrl?: string;
+  videoUrl?: string; // Can be a public URL or a data URI
+  shortVideoUrl?: string; // Can be a public URL or a data URI
   author: {
     id: string;
     name: string;
@@ -98,7 +98,7 @@ export type HeroSlide = {
 };
 
 export type BannerAd = {
-  id: string;
+  id:string;
   title: string;
   imageUrl: string;
   linkUrl: string;

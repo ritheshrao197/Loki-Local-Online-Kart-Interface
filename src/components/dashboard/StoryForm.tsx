@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,16 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Film, Image as ImageIcon, Loader2, UploadCloud } from 'lucide-react';
 import type { Blog as Story } from '@/lib/types';
 import { addBlog, updateBlog, getSellerById } from '@/lib/firebase/firestore';
+import Image from 'next/image';
 
 const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long.'),
   content: z.string().min(100, 'Content must be at least 100 characters long.'),
-  featuredImageUrl: z.string().url('Please enter a valid image URL.').optional().or(z.literal('')),
-  videoUrl: z.string().url('Please enter a valid video URL.').optional().or(z.literal('')),
-  shortVideoUrl: z.string().url('Please enter a valid video URL.').optional().or(z.literal('')),
+  featuredImage: z.any().optional(),
+  video: z.any().optional(),
+  shortVideo: z.any().optional(),
 });
 
 type StoryFormValues = z.infer<typeof formSchema>;
@@ -29,31 +30,60 @@ interface StoryFormProps {
   sellerId: string;
 }
 
+// Helper to convert file to Data URI
+const fileToDataUri = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
 export function StoryForm({ story, sellerId }: StoryFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const isEditMode = !!story;
+  const [imagePreview, setImagePreview] = useState<string | null>(story?.featuredImage?.url || null);
+  const [videoFileName, setVideoFileName] = useState<string | null>(null);
+  const [shortVideoFileName, setShortVideoFileName] = useState<string | null>(null);
 
+  const isEditMode = !!story;
+  
   const form = useForm<StoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: isEditMode
       ? {
           title: story.title,
           content: story.content,
-          featuredImageUrl: story.featuredImage?.url || '',
-          videoUrl: story.videoUrl || '',
-          shortVideoUrl: story.shortVideoUrl || '',
+          featuredImage: story.featuredImage?.url,
+          video: story.videoUrl,
+          shortVideo: story.shortVideoUrl,
         }
       : {
           title: '',
           content: '',
-          featuredImageUrl: '',
-          videoUrl: '',
-          shortVideoUrl: '',
         },
   });
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: 'featuredImage' | 'video' | 'shortVideo'
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    form.setValue(field, file);
+
+    if (field === 'featuredImage') {
+      const dataUri = await fileToDataUri(file);
+      setImagePreview(dataUri);
+    } else if (field === 'video') {
+      setVideoFileName(file.name);
+    } else if (field === 'shortVideo') {
+      setShortVideoFileName(file.name);
+    }
+  };
 
   const onSubmit = async (data: StoryFormValues) => {
     setIsSubmitting(true);
@@ -61,15 +91,28 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
       const seller = await getSellerById(sellerId);
       if (!seller) throw new Error('Seller not found.');
 
+      let featuredImageUrl: string | undefined = isEditMode ? story?.featuredImage?.url : undefined;
+      if (data.featuredImage instanceof File) {
+        featuredImageUrl = await fileToDataUri(data.featuredImage);
+      }
+
+      let videoUrl: string | undefined = isEditMode ? story?.videoUrl : undefined;
+      if (data.video instanceof File) {
+        videoUrl = await fileToDataUri(data.video);
+      }
+
+      let shortVideoUrl: string | undefined = isEditMode ? story?.shortVideoUrl : undefined;
+      if (data.shortVideo instanceof File) {
+        shortVideoUrl = await fileToDataUri(data.shortVideo);
+      }
+      
       const storyData = {
         title: data.title,
         content: data.content,
         author: { id: sellerId, name: seller.name },
-        ...(data.featuredImageUrl && { 
-            featuredImage: { url: data.featuredImageUrl, hint: 'blog post' } 
-        }),
-        ...(data.videoUrl && { videoUrl: data.videoUrl }),
-        ...(data.shortVideoUrl && { shortVideoUrl: data.shortVideoUrl }),
+        ...(featuredImageUrl && { featuredImage: { url: featuredImageUrl, hint: 'blog post' } }),
+        ...(videoUrl && { videoUrl }),
+        ...(shortVideoUrl && { shortVideoUrl }),
       };
 
       if (isEditMode) {
@@ -84,7 +127,8 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
     } catch (error) {
       console.error("Form submission error:", error);
       toast({ title: "Submission Error", description: "Could not save the story.", variant: "destructive" });
-      setIsSubmitting(false);
+    } finally {
+        setIsSubmitting(false);
     }
   };
 
@@ -131,49 +175,87 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
               )}
             />
              <FormField
-              control={form.control}
-              name="featuredImageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Featured Image URL (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://example.com/image.jpg" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+                control={form.control}
+                name="featuredImage"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Featured Image (Optional)</FormLabel>
+                    <div className="flex items-center gap-4">
+                        <div className="w-48 h-27 bg-muted rounded-md flex items-center justify-center relative border aspect-video">
+                            {imagePreview ? (
+                            <Image src={imagePreview} alt="Preview" fill className="object-contain rounded-md p-1" />
+                            ) : (
+                            <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                            )}
+                        </div>
+                        <Input id="image-upload" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'featuredImage')} className="hidden" />
+                         <Button asChild variant="outline">
+                            <label htmlFor="image-upload" className="cursor-pointer">
+                                <UploadCloud className="mr-2" /> Upload Image
+                            </label>
+                        </Button>
+                    </div>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
-             <FormField
-              control={form.control}
-              name="videoUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Video URL (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://youtube.com/watch?v=..." {...field} />
-                  </FormControl>
-                   <FormDescription>
-                    Link to a longer video about your brand or process.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+
+            <FormField
+                control={form.control}
+                name="video"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Video (Optional)</FormLabel>
+                     <div className="flex items-center gap-4">
+                        {videoFileName ? (
+                            <div className="flex items-center gap-2 text-sm p-2 bg-secondary rounded-md">
+                                <Film className="h-4 w-4" /> <span>{videoFileName}</span>
+                            </div>
+                        ) : isEditMode && story?.videoUrl ? (
+                             <div className="flex items-center gap-2 text-sm p-2 bg-secondary rounded-md">
+                                <Film className="h-4 w-4" /> <span>Existing Video</span>
+                            </div>
+                        ) : null}
+                         <Input id="video-upload" type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'video')} className="hidden" />
+                         <Button asChild variant="outline">
+                            <label htmlFor="video-upload" className="cursor-pointer">
+                                <UploadCloud className="mr-2" /> Upload Video
+                            </label>
+                        </Button>
+                    </div>
+                    <FormDescription>Link to a longer video about your brand or process.</FormDescription>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
+
              <FormField
-              control={form.control}
-              name="shortVideoUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Short Video URL (Optional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://youtube.com/shorts/..." {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Link to a short, vertical video (e.g., YouTube Short, Instagram Reel).
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+                control={form.control}
+                name="shortVideo"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Short Video (Optional)</FormLabel>
+                     <div className="flex items-center gap-4">
+                        {shortVideoFileName ? (
+                             <div className="flex items-center gap-2 text-sm p-2 bg-secondary rounded-md">
+                                <Film className="h-4 w-4" /> <span>{shortVideoFileName}</span>
+                            </div>
+                        ) : isEditMode && story?.shortVideoUrl ? (
+                              <div className="flex items-center gap-2 text-sm p-2 bg-secondary rounded-md">
+                                <Film className="h-4 w-4" /> <span>Existing Short</span>
+                            </div>
+                        ): null}
+                        <Input id="short-video-upload" type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'shortVideo')} className="hidden" />
+                         <Button asChild variant="outline">
+                             <label htmlFor="short-video-upload" className="cursor-pointer">
+                                <UploadCloud className="mr-2" /> Upload Short
+                            </label>
+                        </Button>
+                    </div>
+                    <FormDescription>Upload a short, vertical video (e.g., YouTube Short, Instagram Reel).</FormDescription>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
           </CardContent>
         </Card>
@@ -188,3 +270,4 @@ export function StoryForm({ story, sellerId }: StoryFormProps) {
     </Form>
   );
 }
+

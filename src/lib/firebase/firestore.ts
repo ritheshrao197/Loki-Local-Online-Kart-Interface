@@ -5,6 +5,7 @@
 
 
 
+
 import {
   collection,
   doc,
@@ -294,7 +295,7 @@ export async function getBlogsBySeller(sellerId: string): Promise<Blog[]> {
   return snapshot.docs.map(blogToClient);
 }
 
-export async function addBlog(blogData: Omit<Blog, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+export async function addBlog(blogData: Partial<Omit<Blog, 'id' | 'createdAt' | 'updatedAt'>>): Promise<string> {
   const blogWithTimestamps = {
     ...blogData,
     createdAt: serverTimestamp(),
