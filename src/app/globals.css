@@ -1,69 +1,68 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 30 50% 98%;
-    --foreground: 240 10% 3.9%;
-    --card: 30 50% 100%; 
-    --card-foreground: 240 10% 3.9%;
+    --background: 40 100% 98%; /* #fff9f5 - A very light, warm off-white */
+    --foreground: 24 10% 20%; /* #3d3838 - Charcoal Gray */
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 215 59% 37%; /* #295399 Deep Blue */
+    --popover-foreground: 24 10% 20%;
+    --primary: 215 59% 37%; /* #295399 - Deep Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 216 69% 91%; /* #A4C3F0 Light Blue */
-    --secondary-foreground: 215 59% 37%;
-    --muted: 210 40% 96.1%; /* #EFEFEF Light Gray */
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 52 94% 64%; /* #F9DD53 Bright Yellow */
-    --accent-foreground: 240 5.9% 10%;
+    --secondary: 40 100% 95%; /* Lighter Warm Beige for secondary elements */
+    --secondary-foreground: 24 10% 20%;
+    --muted: 216 34% 91%; /* Light Blue for muted backgrounds */
+    --muted-foreground: 215 28% 45%;
+    --accent: 46 94% 65%; /* #F9DD53 - Bright Yellow */
+    --accent-foreground: 24 10% 20%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 216 34% 88%; /* Softer border */
+    --input: 216 34% 93%; /* Light gray for inputs */
     --ring: 215 59% 37%;
     --radius: 0.5rem;
     --chart-1: 215 59% 37%;
-    --chart-2: 52 94% 64%;
+    --chart-2: 46 94% 65%;
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 30 50% 98%;
-    --sidebar-foreground: 240 10% 3.9%;
+    --sidebar-background: 216 34% 93%; /* Light gray */
+    --sidebar-foreground: 24 10% 20%;
     --sidebar-primary: 215 59% 37%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96.1%;
-    --sidebar-accent-foreground: 215 59% 37%;
-    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-accent: 0 0% 100%;
+    --sidebar-accent-foreground: 24 10% 20%;
+    --sidebar-border: 216 34% 85%;
     --sidebar-ring: 215 59% 37%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 24 10% 10%; /* Dark Charcoal */
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 24 10% 15%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 24 10% 10%;
     --popover-foreground: 0 0% 98%;
     --primary: 216 69% 91%; /* Light Blue */
-    --primary-foreground: 215 59% 37%;
+    --primary-foreground: 215 59% 20%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 52 94% 64%; /* Bright Yellow */
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 46 94% 65%; /* Bright Yellow */
+    --accent-foreground: 24 10% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 216 69% 91%;
-    --sidebar-background: 240 10% 3.9%;
+    --sidebar-background: 24 10% 12%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 216 69% 91%;
-    --sidebar-primary-foreground: 215 59% 37%;
+    --sidebar-primary-foreground: 215 59% 20%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 3.7% 15.9%;
@@ -77,6 +76,55 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before, body::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    filter: blur(100px);
+    will-change: transform;
+    transition: transform 0.5s ease;
+  }
+
+  body::before {
+    top: -15vh;
+    right: -20vw;
+    width: 40vw;
+    height: 40vw;
+    background: rgba(249, 221, 83, 0.1);
+    border-radius: 50% 50% 30% 70% / 60% 30% 70% 40%;
+    animation: pulse 15s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  body::after {
+    bottom: -10vh;
+    left: -15vw;
+    width: 35vw;
+    height: 35vw;
+    background: rgba(41, 83, 153, 0.1);
+    border-radius: 70% 30% 40% 60% / 50% 60% 30% 50%;
+    animation: pulse 20s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scale(1.2) rotate(15deg);
+    }
+  }
+
+  /* Gradient overlay layer */
+  .gradient-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--background)) 100%);
+    opacity: 0.05;
+    z-index: -2;
   }
 }
