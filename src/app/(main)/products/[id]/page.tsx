@@ -69,13 +69,19 @@ export default function ProductDetailPage() {
       });
   }
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: product?.name,
-        text: `Check out this product: ${product?.name}`,
-        url: window.location.href,
-      }).catch(console.error);
+      try {
+        await navigator.share({
+          title: product?.name,
+          text: `Check out this product: ${product?.name}`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        // This can happen if the user dismisses the share sheet or if sharing fails.
+        // We can safely ignore this error.
+        console.log('Share was cancelled or failed', error);
+      }
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast({
