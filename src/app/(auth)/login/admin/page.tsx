@@ -26,19 +26,25 @@ export default function SellerAdminLoginPage() {
     e.preventDefault();
     const user = username.toLowerCase();
 
-    if (user === 'admin') {
-      toast({ title: 'Admin Login Successful' });
-      router.push('/admin');
-    } else if (user) {
-      // Assume any other username is a seller ID for testing
-      toast({ title: 'Seller Login Successful' });
-      router.push(`/dashboard/${user}`);
-    } else {
-      toast({
-        title: 'Invalid Credentials',
-        description: 'Use "admin" or a valid seller ID to log in.',
-        variant: 'destructive',
-      });
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear(); // Clear any previous session
+      if (user === 'admin') {
+        sessionStorage.setItem('userRole', 'admin');
+        toast({ title: 'Admin Login Successful' });
+        router.push('/admin');
+      } else if (user) {
+        // Assume any other username is a seller ID for testing
+        sessionStorage.setItem('userRole', 'seller');
+        sessionStorage.setItem('userId', user);
+        toast({ title: 'Seller Login Successful' });
+        router.push(`/dashboard/${user}`);
+      } else {
+        toast({
+          title: 'Invalid Credentials',
+          description: 'Use "admin" or a valid seller ID to log in.',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
