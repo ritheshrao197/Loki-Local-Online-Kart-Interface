@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --background: 30 100% 96%; /* light-peach: #FFF7F0 */
+    --background: transparent; /* light-peach: #FFF7F0 */
     --foreground: 24 9.8% 10%;
-    --card: 30 50% 93%; /* Slightly darker peach for cards */
+    --card: 30 50% 93% / 0.8; /* Slightly darker peach for cards */
     --card-foreground: 24 9.8% 10%;
     --popover: 30 100% 96%;
     --popover-foreground: 24 9.8% 10%;
@@ -42,7 +42,7 @@
   .dark {
     --background: 24 9.8% 10%;
     --foreground: 30 50% 95%;
-    --card: 24 9.8% 12%;
+    --card: 24 9.8% 12% / 0.8;
     --card-foreground: 30 50% 95%;
     --popover: 24 9.8% 10%;
     --popover-foreground: 30 50% 95%;
@@ -76,7 +76,6 @@
   }
   body {
     @apply text-foreground;
-    background-color: hsl(var(--background));
     background-image: linear-gradient(to right, #fde68a, #295398);
   }
 }
