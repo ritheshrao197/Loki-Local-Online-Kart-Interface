@@ -11,7 +11,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { MobileNav } from './MobileNav';
 import { Badge } from '../ui/badge';
 import { ThemeToggle } from './ThemeToggle';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -20,6 +20,7 @@ export const Header = React.memo(function Header() {
   const [userId, setUserId] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   
   useEffect(() => {
     setIsMounted(true);
@@ -36,73 +37,59 @@ export const Header = React.memo(function Header() {
   }, [router]);
 
   const cartItemCount = 2; // Mock count
+  const isDashboard = pathname.startsWith('/dashboard');
 
   if (!isMounted) {
     return <div className="h-16 border-b" />;
   }
 
   const renderActionButtons = () => {
+    if (userRole === 'admin') {
+      return (
+        <>
+          <Button asChild variant="ghost" className="rounded-full px-4">
+            <Link href="/admin">
+              <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
+            </Link>
+          </Button>
+          <ThemeToggle />
+        </>
+      );
+    }
+
+    if (userRole === 'seller' && userId) {
+      return (
+        <>
+          <Button asChild variant="ghost" className="rounded-full px-4">
+            <Link href={`/dashboard/${userId}`}>
+              <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard
+            </Link>
+          </Button>
+           <Button variant="ghost" size="icon" asChild className="rounded-full">
+            <Link href={`/sellers/${userId}`}>
+              <User className="h-5 w-5" />
+              <span className="sr-only">Profile</span>
+            </Link>
+          </Button>
+          <ThemeToggle />
+        </>
+      );
+    }
+    
+    // Buyer or guest view
     return (
       <>
-        {/* Admin buttons - conditionally visible */}
-        <Button 
-          asChild 
-          variant="ghost" 
-          className="rounded-full px-4"
-          style={{ display: userRole === 'admin' ? 'flex' : 'none' }}
-        >
-          <Link href="/admin">
-            <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
-          </Link>
-        </Button>
-        
-        {/* Seller buttons - conditionally visible */}
-        <Button 
-          asChild 
-          variant="ghost" 
-          className="rounded-full px-4"
-          style={{ display: userRole === 'seller' && userId ? 'flex' : 'none' }}
-        >
-          <Link href={userId ? `/dashboard/${userId}` : '#'}>
-            <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard
-          </Link>
-        </Button>
-        
-        {/* Default buttons for buyers or guests - conditionally visible */}
-        <Button 
-          variant="ghost" 
-          asChild 
-          className="rounded-full px-4"
-          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
-        >
+        <Button variant="ghost" asChild className="rounded-full px-4">
           <Link href="/blogs">Stories</Link>
         </Button>
-        
-        <Button 
-          variant="ghost" 
-          asChild 
-          className="rounded-full px-4"
-          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
-        >
+        <Button variant="ghost" asChild className="rounded-full px-4">
           <Link href="/discover">Discover</Link>
         </Button>
-        
-        <Button 
-          variant="ghost" 
-          asChild 
-          className="rounded-full px-4"
-          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
-        >
+        <Button variant="ghost" asChild className="rounded-full px-4">
           <Link href="/login/admin">Sell on Loki</Link>
         </Button>
-        
-        <div 
-          className="flex items-center space-x-1"
-          style={{ display: !userRole || userRole === 'buyer' ? 'flex' : 'none' }}
-        >
-          <div style={{ display: 'flex' }}>
-            <ThemeToggle />
-          </div>
+        <div className="flex items-center space-x-1">
+          <ThemeToggle />
           <Button variant="ghost" size="icon" asChild className="rounded-full">
             <Link href="/profile">
               <User className="h-5 w-5" />
@@ -111,7 +98,7 @@ export const Header = React.memo(function Header() {
           </Button>
           <Button variant="ghost" size="icon" asChild className="rounded-full relative">
             <Link href="/cart">
-              {isMounted && cartItemCount > 0 && (
+              {cartItemCount > 0 && (
                 <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs bg-primary text-primary-foreground border-0">
                   {cartItemCount}
                 </Badge>
@@ -120,11 +107,6 @@ export const Header = React.memo(function Header() {
               <span className="sr-only">Cart</span>
             </Link>
           </Button>
-        </div>
-        
-        {/* Always render ThemeToggle for all user roles but control visibility */}
-        <div style={{ display: userRole && userRole !== 'buyer' ? 'flex' : 'none' }}>
-          <ThemeToggle />
         </div>
       </>
     );

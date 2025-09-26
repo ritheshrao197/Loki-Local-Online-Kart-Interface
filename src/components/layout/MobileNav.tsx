@@ -38,27 +38,25 @@ export function MobileNav() {
       setUserRole(role);
       setUserId(id);
 
-      const items = [];
-      const product1 = placeholderImages.find(p => p.id === 'prod_101');
-      if (product1) {
-          items.push({
-              ...product1,
-              quantity: 1,
-              price: 499,
-              seller: { name: 'Artisan Fabrics Co.' },
-              images: [{ url: product1.url, hint: product1.hint }]
-          });
-      }
-      const product2 = placeholderImages.find(p => p.id === 'prod_115');
-      if (product2) {
-          items.push({
-              ...product2,
-              quantity: 1,
-              price: 399,
-              seller: { name: 'GreenEarth' },
-              images: [{ url: product2.url, hint: product2.hint }]
-          });
-      }
+      const items = [
+        {
+          id: 'prod_101',
+          name: 'Handwoven Cotton Scarf',
+          quantity: 1,
+          price: 499,
+          seller: { name: 'Artisan Fabrics Co.' },
+          images: [{ url: placeholderImages.find(p => p.id === 'prod_101')?.url, hint: 'cotton scarf' }]
+        },
+        {
+          id: 'prod_115',
+          name: 'Bamboo Toothbrush Set',
+          quantity: 1,
+          price: 399,
+          seller: { name: 'GreenEarth' },
+          images: [{ url: placeholderImages.find(p => p.id === 'prod_115')?.url, hint: 'bamboo toothbrush' }]
+        }
+      ].filter(item => item.images[0].url); // Ensure item is valid before adding
+
       setCartItems(items);
     }
   }, []);
@@ -120,7 +118,7 @@ export function MobileNav() {
       <div className="fixed bottom-0 left-0 z-40 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <nav className="grid h-16 grid-cols-5 items-center text-xs">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = item.href === '/' ? pathname === item.href : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.label}
