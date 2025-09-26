@@ -4,13 +4,28 @@ import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import dynamic from 'next/dynamic';
+import { RecentlyViewedLoader } from '@/components/home/RecentlyViewedLoader';
 
-const HeroSlider = dynamic(() => import('@/components/home/HeroSlider').then(mod => mod.HeroSlider));
-const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCategories').then(mod => mod.FeaturedCategories));
-const Promotions = dynamic(() => import('@/components/home/Promotions').then(mod => mod.Promotions));
-const PopularProducts = dynamic(() => import('@/components/home/PopularProducts').then(mod => mod.PopularProducts));
-const BannerAds = dynamic(() => import('@/components/home/BannerAds').then(mod => mod.BannerAds));
-const RecentlyViewedProducts = dynamic(() => import('@/components/home/RecentlyViewedProducts').then(mod => mod.RecentlyViewedProducts));
+const HeroSlider = dynamic(() => import('@/components/home/HeroSlider').then(mod => mod.HeroSlider), {
+  loading: () => <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />,
+  ssr: true
+});
+const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCategories').then(mod => mod.FeaturedCategories), {
+  loading: () => <FeaturedCategoriesSkeleton />,
+  ssr: true
+});
+const Promotions = dynamic(() => import('@/components/home/Promotions').then(mod => mod.Promotions), {
+  loading: () => <Skeleton className="h-80 w-full" />,
+  ssr: true
+});
+const PopularProducts = dynamic(() => import('@/components/home/PopularProducts').then(mod => mod.PopularProducts), {
+  loading: () => <ProductGridSkeleton />,
+  ssr: true
+});
+const BannerAds = dynamic(() => import('@/components/home/BannerAds').then(mod => mod.BannerAds), {
+    loading: () => <div className="h-48" />,
+    ssr: true
+});
 
 export default function HomePage() {
   return (
@@ -62,9 +77,7 @@ export default function HomePage() {
 
         <section className="py-12">
           <div className="px-4 sm:px-6 lg:px-8">
-            <Suspense fallback={<RecentlyViewedSkeleton />}>
-              <RecentlyViewedProducts />
-            </Suspense>
+            <RecentlyViewedLoader />
           </div>
         </section>
 
@@ -92,21 +105,6 @@ const ProductGridSkeleton = () => (
         {Array.from({length: 8}).map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
     </div>
    </div>
-);
-
-const RecentlyViewedSkeleton = () => (
-  <div>
-    <h2 className="text-2xl font-bold font-headline mb-6">Recently Viewed</h2>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {Array.from({length: 4}).map((_, i) => (
-         <div key={i} className="space-y-2">
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-5 w-1/2" />
-         </div>
-      ))}
-    </div>
-  </div>
 );
 
 const FeaturedCategoriesSkeleton = () => (

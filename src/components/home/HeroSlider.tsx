@@ -32,7 +32,12 @@ export function HeroSlider() {
   }
 
   if (slides.length === 0) {
-    return null;
+    return (
+      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4">
+        <h2 className="text-3xl font-bold font-headline">Welcome to Loki</h2>
+        <p className="mt-4 max-w-lg text-lg text-muted-foreground">Your local marketplace is getting ready. Content will appear here soon!</p>
+      </div>
+    );
   }
 
   return (
@@ -53,7 +58,7 @@ export function HeroSlider() {
                   fill
                   priority={index === 0}
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="100vw"
                   placeholder="blur"
                   blurDataURL={`/_next/image?url=${slide.imageUrl}&w=16&q=1`}
                 />
