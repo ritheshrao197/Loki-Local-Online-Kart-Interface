@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -131,7 +132,10 @@ export default function ProductDetailPage() {
                 <Badge variant="secondary">{product.category}</Badge>
                 <h1 className="mt-2 text-3xl font-bold font-headline lg:text-4xl">{product.name}</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                    Sold by <span className="text-accent-foreground font-medium">{product.seller.name}</span>
+                    Sold by{' '}
+                    <Link href={`/sellers/${product.seller.id}`} className="text-accent-foreground font-medium hover:underline">
+                        {product.seller.name}
+                    </Link>
                 </p>
             </div>
             

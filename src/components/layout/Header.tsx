@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Search, ShoppingCart, User } from 'lucide-react';
+import { LayoutDashboard, Search, ShoppingCart, User, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Logo from '@/components/common/logo';
@@ -61,6 +61,9 @@ export function Header() {
       <>
         <Button variant="ghost" asChild>
           <Link href="/blogs">Stories</Link>
+        </Button>
+         <Button variant="ghost" asChild>
+          <Link href="/discover">Discover</Link>
         </Button>
         <Button variant="ghost" asChild>
           <Link href="/login/admin">Sell on Loki</Link>

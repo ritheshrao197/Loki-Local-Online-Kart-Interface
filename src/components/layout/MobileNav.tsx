@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -51,8 +51,8 @@ export function MobileNav() {
 
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
+    { href: '/discover', label: 'Discover', icon: Compass },
     { href: '/blogs', label: 'Stories', icon: Newspaper },
-    { href: '#', label: 'Search', icon: Search, isAction: true },
     { href: getProfileLink(), label: 'Profile', icon: (userRole === 'admin' || userRole === 'seller') ? LayoutDashboard : User },
     { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
   ];
@@ -74,10 +74,14 @@ export function MobileNav() {
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-center">
+        <div className="container flex h-14 items-center justify-between">
            <Link href="/" className="flex items-center space-x-2">
                 <Logo className="h-7 w-auto" />
             </Link>
+            <Button variant="ghost" size="icon">
+                <Search className="h-5 w-5" />
+                <span className="sr-only">Search</span>
+            </Button>
         </div>
       </header>
 
