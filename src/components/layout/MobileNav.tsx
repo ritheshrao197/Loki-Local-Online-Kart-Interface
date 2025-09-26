@@ -1,13 +1,13 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '../ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter, SheetDescription } from '../ui/sheet';
 import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
@@ -25,11 +25,10 @@ type UserRole = 'admin' | 'seller' | 'buyer' | null;
 export function MobileNav() {
   const pathname = usePathname();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [seller, setSeller] = useState<Seller | null>(null);
-
-
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   const isDashboard = pathname.startsWith('/dashboard');
@@ -69,6 +68,14 @@ export function MobileNav() {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 50;
   const total = subtotal + shipping;
+  const { toast } = useToast();
+
+  const handleLogout = () => {
+      // Dummy logout logic
+      sessionStorage.clear();
+      toast({ title: "Logged Out", description: "You have been successfully logged out." });
+      window.location.href = '/login/admin'; // Force reload
+  };
 
   const buyerNavItems = [
     { href: '/', label: 'Home', icon: Home },
@@ -83,11 +90,10 @@ export function MobileNav() {
     { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
     { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: '/profile', label: 'Profile', icon: User },
+    { href: '#', label: 'Profile', icon: User, isAction: true, isProfile: true },
   ];
 
   const navItems = isDashboard ? sellerNavItems : buyerNavItems;
-
 
   const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
     if ('isAction' in item && item.isAction) {
@@ -95,6 +101,9 @@ export function MobileNav() {
     }
     if ('isCart' in item && item.isCart) {
       setIsCartOpen(true);
+    }
+    if ('isProfile' in item && item.isProfile) {
+        setIsProfileOpen(true);
     }
   }
 
@@ -200,6 +209,33 @@ export function MobileNav() {
               <Link href="/cart">Proceed to Checkout</Link>
             </Button>
           </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* Profile Sheet for Seller */}
+      <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+        <SheetContent side="bottom" className="flex w-full flex-col p-4 rounded-t-lg">
+          <SheetHeader className="px-2 text-left">
+            <SheetTitle>Seller Account</SheetTitle>
+            <SheetDescription>Manage your seller account</SheetDescription>
+          </SheetHeader>
+          <div className="flex-1 py-4 space-y-2">
+             <Button asChild variant="ghost" className="w-full justify-start">
+                 <Link href={`/profile`} onClick={() => setIsProfileOpen(false)}>
+                    <User className="mr-2" />
+                    View Public Profile
+                </Link>
+            </Button>
+            <Button variant="ghost" className="w-full justify-start">
+                <Settings className="mr-2" />
+                Settings
+            </Button>
+             <Separator />
+             <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
+                <LayoutDashboard className="mr-2" />
+                Logout
+            </Button>
+          </div>
         </SheetContent>
       </Sheet>
     </>
