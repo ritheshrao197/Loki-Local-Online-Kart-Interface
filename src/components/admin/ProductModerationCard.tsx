@@ -22,6 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getSellerById } from '@/lib/firebase/firestore';
 
 interface ProductModerationCardProps {
   product: Product;
@@ -65,6 +66,11 @@ export function ProductModerationCard({ product, onStatusChange, onDelete }: Pro
     setIsReviewing(true);
     setReview(null);
     try {
+      const seller = await getSellerById(product.sellerId);
+      if (!seller) {
+        throw new Error("Seller information not found for this product.");
+      }
+      
       const imageUrl = product.images[0].url;
       const productImageUrl = await toDataURL(imageUrl);
 
@@ -73,7 +79,7 @@ export function ProductModerationCard({ product, onStatusChange, onDelete }: Pro
         productDescription: product.description,
         productImageUrl,
         productPrice: product.price,
-        sellerInfo: product.seller.name,
+        sellerName: seller.name,
       });
       setReview(result);
     } catch (error) {
@@ -105,7 +111,7 @@ export function ProductModerationCard({ product, onStatusChange, onDelete }: Pro
     <Card>
       <CardHeader>
         <CardTitle>{product.name}</CardTitle>
-        <CardDescription>Sold by {product.seller.name} for ₹{product.price.toLocaleString('en-IN')}</CardDescription>
+        <CardDescription>Sold by... for ₹{product.price.toLocaleString('en-IN')}</CardDescription>
       </CardHeader>
       <CardContent className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-1">

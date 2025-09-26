@@ -20,7 +20,7 @@ const AdminReviewProductListingInputSchema = z.object({
       'A URL of the product image, as a data URI that must include a MIME type and use Base64 encoding. Expected format: data:<mimetype>;base64,<encoded_data>.'
     ),
   productPrice: z.number().describe('The price of the product.'),
-  sellerInfo: z.string().describe('Information about the seller listing the product.'),
+  sellerName: z.string().describe('The name of the seller listing the product.'),
 });
 export type AdminReviewProductListingInput = z.infer<typeof AdminReviewProductListingInputSchema>;
 
@@ -54,7 +54,7 @@ const prompt = ai.definePrompt({
   Product Description: {{{productDescription}}}
   Product Image: {{media url=productImageUrl}}
   Product Price: {{{productPrice}}}
-  Seller Information: {{{sellerInfo}}}
+  Seller Name: {{{sellerName}}}
 
   Respond in the format:
   Summary: [A concise summary of the product listing]

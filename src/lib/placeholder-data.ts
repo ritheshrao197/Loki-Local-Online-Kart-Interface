@@ -13,11 +13,10 @@ export const mockSellers: Seller[] = [
 ];
 
 
-export const mockProducts: Product[] = [
+export const mockProducts: Omit<Product, 'id'>[] = [
     { 
-        id: 'prod_101',
         name: 'Handwoven Cotton Scarf',
-        seller: { id: 'seller_101', name: 'Artisan Fabrics Co.' },
+        sellerId: 'seller_101',
         category: 'Handicrafts',
         price: 499,
         stock: 50,
@@ -33,9 +32,8 @@ export const mockProducts: Product[] = [
         unitOfMeasure: 'piece',
     },
     { 
-        id: 'prod_103',
         name: 'Organic Turmeric Powder',
-        seller: { id: 'seller_102', name: 'FarmFresh Spices' },
+        sellerId: 'seller_102',
         category: 'Food',
         price: 250,
         stock: 120,
@@ -51,9 +49,8 @@ export const mockProducts: Product[] = [
         unitOfMeasure: 'kg',
     },
     { 
-        id: 'prod_110',
         name: 'Jute Shopping Bag',
-        seller: { id: 'seller_103', name: 'GreenEarth' },
+        sellerId: 'seller_103',
         category: 'Textiles',
         price: 299,
         stock: 70,
@@ -68,9 +65,8 @@ export const mockProducts: Product[] = [
         unitOfMeasure: 'piece',
     },
     { 
-        id: 'prod_115',
         name: 'Bamboo Toothbrush Set',
-        seller: { id: 'seller_103', name: 'GreenEarth' },
+        sellerId: 'seller_103',
         category: 'Personal Care',
         price: 399,
         stock: 200,
@@ -86,9 +82,8 @@ export const mockProducts: Product[] = [
         unitOfMeasure: 'piece',
     },
     { 
-        id: 'prod_120',
         name: 'Handmade Ceramic Vase',
-        seller: { id: 'seller_5', name: 'ClayCraft Studio' },
+        sellerId: 'seller_5',
         category: 'Home Decor',
         price: 1200,
         stock: 30,
@@ -103,9 +98,8 @@ export const mockProducts: Product[] = [
         unitOfMeasure: 'piece',
     },
      { 
-        id: 'prod_131',
         name: 'Traditional Khadi Shirt',
-        seller: { id: 'seller_101', name: 'Artisan Fabrics Co.' },
+        sellerId: 'seller_101',
         category: 'Apparel',
         price: 800,
         stock: 60,
@@ -119,7 +113,7 @@ export const mockProducts: Product[] = [
         status: 'approved',
         unitOfMeasure: 'piece',
     }
-];
+].map((p, i) => ({ ...p, id: placeholderImages[i]?.id || `prod_mock_${i}`}));
 
 export const mockOrders: (Omit<Order, 'id'> & { id: string, orderDate: Date })[] = [
     {

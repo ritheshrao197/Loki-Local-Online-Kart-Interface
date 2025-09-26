@@ -9,13 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { MessageSquare, ShoppingCart, ThumbsUp, Truck, Warehouse, Zap, Share2, Star } from 'lucide-react';
 import { ProductCard } from '@/components/products/ProductCard';
-import type { Product } from '@/lib/types';
+import type { Product, Seller } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 const RECENTLY_VIEWED_KEY = 'recentlyViewed';
 const MAX_RECENTLY_VIEWED = 8;
 
-export function ProductDetails({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
+export function ProductDetails({ product, seller, relatedProducts }: { product: Product, seller: Seller, relatedProducts: Product[] }) {
   const { toast } = useToast();
 
   useEffect(() => {
@@ -87,8 +87,8 @@ export function ProductDetails({ product, relatedProducts }: { product: Product,
                 <h1 className="mt-2 text-3xl font-bold font-headline lg:text-4xl">{product.name}</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                     Sold by{' '}
-                    <Link href={`/sellers/${product.seller.id}`} className="text-accent-foreground font-medium hover:underline">
-                        {product.seller.name}
+                    <Link href={`/sellers/${seller.id}`} className="text-accent-foreground font-medium hover:underline">
+                        {seller.name}
                     </Link>
                 </p>
             </div>

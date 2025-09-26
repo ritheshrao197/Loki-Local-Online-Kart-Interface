@@ -2,8 +2,8 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getProductById, getProducts } from '@/lib/firebase/firestore';
-import type { Product } from '@/lib/types';
+import { getProductById, getProducts, getSellerById } from '@/lib/firebase/firestore';
+import type { Product, Seller } from '@/lib/types';
 import { ProductDetails } from '@/components/products/ProductDetails';
 import { ProductDetailSkeleton } from '@/components/products/ProductDetailSkeleton';
 
@@ -11,13 +11,18 @@ interface ProductPageProps {
   params: { id: string };
 }
 
-async function fetchProduct(id: string): Promise<Product | null> {
+async function fetchProductData(id: string): Promise<{product: Product, seller: Seller} | null> {
   try {
     const fetchedProduct = await getProductById(id);
     if (!fetchedProduct || fetchedProduct.status !== 'approved') {
       return null;
     }
-    return fetchedProduct;
+    const fetchedSeller = await getSellerById(fetchedProduct.sellerId);
+    if (!fetchedSeller) {
+        return null;
+    }
+
+    return { product: fetchedProduct, seller: fetchedSeller };
   } catch (error) {
     console.error("Failed to fetch product data:", error);
     return null;
@@ -37,13 +42,15 @@ async function fetchRelatedProducts(category: string, productId: string): Promis
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await fetchProduct(params.id);
+  const data = await fetchProductData(params.id);
 
-  if (!product) {
+  if (!data) {
     return {
       title: 'Product not found',
     };
   }
+
+  const { product } = data;
 
   return {
     title: product.name,
@@ -59,17 +66,18 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = params;
-  const product = await fetchProduct(id as string);
+  const data = await fetchProductData(id as string);
 
-  if (!product) {
+  if (!data) {
     notFound();
   }
+  const { product, seller } = data;
 
   const relatedProducts = await fetchRelatedProducts(product.category, product.id);
 
   return (
     <Suspense fallback={<ProductDetailSkeleton />}>
-      <ProductDetails product={product} relatedProducts={relatedProducts} />
+      <ProductDetails product={product} seller={seller} relatedProducts={relatedProducts} />
     </Suspense>
   );
 }

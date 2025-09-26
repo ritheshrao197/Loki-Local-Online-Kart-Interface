@@ -12,10 +12,7 @@ export type Product = {
   }[];
   category: string;
   subcategory?: string;
-  seller: {
-    id:string;
-    name: string;
-  };
+  sellerId: string;
   status: 'pending' | 'approved' | 'rejected' | 'draft' | 'archived';
   keywords?: string;
   stock: number;

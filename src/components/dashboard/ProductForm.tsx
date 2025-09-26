@@ -16,7 +16,7 @@ import { autoCategorizeProduct } from '@/ai/flows/auto-categorize-product';
 import { CalendarIcon, Loader2, Sparkles, Trash2, UploadCloud } from 'lucide-react';
 import type { Product, Seller } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { addProduct, updateProduct, getSellerById, getSellers } from '@/lib/firebase/firestore';
+import { addProduct, updateProduct, getSellers } from '@/lib/firebase/firestore';
 import Image from 'next/image';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -55,7 +55,7 @@ const formSchema = z.object({
   isPromoted: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
   // Admin-specific field
-  sellerId: z.string().optional(),
+  sellerId: z.string().min(1, 'Seller must be selected.'),
 }).refine(
     (data) => {
         if (data.discountPrice && data.price) {
@@ -87,16 +87,16 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const [sellers, setSellers] = useState<Seller[]>([]);
   
   const isEditMode = !!product;
-  const isAdminCreateMode = isAdmin && !isEditMode;
+  const sellerIdForForm = isAdmin ? (isEditMode ? product.sellerId : '') : urlSellerId;
 
   useEffect(() => {
-    if (isAdminCreateMode) {
+    if (isAdmin) {
       getSellers().then(fetchedSellers => {
         const approvedSellers = fetchedSellers.filter(s => s.status === 'approved');
         setSellers(approvedSellers);
       });
     }
-  }, [isAdminCreateMode]);
+  }, [isAdmin]);
 
 
   const defaultValues: Partial<ProductFormValues> = isEditMode ? {
@@ -122,7 +122,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     returnPolicy: product.returnPolicy || 'none',
     isPromoted: product.isPromoted || false,
     isFeatured: product.isFeatured || false,
-    sellerId: product.seller.id,
+    sellerId: product.sellerId,
   } : {
     name: '',
     description: '',
@@ -147,6 +147,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     returnPolicy: 'none' as const,
     isPromoted: false,
     isFeatured: false,
+    sellerId: urlSellerId,
   };
 
 
@@ -255,78 +256,64 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
     
-    const sellerId = isAdmin ? (isEditMode ? product.seller.id : data.sellerId) : urlSellerId;
-
-    if (!sellerId) {
+    if (!data.sellerId) {
       toast({ title: "Seller Not Selected", description: "Please select a seller for this product.", variant: "destructive" });
       setIsSubmitting(false);
       return;
     }
 
     try {
+      // Create a base product object with fields common to both add and update
+      const productBase = {
+        name: data.name,
+        description: data.description || '',
+        price: data.price,
+        discountPrice: data.discountPrice,
+        images: data.images.map(img => ({ url: img.url, hint: img.hint })),
+        category: data.category,
+        subcategory: data.subcategory,
+        sellerId: data.sellerId,
+        status: 'pending', // Default status, will be overridden if needed
+        keywords: data.keywords,
+        stock: data.stock,
+        unitOfMeasure: data.unitOfMeasure,
+        stockAlert: data.stockAlert,
+        brand: data.brand,
+        weight: data.weight,
+        dimensions: data.dimensions,
+        manufacturingDate: data.manufacturingDate ? data.manufacturingDate.toISOString() : undefined,
+        expiryDate: data.expiryDate ? data.expiryDate.toISOString() : undefined,
+        isGstRegistered: data.isGstRegistered,
+        certification: data.certification,
+        shippingOptions: data.shippingOptions,
+        estimatedDelivery: data.estimatedDelivery,
+        returnPolicy: data.returnPolicy,
+        isPromoted: data.isPromoted,
+        isFeatured: data.isFeatured,
+      };
+      
       if (isEditMode && product) {
-        const updatedProductData = {
-          ...data,
-          images: data.images.map(img => ({ url: img.url, hint: img.hint })), // Ensure plain objects
-          seller: product.seller, // Preserve original seller info
+        await updateProduct(product.id, {
+          ...productBase,
           status: isAdmin ? product.status : 'pending',
-          // Convert Date objects to ISO strings
-          manufacturingDate: data.manufacturingDate ? data.manufacturingDate.toISOString() : undefined,
-          expiryDate: data.expiryDate ? data.expiryDate.toISOString() : undefined,
-        };
-        
-        await updateProduct(product.id, updatedProductData);
-         toast({
+        });
+        toast({
           title: 'Product Updated!',
           description: isAdmin ? 'Product has been updated successfully.' : 'Your product is updated and pending re-approval.',
         });
-        if (isAdmin) {
-            router.push(`/admin/products?updated=true`);
-        } else {
-            router.push(`/dashboard/${sellerId}/products?updated=true`);
-        }
+        const redirectUrl = isAdmin ? '/admin/products' : `/dashboard/${data.sellerId}/products`;
+        router.push(`${redirectUrl}?updated=true`);
       } else {
-        const seller = await getSellerById(sellerId);
-        if (!seller) {
-            throw new Error("Could not find seller details.");
-        }
-        const newProduct: Omit<Product, 'id'> = {
-          name: data.name,
-          description: data.description || '',
-          price: data.price,
-          discountPrice: data.discountPrice,
-          images: data.images.map(img => ({ url: img.url, hint: img.hint })),
-          category: data.category,
-          subcategory: data.subcategory,
-          seller: { id: sellerId, name: seller.name },
+        await addProduct({
+          ...productBase,
           status: isAdmin ? 'approved' : 'pending',
-          keywords: data.keywords,
-          stock: data.stock,
-          unitOfMeasure: data.unitOfMeasure,
-          stockAlert: data.stockAlert,
-          brand: data.brand,
-          weight: data.weight,
-          dimensions: data.dimensions,
-          manufacturingDate: data.manufacturingDate ? data.manufacturingDate.toISOString() : undefined,
-          expiryDate: data.expiryDate ? data.expiryDate.toISOString() : undefined,
-          isGstRegistered: data.isGstRegistered,
-          certification: data.certification,
-          shippingOptions: data.shippingOptions,
-          estimatedDelivery: data.estimatedDelivery,
-          returnPolicy: data.returnPolicy,
-          isPromoted: data.isPromoted,
-          isFeatured: data.isFeatured,
-        };
-        await addProduct(newProduct);
+        });
         toast({
           title: 'Product Submitted!',
           description: `Your product is pending admin approval.`,
         });
-        if (isAdmin) {
-          router.push(`/admin/products?newProduct=true`);
-        } else {
-          router.push(`/dashboard/${sellerId}/products?newProduct=true`);
-        }
+        const redirectUrl = isAdmin ? '/admin/products' : `/dashboard/${data.sellerId}/products`;
+        router.push(`${redirectUrl}?newProduct=true`);
       }
       router.refresh();
 
@@ -346,18 +333,13 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
      const data = form.getValues();
      setIsSubmitting(true);
      
-     const sellerId = isAdmin ? data.sellerId : urlSellerId;
-     
-      if (!sellerId) {
+     if (!data.sellerId) {
         toast({ title: "Error", description: "Seller not identified.", variant: "destructive" });
         setIsSubmitting(false);
         return;
       }
 
     try {
-        const seller = await getSellerById(sellerId);
-        if (!seller) throw new Error("Could not find seller details.");
-
         const draftProduct: Omit<Product, 'id'> = {
             name: data.name || "Untitled Draft",
             description: data.description || '',
@@ -366,7 +348,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             images: data.images || [],
             category: data.category || '',
             subcategory: data.subcategory,
-            seller: { id: sellerId, name: seller.name },
+            sellerId: data.sellerId,
             status: 'draft',
             keywords: data.keywords,
             stock: data.stock || 0,
@@ -431,7 +413,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
                 <CardDescription>Enter the basic details for your product.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {isAdminCreateMode && (
+                {isAdmin && (
                    <FormField control={form.control} name="sellerId" render={({ field }) => (
                         <FormItem>
                         <FormLabel>Seller</FormLabel>

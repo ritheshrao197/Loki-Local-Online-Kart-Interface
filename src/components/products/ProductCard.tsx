@@ -1,14 +1,15 @@
 
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import type { Product } from '@/lib/types';
+import type { Product, Seller } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '../ui/button';
 import { ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getSellerById } from '@/lib/firebase/firestore';
 
 interface ProductCardProps {
   product: Product;
@@ -16,6 +17,16 @@ interface ProductCardProps {
 
 export const ProductCard = React.memo(function ProductCard({ product }: ProductCardProps) {
   const { toast } = useToast();
+  const [seller, setSeller] = useState<Seller | null>(null);
+
+  useEffect(() => {
+    async function fetchSeller() {
+      const fetchedSeller = await getSellerById(product.sellerId);
+      setSeller(fetchedSeller);
+    }
+    fetchSeller();
+  }, [product.sellerId]);
+
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent navigating to product page
@@ -51,7 +62,7 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                 <p className="text-sm text-muted-foreground">{product.category}</p>
                 <h3 className="mt-1 font-headline font-semibold text-lg truncate group-hover:text-primary">{product.name}</h3>
                  <p className="mt-1 text-xs text-muted-foreground">
-                  by {product.seller.name}
+                  by {seller?.name || '...'}
                 </p>
               </div>
             </Link>
