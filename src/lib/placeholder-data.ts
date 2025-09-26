@@ -19,10 +19,10 @@ export const mockSellers: Seller[] = [
 
 
 const productDetails = [
-  { name: 'Handwoven Cotton Scarf', price: 499, category: 'Handicrafts', keywords: 'scarf, cotton, handwoven', stock: 50, unit: 'piece' as const, sellerId: 'seller_1', isPromoted: true, isFeatured: false },
+  { name: 'Handwoven Cotton Scarf', price: 499, category: 'Apparel', keywords: 'scarf, cotton, handwoven', stock: 50, unit: 'piece' as const, sellerId: 'seller_1', isPromoted: true, isFeatured: false },
   { name: 'Organic Turmeric Powder', price: 250, category: 'Food & Groceries', keywords: 'turmeric, powder, organic', stock: 120, unit: 'kg' as const, sellerId: 'seller_2', isPromoted: false, isFeatured: false },
   { name: 'Jute Shopping Bag', price: 299, category: 'Accessories', keywords: 'jute, bag, eco-friendly', stock: 70, unit: 'piece' as const, sellerId: 'seller_3', isPromoted: true, isFeatured: true },
-  { name: 'Bamboo Toothbrush Set', price: 399, category: 'Personal Care', keywords: 'bamboo, toothbrush, biodegradable', stock: 200, unit: 'piece' as const, sellerId: 'seller_4', isPromoted: false, isFeatured: false },
+  { name: 'Bamboo Toothbrush Set', price: 399, category: 'Bath & Body', keywords: 'bamboo, toothbrush, biodegradable', stock: 200, unit: 'piece' as const, sellerId: 'seller_4', isPromoted: false, isFeatured: false },
   { name: 'Handmade Ceramic Vase', price: 1200, category: 'Home Decor', keywords: 'ceramic, vase, handmade', stock: 30, unit: 'piece' as const, sellerId: 'seller_5', isPromoted: false, isFeatured: false },
   { name: 'Herbal Hair Oil', price: 350, category: 'Bath & Body', keywords: 'hair oil, herbal, natural', stock: 90, unit: 'piece' as const, sellerId: 'seller_6', isPromoted: false, isFeatured: false },
   { name: 'Leather Wallet', price: 899, category: 'Accessories', keywords: 'leather, wallet, handcrafted', stock: 40, unit: 'piece' as const, sellerId: 'seller_7', isPromoted: false, isFeatured: false },
