@@ -27,6 +27,7 @@ import {
   Gavel,
   LayoutTemplate,
   Newspaper,
+  Store,
 } from 'lucide-react';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
@@ -47,8 +48,7 @@ function AdminDashboardSkeleton() {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-              <Skeleton className="h-7 w-7" />
-              <Skeleton className="h-6 w-20" />
+              <div className={cn('relative h-7 w-auto')} style={{ aspectRatio: '200/66' }}/>
             </Link>
             <SidebarTrigger className="ml-auto" />
           </div>
