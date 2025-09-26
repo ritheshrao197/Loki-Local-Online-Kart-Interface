@@ -191,6 +191,15 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
         productData.expiryDate = Timestamp.fromDate(new Date(product.expiryDate));
     }
 
+    // Firestore doesn't accept 'undefined'
+    if (productData.stockAlert === undefined) {
+        productData.stockAlert = null;
+    }
+    if (productData.discountPrice === undefined) {
+        productData.discountPrice = null;
+    }
+
+
     const docRef = await addDoc(productsCol, productData);
     return docRef.id;
 }
@@ -211,6 +220,15 @@ export async function updateProduct(productId: string, productData: Partial<Omit
   if (productData.expiryDate) {
     dataToUpdate.expiryDate = Timestamp.fromDate(new Date(productData.expiryDate));
   }
+  
+  // Firestore doesn't accept 'undefined'
+  if (dataToUpdate.stockAlert === undefined) {
+    dataToUpdate.stockAlert = null;
+  }
+  if (dataToUpdate.discountPrice === undefined) {
+    dataToUpdate.discountPrice = null;
+  }
+
 
   await updateDoc(productRef, dataToUpdate);
 }
