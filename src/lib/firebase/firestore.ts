@@ -87,19 +87,23 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
 // ================== Product Functions ==================
 
 /**
- * Converts undefined fields in product data to null.
- * Firestore does not support 'undefined'.
+ * Converts undefined values to null recursively, as Firestore doesn't support 'undefined'.
  */
-function sanitizeForFirestore(data: Record<string, any>): Record<string, any> {
-    const sanitizedData: Record<string, any> = {};
+function sanitizeDataForFirestore(data: any): any {
+    if (data === undefined) {
+        return null;
+    }
+    if (data === null || typeof data !== 'object') {
+        return data;
+    }
+    if (Array.isArray(data)) {
+        return data.map(item => sanitizeDataForFirestore(item));
+    }
+    const sanitizedData: { [key: string]: any } = {};
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
             const value = data[key];
-            if (value !== undefined) {
-                 sanitizedData[key] = value;
-            } else {
-                 sanitizedData[key] = null;
-            }
+            sanitizedData[key] = sanitizeDataForFirestore(value);
         }
     }
     return sanitizedData;
@@ -202,8 +206,8 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  */
 export async function addProduct(product: Omit<Product, 'id'>): Promise<string> {
     const productsCol = collection(db, 'products');
-    const productData = sanitizeForFirestore({ ...product });
-    const docRef = await addDoc(productsCol, productData);
+    const sanitizedData = sanitizeDataForFirestore(product);
+    const docRef = await addDoc(productsCol, sanitizedData);
     return docRef.id;
 }
 
@@ -215,8 +219,8 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
  */
 export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
-  const dataToUpdate = sanitizeForFirestore(productData);
-  await updateDoc(productRef, dataToUpdate);
+  const sanitizedData = sanitizeDataForFirestore(productData);
+  await updateDoc(productRef, sanitizedData);
 }
 
 /**
