@@ -18,7 +18,6 @@ import { ThemeToggle } from './ThemeToggle';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { placeholderImages } from '@/lib/placeholder-images';
 import type { Seller } from '@/lib/types';
 import { getSellerById } from '@/lib/firebase/firestore';
 
@@ -31,7 +30,6 @@ export function MobileNav() {
   const { toast } = useToast();
   const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -51,55 +49,31 @@ export function MobileNav() {
       if (role === 'seller' && id) {
         getSellerById(id).then(setSeller);
       }
-
-      const items = [];
-      const item1Data = placeholderImages.find(p => p.id === 'prod_101');
-      if (item1Data) {
-          items.push({
-              id: 'prod_101',
-              name: 'Handwoven Cotton Scarf',
-              quantity: 1,
-              price: 499,
-              seller: { name: 'Artisan Fabrics Co.' },
-              images: [{ url: item1Data.url, hint: item1Data.hint }]
-          });
-      }
       
-      const item2Data = placeholderImages.find(p => p.id === 'prod_115');
-      if (item2Data) {
-          items.push({
-              id: 'prod_115',
-              name: 'Bamboo Toothbrush Set',
-              quantity: 1,
-              price: 399,
-              seller: { name: 'GreenEarth' },
-              images: [{ url: item2Data.url, hint: item2Data.hint }]
-          });
-      }
+      const items = [];
+      const item1 = {
+          id: 'prod_101',
+          name: 'Handwoven Cotton Scarf',
+          quantity: 1,
+          price: 499,
+          seller: { name: 'Artisan Fabrics Co.' },
+          images: [{ url: 'https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080', hint: 'cotton scarf' }]
+      };
+      if (item1) items.push(item1);
+
+      const item2 = {
+          id: 'prod_115',
+          name: 'Bamboo Toothbrush Set',
+          quantity: 1,
+          price: 399,
+          seller: { name: 'GreenEarth' },
+          images: [{ url: 'https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop', hint: 'bamboo toothbrush' }]
+      };
+      if(item2) items.push(item2);
 
       setCartItems(items);
     }
   }, []);
-
-  const handleLogout = async () => {
-    const auth = getAuth(app);
-    try {
-      if (typeof window !== 'undefined') {
-        sessionStorage.clear();
-      }
-      setIsProfileOpen(false);
-      router.push('/login');
-      await signOut(auth);
-      toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
-    } catch (error) {
-      console.error("Logout error:", error);
-      toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
-    }
-  };
-
-  const handleSettingsClick = () => {
-    toast({ title: "Coming Soon!", description: "Settings page is under development." });
-  }
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 50;
@@ -130,12 +104,6 @@ export function MobileNav() {
     }
     if ('isCart' in item && item.isCart) {
       setIsCartOpen(true);
-    } else if ('isProfile' in item && item.isProfile) {
-      setIsProfileOpen(true);
-    } else if (item.label === 'Search') {
-      toast({
-        title: `${item.label} feature is coming soon!`,
-      });
     }
   }
 
@@ -241,40 +209,6 @@ export function MobileNav() {
               <Link href="/cart">Proceed to Checkout</Link>
             </Button>
           </SheetFooter>
-        </SheetContent>
-      </Sheet>
-
-      {/* Seller Profile Sheet */}
-      <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-        <SheetContent side="right" className="w-[280px] p-0">
-          <SheetHeader className="p-4 border-b">
-            <SheetTitle>
-              <div className="flex items-center gap-3">
-                 <Avatar className="size-9">
-                  <AvatarImage src={`https://picsum.photos/seed/${userId}/100/100`} />
-                  <AvatarFallback>{seller?.name.charAt(0) || 'S'}</AvatarFallback>
-                </Avatar>
-                <span className='truncate'>{seller?.name || 'Seller Menu'}</span>
-              </div>
-            </SheetTitle>
-          </SheetHeader>
-          <div className="p-4 space-y-2">
-             <Button variant="outline" asChild className="w-full justify-start">
-                <Link href={`/sellers/${userId}`}>
-                    <User className="mr-2 h-4 w-4"/>
-                    View Public Profile
-                </Link>
-            </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={handleSettingsClick}>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-            </Button>
-             <Separator />
-            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4"/>
-              Logout
-            </Button>
-          </div>
         </SheetContent>
       </Sheet>
     </>
