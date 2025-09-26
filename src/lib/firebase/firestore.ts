@@ -86,6 +86,41 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
 // ================== Product Functions ==================
 
 /**
+ * Converts undefined fields in product data to null.
+ * Firestore does not support 'undefined'.
+ */
+function sanitizeProductData(productData: { [key: string]: any }) {
+    const sanitizedData = { ...productData };
+    const fieldsToSanitize = [
+        'subcategory', 'discountPrice', 'stockAlert', 'keywords', 'brand',
+        'weight', 'dimensions', 'manufacturingDate', 'expiryDate',
+        'certification', 'estimatedDelivery', 'returnPolicy',
+    ];
+
+    fieldsToSanitize.forEach(field => {
+        if (sanitizedData[field] === undefined) {
+            sanitizedData[field] = null;
+        }
+    });
+
+    if (sanitizedData.dimensions) {
+        if (sanitizedData.dimensions.length === undefined) sanitizedData.dimensions.length = null;
+        if (sanitizedData.dimensions.width === undefined) sanitizedData.dimensions.width = null;
+        if (sanitizedData.dimensions.height === undefined) sanitizedData.dimensions.height = null;
+    }
+
+    if (productData.manufacturingDate) {
+        sanitizedData.manufacturingDate = Timestamp.fromDate(new Date(productData.manufacturingDate));
+    }
+    if (productData.expiryDate) {
+        sanitizedData.expiryDate = Timestamp.fromDate(new Date(productData.expiryDate));
+    }
+    
+    return sanitizedData;
+}
+
+
+/**
  * Fetches products from Firestore, optionally filtering by status.
  * @param status - Optional status to filter products by.
  */
@@ -182,23 +217,7 @@ export async function updateProductStatus(productId: string, status: 'approved' 
 export async function addProduct(product: Omit<Product, 'id'>): Promise<string> {
     const productsCol = collection(db, 'products');
     
-    const productData: { [key: string]: any } = { ...product };
-    
-    if (product.manufacturingDate) {
-        productData.manufacturingDate = Timestamp.fromDate(new Date(product.manufacturingDate));
-    }
-    if (product.expiryDate) {
-        productData.expiryDate = Timestamp.fromDate(new Date(product.expiryDate));
-    }
-
-    // Firestore doesn't accept 'undefined'
-    if (productData.stockAlert === undefined) {
-        productData.stockAlert = null;
-    }
-    if (productData.discountPrice === undefined) {
-        productData.discountPrice = null;
-    }
-
+    const productData = sanitizeProductData({ ...product });
 
     const docRef = await addDoc(productsCol, productData);
     return docRef.id;
@@ -212,23 +231,7 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
 export async function updateProduct(productId: string, productData: Partial<Omit<Product, 'id'>>): Promise<void> {
   const productRef = doc(db, 'products', productId);
   
-  const dataToUpdate: { [key: string]: any } = { ...productData };
-
-  if (productData.manufacturingDate) {
-    dataToUpdate.manufacturingDate = Timestamp.fromDate(new Date(productData.manufacturingDate));
-  }
-  if (productData.expiryDate) {
-    dataToUpdate.expiryDate = Timestamp.fromDate(new Date(productData.expiryDate));
-  }
-  
-  // Firestore doesn't accept 'undefined'
-  if (dataToUpdate.stockAlert === undefined) {
-    dataToUpdate.stockAlert = null;
-  }
-  if (dataToUpdate.discountPrice === undefined) {
-    dataToUpdate.discountPrice = null;
-  }
-
+  const dataToUpdate = sanitizeProductData({ ...productData });
 
   await updateDoc(productRef, dataToUpdate);
 }
