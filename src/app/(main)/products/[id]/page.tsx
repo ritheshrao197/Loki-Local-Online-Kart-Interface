@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
@@ -18,57 +18,49 @@ import { getProductById, getProducts } from '@/lib/firebase/firestore';
 const RECENTLY_VIEWED_KEY = 'recentlyViewed';
 const MAX_RECENTLY_VIEWED = 8;
 
-export default function ProductDetailPage() {
-  const params = useParams();
-  const { id } = params;
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+async function fetchProduct(id: string): Promise<Product | null> {
+  try {
+    const fetchedProduct = await getProductById(id);
+    if (!fetchedProduct || fetchedProduct.status !== 'approved') {
+      return null;
+    }
+    return fetchedProduct;
+  } catch (error) {
+    console.error("Failed to fetch product data:", error);
+    return null;
+  }
+}
+
+async function fetchRelatedProducts(category: string, productId: string): Promise<Product[]> {
+  try {
+    const allApprovedProducts = await getProducts('approved');
+    return allApprovedProducts
+      .filter((p) => p.category === category && p.id !== productId)
+      .slice(0, 4);
+  } catch (error) {
+    console.error("Failed to fetch related products:", error);
+    return [];
+  }
+}
+
+function ProductDetails({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!id) return;
-    
-    async function fetchProductData() {
-      setLoading(true);
-      try {
-        const fetchedProduct = await getProductById(id as string);
-        if (!fetchedProduct || fetchedProduct.status !== 'approved') {
-          notFound();
-          return;
-        }
-        setProduct(fetchedProduct);
-
-        // Add to recently viewed
-        if (typeof window !== 'undefined') {
-          const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
-          const updatedRecentlyViewed = [id as string, ...recentlyViewed.filter(itemId => itemId !== id)].slice(0, MAX_RECENTLY_VIEWED);
-          localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updatedRecentlyViewed));
-        }
-
-        const allApprovedProducts = await getProducts('approved');
-        const filteredRelated = allApprovedProducts
-          .filter((p) => p.category === fetchedProduct.category && p.id !== fetchedProduct.id)
-          .slice(0, 4);
-        setRelatedProducts(filteredRelated);
-      } catch (error) {
-        console.error("Failed to fetch product data:", error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
+    // Add to recently viewed on client side
+    if (typeof window !== 'undefined') {
+      const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
+      const updatedRecentlyViewed = [product.id, ...recentlyViewed.filter(itemId => itemId !== product.id)].slice(0, MAX_RECENTLY_VIEWED);
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updatedRecentlyViewed));
     }
-
-    fetchProductData();
-  }, [id]);
+  }, [product.id]);
 
   const handleAddToCart = () => {
-      if (!product) return;
-      toast({
-          title: "Added to Cart",
-          description: `${product.name} has been added to your cart.`,
-      });
-  }
+    toast({
+        title: "Added to Cart",
+        description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -79,8 +71,6 @@ export default function ProductDetailPage() {
           url: window.location.href,
         });
       } catch (error) {
-        // This can happen if the user dismisses the share sheet.
-        // We'll fall back to copying the link to the clipboard.
         navigator.clipboard.writeText(window.location.href);
         toast({
             title: "Link Copied!",
@@ -101,15 +91,7 @@ export default function ProductDetailPage() {
       title: "Coming Soon!",
       description: "The chat with seller feature is under development.",
     });
-  }
-
-  if (loading) {
-    return <ProductDetailSkeleton />;
-  }
-
-  if (!product) {
-    return null; // notFound() would have been called
-  }
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-12">
@@ -206,6 +188,24 @@ export default function ProductDetailPage() {
         </div>
       )}
     </div>
+  );
+}
+
+
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const product = await fetchProduct(id as string);
+
+  if (!product) {
+    notFound();
+  }
+
+  const relatedProducts = await fetchRelatedProducts(product.category, product.id);
+
+  return (
+    <Suspense fallback={<ProductDetailSkeleton />}>
+      <ProductDetails product={product} relatedProducts={relatedProducts} />
+    </Suspense>
   );
 }
 

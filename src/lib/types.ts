@@ -40,6 +40,7 @@ export type Product = {
   rating?: number;
   reviewsCount?: number;
   videoUrl?: string;
+  shortVideoUrl?: string;
 };
 
 export type Seller = {

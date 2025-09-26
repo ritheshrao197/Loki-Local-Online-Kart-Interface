@@ -1,11 +1,8 @@
 
-'use client';
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import type { Product } from '@/lib/types';
-import { Skeleton } from '../ui/skeleton';
 import { getProducts } from '@/lib/firebase/firestore';
 
 type CategoryWithImage = {
@@ -14,44 +11,28 @@ type CategoryWithImage = {
   hint: string;
 };
 
-export function FeaturedCategories() {
-  const [categories, setCategories] = useState<CategoryWithImage[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchFeaturedCategories() {
-      try {
-        const products = await getProducts('approved');
-        const uniqueCategories = products.reduce((acc, product) => {
-          if (!acc.find(c => c.name === product.category)) {
-            acc.push({
-              name: product.category,
-              image: product.images[0].url,
-              hint: product.images[0].hint,
-            });
-          }
-          return acc;
-        }, [] as CategoryWithImage[]);
-        setCategories(uniqueCategories.slice(0, 5));
-      } catch (error) {
-        console.error("Failed to fetch products for categories:", error);
-      } finally {
-        setLoading(false);
+async function fetchFeaturedCategories(): Promise<CategoryWithImage[]> {
+  try {
+    const products = await getProducts('approved');
+    const uniqueCategories = products.reduce((acc, product) => {
+      if (!acc.find(c => c.name === product.category)) {
+        acc.push({
+          name: product.category,
+          image: product.images[0].url,
+          hint: product.images[0].hint,
+        });
       }
-    }
-    fetchFeaturedCategories();
-  }, []);
-
-  if (loading) {
-    return (
-        <div>
-            <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="aspect-[4/5]"/>)}
-            </div>
-        </div>
-    )
+      return acc;
+    }, [] as CategoryWithImage[]);
+    return uniqueCategories.slice(0, 5);
+  } catch (error) {
+    console.error("Failed to fetch products for categories:", error);
+    return [];
   }
+}
+
+export async function FeaturedCategories() {
+  const categories = await fetchFeaturedCategories();
 
   if (categories.length === 0) {
       return null;
