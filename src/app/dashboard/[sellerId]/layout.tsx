@@ -35,12 +35,15 @@ import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileNav } from '@/components/layout/MobileNav';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
+  const isMobile = useIsMobile();
   
   const sellerId = params.sellerId as string;
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -81,8 +84,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   };
 
-  if (loading) {
+  if (loading || isMobile === undefined) {
     return <DashboardSkeleton />;
+  }
+
+  if (isMobile) {
+    return (
+      <>
+        <MobileNav />
+        <main className="p-4 sm:p-6 lg:p-8">
+          {children}
+          {/* Add padding to the bottom to avoid content being hidden by the mobile nav */}
+          <div className="h-16" />
+        </main>
+      </>
+    );
   }
 
   return (
