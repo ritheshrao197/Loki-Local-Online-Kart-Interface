@@ -46,12 +46,12 @@ export function HeroSlider() {
   }, [api, onSlideChange]);
 
   if (loading) {
-     return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-apple-xl" />;
+     return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-app-xl" />;
   }
 
   if (slides.length === 0) {
     return (
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4 rounded-apple-xl">
+      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4 rounded-app-xl">
         <motion.h2 
           className="text-3xl font-bold font-headline"
           initial={{ opacity: 0, y: 20 }}
@@ -81,10 +81,10 @@ export function HeroSlider() {
         }}
         setApi={setApi}
       >
-        <CarouselContent className="rounded-apple-xl overflow-hidden shadow-depth-4">
+        <CarouselContent className="rounded-app-xl overflow-hidden shadow-depth-4">
           {slides.map((slide, index) => (
-            <CarouselItem key={slide.id} className="rounded-apple-xl overflow-hidden">
-              <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-apple-xl overflow-hidden">
+            <CarouselItem key={slide.id} className="rounded-app-xl overflow-hidden">
+              <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-app-xl overflow-hidden">
                 <motion.div
                   initial={{ scale: 1.05, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -96,7 +96,7 @@ export function HeroSlider() {
                     alt={slide.title}
                     fill
                     priority={index === 0}
-                    className="object-cover rounded-apple-xl"
+                    className="object-cover rounded-app-xl"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     placeholder="blur"
                     blurDataURL={`/_next/image?url=${slide.imageUrl}&w=16&q=1`}
@@ -104,7 +104,7 @@ export function HeroSlider() {
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                 </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent rounded-apple-xl flex flex-col items-start justify-center text-left text-white p-8 md:p-12 lg:p-16">
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent rounded-app-xl flex flex-col items-start justify-center text-left text-white p-8 md:p-12 lg:p-16">
                   <motion.h2 
                     className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline max-w-lg"
                     initial={{ opacity: 0, x: -50 }}
@@ -141,7 +141,7 @@ export function HeroSlider() {
                       stiffness: 100
                     }}
                   >
-                    <Button asChild className="mt-6 md:mt-8 shadow-lg hover:shadow-xl transition-shadow rounded-full bg-[#F9DD53] text-[#295398] hover:bg-[#F9DD53]/90" size="lg">
+                    <Button asChild className="mt-6 md:mt-8 shadow-lg hover:shadow-xl transition-shadow rounded-full" size="lg">
                       <Link href={slide.ctaLink}>{slide.ctaText}</Link>
                     </Button>
                   </motion.div>

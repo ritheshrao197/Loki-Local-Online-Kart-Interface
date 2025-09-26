@@ -4,86 +4,91 @@
 
 @layer base {
   :root {
-    /* Light Theme with new color palette */
-    /* Anti-flash white: #EDEEEC */
-    /* White: #FFFFFF */
-    /* Mustard: #FEDD59 */
-    /* Lapis Lazuli: #336398 */
+    /* Light Theme - New Palette */
+    --background: 0 0% 100%; /* White */
+    --foreground: 240 10% 3.9%; /* Dark Gray */
     
-    --background: 0 0% 93%; /* Anti-flash white: #EDEEEC */
-    --foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 240 10% 3.9%;
     
-    --card: 0 0% 100%; /* White: #FFFFFF */
-    --card-foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
     
-    --popover: 0 0% 100%; /* White: #FFFFFF */
-    --popover-foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --primary: 48 96% 65%; /* Vibrant Yellow */
+    --primary-foreground: 240 10% 3.9%; /* Dark Gray for contrast */
     
-    --primary: 211 50% 40%; /* Lapis Lazuli: #336398 */
-    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 240 4.8% 95.9%; /* Light Gray */
+    --secondary-foreground: 240 10% 3.9%;
     
-    --secondary: 48 99% 67%; /* Mustard: #FEDD59 */
-    --secondary-foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
     
-    --muted: 0 0% 87%; /* Anti-flash white: #EDEEEC */
-    --muted-foreground: 0 0% 50%; /* Medium Gray */
+    --accent: 48 96% 65%; /* Vibrant Yellow */
+    --accent-foreground: 240 10% 3.9%;
     
-    --accent: 48 99% 67%; /* Mustard: #FEDD59 */
-    --accent-foreground: 0 0% 20%; /* Charcoal Gray for text */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
     
-    --destructive: 0 84% 60%; /* Red */
-    --destructive-foreground: 0 0% 100%; /* White */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 48 96% 65%;
     
-    --border: 0 0% 87%; /* Anti-flash white: #EDEEEC */
-    --input: 0 0% 87%; /* Anti-flash white: #EDEEEC */
-    --ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
+    --radius: 0.75rem; /* Slightly larger radius */
     
-    --radius: 0.5rem;
-    
-    --chart-1: 211 50% 40%; /* Lapis Lazuli: #336398 */
-    --chart-2: 48 99% 67%; /* Mustard: #FEDD59 */
+    --chart-1: 48 96% 65%;
+    --chart-2: 211 50% 40%;
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
     
-    --sidebar-background: 0 0% 100%; /* White: #FFFFFF */
-    --sidebar-foreground: 0 0% 20%; /* Charcoal Gray for text */
-    --sidebar-primary: 211 50% 40%; /* Lapis Lazuli: #336398 */
-    --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 0 0% 93%; /* Anti-flash white for hover */
-    --sidebar-accent-foreground: 0 0% 20%; /* Charcoal Gray for text */
-    --sidebar-border: 0 0% 87%; /* Anti-flash white: #EDEEEC */
-    --sidebar-ring: 211 50% 40%; /* Lapis Lazuli: #336398 */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 10% 3.9%;
+    --sidebar-primary: 48 96% 65%;
+    --sidebar-primary-foreground: 240 10% 3.9%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 10% 3.9%;
+    --sidebar-border: 240 5.9% 90%;
+    --sidebar-ring: 48 96% 65%;
   }
 
   .dark {
-    --background: 24 9.8% 10%;
-    --foreground: 30 50% 95%;
-    --card: 24 9.8% 12%;
-    --card-foreground: 30 50% 95%;
-    --popover: 24 9.8% 10%;
-    --popover-foreground: 30 50% 95%;
-    --primary: 15 100% 64%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 24 9.8% 20%;
-    --secondary-foreground: 30 50% 95%;
-    --muted: 24 9.8% 20%;
-    --muted-foreground: 30 50% 75%;
-    --accent: 36 59% 65%;
-    --accent-foreground: 30 50% 95%;
+    /* Dark Theme - Adjusted Palette */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 48 96% 65%;
+    --primary-foreground: 240 10% 3.9%;
+    
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    
+    --accent: 48 96% 65%;
+    --accent-foreground: 240 10% 3.9%;
+    
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 24 9.8% 20%;
-    --input: 24 9.8% 20%;
-    --ring: 15 100% 64%;
-    --sidebar-background: 24 9.8% 12%;
-    --sidebar-foreground: 30 50% 95%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 9.8% 20%;
-    --sidebar-accent-foreground: 30 50% 95%;
-    --sidebar-border: 24 9.8% 20%;
-    --sidebar-ring: 15 100% 64%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 48 96% 65%;
+    
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 48 96% 65%;
+    --sidebar-primary-foreground: 240 10% 3.9%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 48 96% 65%;
   }
 }
 
@@ -93,5 +98,101 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Subtle depth effects for interactive elements */
+  .btn-primary {
+    @apply shadow transition-transform duration-200 active:scale-[0.98];
+  }
+  
+  /* Enhanced depth for popover elements */
+  .popover {
+    @apply shadow-lg;
+  }
+  
+  /* Floating animation for subtle motion */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  /* Apple-inspired hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+  }
+  
+  /* Smooth fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+}
+
+@layer utilities {
+  /* Depth shadows - Subtle approach */
+  .shadow-depth-1 {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-depth-2 {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .shadow-depth-3 {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07), 0 4px 8px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-depth-4 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 6px 12px rgba(0, 0, 0, 0.07);
+  }
+  
+  /* App-specific rounded corners */
+  .rounded-app {
+    border-radius: 12px;
+  }
+  
+  .rounded-app-lg {
+    border-radius: 18px;
+  }
+  
+  .rounded-app-xl {
+    border-radius: 24px;
+  }
+  
+  /* App-specific gradients */
+  .bg-gradient-app {
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--background)));
+  }
+  
+  /* App-specific clean borders */
+  .border-app {
+    border: 1px solid hsl(var(--border));
   }
 }

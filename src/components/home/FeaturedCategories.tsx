@@ -73,7 +73,7 @@ export function FeaturedCategories() {
             className="group"
           >
             <Link href="/" className="block h-full">
-              <Card className="overflow-hidden border-0 bg-gradient-to-br from-card to-card/80 shadow-sm hover:shadow-xl transition-all duration-300 h-full transform-gpu">
+              <Card className="overflow-hidden border-0 bg-gradient-to-br from-card to-card/80 shadow-sm hover:shadow-xl transition-all duration-300 h-full transform-gpu rounded-app-lg">
                 <div className="relative aspect-[4/5]">
                   <motion.div
                     className="absolute inset-0"
@@ -89,7 +89,7 @@ export function FeaturedCategories() {
                       data-ai-hint={category.hint}
                     />
                   </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent flex items-end justify-start p-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end justify-start p-4">
                     <motion.h3 
                       className="font-headline text-white text-lg font-semibold drop-shadow-md"
                       whileHover={{ 

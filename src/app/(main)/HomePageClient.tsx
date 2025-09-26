@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Suspense } from 'react';
@@ -11,7 +10,7 @@ import { motion } from 'framer-motion';
 
 // Dynamically import components with optimized loading
 const HeroSlider = dynamic(() => import('@/components/home/HeroSlider').then(mod => mod.HeroSlider), {
-  loading: () => <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-apple-xl" />,
+  loading: () => <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-app-xl" />,
   ssr: true
 });
 
@@ -21,7 +20,7 @@ const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCateg
 });
 
 const Promotions = dynamic(() => import('@/components/home/Promotions').then(mod => mod.Promotions), {
-  loading: () => <Skeleton className="h-80 w-full rounded-apple-xl" />,
+  loading: () => <Skeleton className="h-80 w-full rounded-app-xl" />,
   ssr: true
 });
 
@@ -177,7 +176,7 @@ const ProductGridSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({length: 8}).map((_, i) => (
           <div key={i} className="space-y-2">
-            <Skeleton className="aspect-square w-full rounded-apple-xl" />
+            <Skeleton className="aspect-square w-full rounded-app-lg" />
             <Skeleton className="h-5 w-3/4 rounded-full" />
             <Skeleton className="h-5 w-1/2 rounded-full" />
           </div>
@@ -190,7 +189,7 @@ const FeaturedCategoriesSkeleton = () => (
     <div>
         <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="aspect-[4/5] rounded-apple-xl"/>)}
+            {Array.from({length: 5}).map((_, i) => <Skeleton key={i} className="aspect-[4/5] rounded-app-lg"/>)}
         </div>
     </div>
 );

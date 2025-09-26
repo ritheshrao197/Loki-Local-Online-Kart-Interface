@@ -118,7 +118,7 @@ export const Header = React.memo(function Header() {
           <Button variant="ghost" size="icon" asChild className="rounded-full relative">
             <Link href="/cart">
               {cartItemCount > 0 && (
-                <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs bg-[#F9DD53] text-[#295398] border-0">
+                <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs bg-primary text-primary-foreground border-0">
                   {cartItemCount}
                 </Badge>
               )}

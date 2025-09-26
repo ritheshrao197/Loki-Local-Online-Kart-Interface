@@ -43,16 +43,16 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
       whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group rounded-apple-lg shadow-depth-1 hover:shadow-depth-3 border-0 bg-gradient-apple">
-        <div className="h-full transition-all duration-300 rounded-apple-lg">
-          <CardContent className="p-0 flex flex-col flex-grow h-full rounded-apple-lg">
+      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group rounded-app-lg shadow-depth-1 hover:shadow-depth-3 border-0 bg-gradient-app">
+        <div className="h-full transition-all duration-300 rounded-app-lg">
+          <CardContent className="p-0 flex flex-col flex-grow h-full rounded-app-lg">
             <Link href={`/products/${product.id}`} className="block flex flex-col flex-grow">
-              <div className="relative aspect-square w-full overflow-hidden rounded-t-apple-lg">
+              <div className="relative aspect-square w-full overflow-hidden rounded-t-app-lg">
                 <Image
                   src={product.images[0].url}
                   alt={product.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-apple-lg"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-app-lg"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   data-ai-hint={product.images[0].hint}
                   quality={80}
@@ -64,10 +64,10 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                   <Badge variant="secondary" className="absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs">Pending</Badge>
                 )}
                  {product.discountPrice && (
-                     <Badge variant="destructive" className="absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs bg-[#F9DD53] text-[#295398] hover:bg-[#F9DD53]/90">SALE</Badge>
+                     <Badge variant="destructive" className="absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs bg-primary text-primary-foreground hover:bg-primary/90">SALE</Badge>
                 )}
               </div>
-              <div className="p-4 flex-grow flex flex-col bg-card rounded-b-apple-lg">
+              <div className="p-4 flex-grow flex flex-col bg-card rounded-b-app-lg">
                 <p className="text-sm text-muted-foreground">{product.category}</p>
                 <h3 className="mt-1 font-headline font-semibold text-lg truncate group-hover:text-primary transition-colors">{product.name}</h3>
                  <p className="mt-1 text-xs text-muted-foreground">
@@ -75,9 +75,9 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                 </p>
               </div>
             </Link>
-            <div className="p-4 pt-0 mt-auto bg-card rounded-b-apple-lg">
+            <div className="p-4 pt-0 mt-auto bg-card rounded-b-app-lg">
                  <div className="flex items-center gap-2">
-                    <p className={`text-xl font-bold ${product.discountPrice ? 'text-[#295398]' : 'text-primary'}`}>
+                    <p className={`text-xl font-bold ${product.discountPrice ? 'text-foreground' : 'text-foreground'}`}>
                         ₹{product.discountPrice ? product.discountPrice.toLocaleString('en-IN') : product.price.toLocaleString('en-IN')}
                     </p>
                     {product.discountPrice && (
@@ -91,8 +91,9 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
+                    className="w-full"
                   >
-                    <Button size="sm" className="w-full rounded-full shadow-sm hover:shadow-md transition-shadow bg-[#295398] hover:bg-[#295398]/90">
+                    <Button size="sm" className="w-full rounded-full shadow-sm hover:shadow-md transition-shadow" onClick={handleAddToCart}>
                         <ShoppingCart className="mr-2 h-4 w-4"/>
                         Add to Cart
                     </Button>
