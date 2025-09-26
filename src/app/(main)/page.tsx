@@ -4,10 +4,16 @@ import { HeroSlider } from '@/components/home/HeroSlider';
 import { FeaturedCategories } from '@/components/home/FeaturedCategories';
 import { Promotions } from '@/components/home/Promotions';
 import { PopularProducts } from '@/components/home/PopularProducts';
-import { ProductGrid } from '@/components/products/ProductGrid';
 import { BannerAds } from '@/components/home/BannerAds';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import dynamic from 'next/dynamic';
+
+const ProductGrid = dynamic(() => import('@/components/products/ProductGrid').then(mod => mod.ProductGrid), {
+  loading: () => <ProductGridSkeleton />,
+  ssr: false,
+});
+
 
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
@@ -70,3 +76,17 @@ export default function HomePage() {
     </div>
   );
 }
+
+
+const ProductGridSkeleton = () => (
+    <div className="space-y-8">
+    <div className="flex gap-4">
+        <Skeleton className="h-10 w-[180px]" />
+        <Skeleton className="h-10 w-[180px]" />
+        <Skeleton className="h-10 flex-1" />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {Array.from({length: 8}).map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
+    </div>
+   </div>
+)
