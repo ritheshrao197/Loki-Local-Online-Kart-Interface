@@ -11,24 +11,28 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '../ui
 import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
-import { mockProducts, mockSellers } from '@/lib/placeholder-data';
+import { mockSellers } from '@/lib/placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import type { Product } from '@/lib/types';
+import { placeholderImages } from '@/lib/placeholder-images';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 const cartItems = [
     { 
-        ...mockProducts.find(p => p.id === 'prod_mock_0')!, 
+        ...placeholderImages.find(p => p.id === 'prod_101'), 
         quantity: 1, 
+        price: 499,
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_101')?.url!, hint: placeholderImages.find(p => p.id === 'prod_101')?.hint! }],
         seller: { name: mockSellers.find(s => s.id === 'seller_101')!.name } 
     },
     { 
-        ...mockProducts.find(p => p.id === 'prod_mock_3')!, 
+        ...placeholderImages.find(p => p.id === 'prod_115'), 
         quantity: 1, 
+        price: 399,
+        images: [{ url: placeholderImages.find(p => p.id === 'prod_115')?.url!, hint: placeholderImages.find(p => p.id === 'prod_115')?.hint! }],
         seller: { name: mockSellers.find(s => s.id === 'seller_103')!.name } 
     },
 ];
@@ -136,7 +140,7 @@ export function MobileNav() {
                   <div key={item.id} className="flex items-start gap-4">
                     <Image
                       src={item.images[0].url}
-                      alt={item.name}
+                      alt={item.name!}
                       width={80}
                       height={80}
                       className="rounded-md object-cover aspect-square"
