@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -18,9 +19,11 @@ export const Header = React.memo(function Header() {
   const isMobile = useIsMobile();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   
   useEffect(() => {
+    setIsMounted(true);
     if (typeof window !== 'undefined') {
       const role = sessionStorage.getItem('userRole') as UserRole;
       const id = sessionStorage.getItem('userId');
@@ -45,6 +48,11 @@ export const Header = React.memo(function Header() {
   if (isMobile) {
     return <MobileNav />;
   }
+  
+  if (!isMounted) {
+     return <div className="h-16 border-b" />; // or a skeleton loader
+  }
+
 
   const renderActionButtons = () => {
     // Always render the same structure to prevent hydration mismatches
