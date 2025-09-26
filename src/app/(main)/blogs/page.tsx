@@ -37,8 +37,8 @@ export default function BlogsPage() {
           <Skeleton className="h-12 w-3/4 mx-auto" />
           <Skeleton className="h-6 w-1/2 mx-auto mt-4" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Array.from({ length: 3 }).map((_, i) => <BlogCardSkeleton key={i} />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => <BlogCardSkeleton key={i} />)}
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ export default function BlogsPage() {
       </div>
 
       {approvedBlogs.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {approvedBlogs.map((blog) => (
             <BlogCard key={blog.id} blog={blog} />
           ))}
