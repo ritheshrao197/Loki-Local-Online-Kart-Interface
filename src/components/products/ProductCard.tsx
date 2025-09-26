@@ -40,19 +40,19 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
   return (
     <motion.div
       className="h-full"
-      whileHover={{ y: -10 }}
+      whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group [perspective:1000px] hover:shadow-xl border-0 bg-gradient-to-br from-card to-card/80">
-        <div className="h-full transition-all duration-300 group-hover:[transform:rotateX(10deg)_translateY(-0.5rem)] rounded-xl">
-          <CardContent className="p-0 flex flex-col flex-grow h-full rounded-xl">
+      <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group rounded-apple-lg shadow-depth-1 hover:shadow-depth-3 border-0 bg-gradient-apple">
+        <div className="h-full transition-all duration-300 rounded-apple-lg">
+          <CardContent className="p-0 flex flex-col flex-grow h-full rounded-apple-lg">
             <Link href={`/products/${product.id}`} className="block flex flex-col flex-grow">
-              <div className="relative aspect-square w-full overflow-hidden rounded-t-xl">
+              <div className="relative aspect-square w-full overflow-hidden rounded-t-apple-lg">
                 <Image
                   src={product.images[0].url}
                   alt={product.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105 rounded-t-apple-lg"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   data-ai-hint={product.images[0].hint}
                   quality={80}
@@ -61,13 +61,13 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                   blurDataURL={`/_next/image?url=${product.images[0].url}&w=16&q=1`}
                 />
                 {product.status === 'pending' && (
-                  <Badge variant="secondary" className="absolute top-2 left-2 z-10">Pending</Badge>
+                  <Badge variant="secondary" className="absolute top-3 left-3 z-10 rounded-full px-3 py-1 text-xs">Pending</Badge>
                 )}
                  {product.discountPrice && (
-                     <Badge variant="destructive" className="absolute top-2 right-2 z-10">SALE</Badge>
+                     <Badge variant="destructive" className="absolute top-3 right-3 z-10 rounded-full px-3 py-1 text-xs bg-[#F9DD53] text-[#295398] hover:bg-[#F9DD53]/90">SALE</Badge>
                 )}
               </div>
-              <div className="p-4 flex-grow flex flex-col bg-card rounded-b-xl">
+              <div className="p-4 flex-grow flex flex-col bg-card rounded-b-apple-lg">
                 <p className="text-sm text-muted-foreground">{product.category}</p>
                 <h3 className="mt-1 font-headline font-semibold text-lg truncate group-hover:text-primary transition-colors">{product.name}</h3>
                  <p className="mt-1 text-xs text-muted-foreground">
@@ -75,9 +75,9 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
                 </p>
               </div>
             </Link>
-            <div className="p-4 pt-0 mt-auto bg-card rounded-b-xl">
+            <div className="p-4 pt-0 mt-auto bg-card rounded-b-apple-lg">
                  <div className="flex items-center gap-2">
-                    <p className={`text-xl font-bold ${product.discountPrice ? 'text-destructive' : 'text-primary'}`}>
+                    <p className={`text-xl font-bold ${product.discountPrice ? 'text-[#295398]' : 'text-primary'}`}>
                         ₹{product.discountPrice ? product.discountPrice.toLocaleString('en-IN') : product.price.toLocaleString('en-IN')}
                     </p>
                     {product.discountPrice && (
@@ -89,10 +89,10 @@ export const ProductCard = React.memo(function ProductCard({ product }: ProductC
 
                 <div className="mt-4 flex gap-2">
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    <Button size="sm" className="w-full shadow-md hover:shadow-lg transition-shadow">
+                    <Button size="sm" className="w-full rounded-full shadow-sm hover:shadow-md transition-shadow bg-[#295398] hover:bg-[#295398]/90">
                         <ShoppingCart className="mr-2 h-4 w-4"/>
                         Add to Cart
                     </Button>

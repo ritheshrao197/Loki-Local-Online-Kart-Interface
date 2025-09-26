@@ -46,12 +46,12 @@ export function HeroSlider() {
   }, [api, onSlideChange]);
 
   if (loading) {
-     return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full" />;
+     return <Skeleton className="h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-apple-xl" />;
   }
 
   if (slides.length === 0) {
     return (
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4">
+      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full bg-secondary flex flex-col items-center justify-center text-center p-4 rounded-apple-xl">
         <motion.h2 
           className="text-3xl font-bold font-headline"
           initial={{ opacity: 0, y: 20 }}
@@ -73,7 +73,7 @@ export function HeroSlider() {
   }
 
   return (
-    <section className="w-full">
+    <section className="w-full px-4 sm:px-6 lg:px-8">
       <Carousel
         className="w-full"
         opts={{
@@ -81,12 +81,12 @@ export function HeroSlider() {
         }}
         setApi={setApi}
       >
-        <CarouselContent>
+        <CarouselContent className="rounded-apple-xl overflow-hidden shadow-depth-4">
           {slides.map((slide, index) => (
-            <CarouselItem key={slide.id}>
-              <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full">
+            <CarouselItem key={slide.id} className="rounded-apple-xl overflow-hidden">
+              <div className="relative h-[400px] md:h-[500px] lg:h-[600px] w-full rounded-apple-xl overflow-hidden">
                 <motion.div
-                  initial={{ scale: 1.1, opacity: 0 }}
+                  initial={{ scale: 1.05, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 1.2, ease: "easeOut" }}
                   className="absolute inset-0"
@@ -96,7 +96,7 @@ export function HeroSlider() {
                     alt={slide.title}
                     fill
                     priority={index === 0}
-                    className="object-cover"
+                    className="object-cover rounded-apple-xl"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     placeholder="blur"
                     blurDataURL={`/_next/image?url=${slide.imageUrl}&w=16&q=1`}
@@ -104,28 +104,24 @@ export function HeroSlider() {
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                 </motion.div>
-                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent rounded-apple-xl flex flex-col items-start justify-center text-left text-white p-8 md:p-12 lg:p-16">
                   <motion.h2 
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline max-w-lg"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ 
                       duration: 0.8, 
                       delay: 0.3,
                       type: "spring",
                       stiffness: 100
                     }}
-                    whileHover={{ 
-                      scale: 1.02,
-                      transition: { duration: 0.2 }
-                    }}
                   >
                     {slide.title}
                   </motion.h2>
                   <motion.p 
-                    className="mt-2 md:mt-4 max-w-lg text-lg"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 md:mt-6 max-w-md text-lg md:text-xl"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ 
                       duration: 0.8, 
                       delay: 0.5,
@@ -144,13 +140,8 @@ export function HeroSlider() {
                       type: "spring",
                       stiffness: 100
                     }}
-                    whileHover={{ 
-                      scale: 1.05,
-                      transition: { duration: 0.2 }
-                    }}
-                    whileTap={{ scale: 0.95 }}
                   >
-                    <Button asChild className="mt-6 md:mt-8 shadow-lg hover:shadow-xl transition-shadow" size="lg">
+                    <Button asChild className="mt-6 md:mt-8 shadow-lg hover:shadow-xl transition-shadow rounded-full bg-[#F9DD53] text-[#295398] hover:bg-[#F9DD53]/90" size="lg">
                       <Link href={slide.ctaLink}>{slide.ctaText}</Link>
                     </Button>
                   </motion.div>
@@ -159,8 +150,8 @@ export function HeroSlider() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex" />
+        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex rounded-full bg-white/30 hover:bg-white/50 backdrop-blur-sm border-0 w-10 h-10 text-white" />
+        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex rounded-full bg-white/30 hover:bg-white/50 backdrop-blur-sm border-0 w-10 h-10 text-white" />
       </Carousel>
     </section>
   );

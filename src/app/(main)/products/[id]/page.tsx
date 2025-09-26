@@ -42,7 +42,8 @@ async function fetchRelatedProducts(category: string, productId: string): Promis
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const data = await fetchProductData(params.id);
+  const { id } = await params;
+  const data = await fetchProductData(id);
 
   if (!data) {
     return {
@@ -65,7 +66,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
-  const { id } = params;
+  const { id } = await params;
   const data = await fetchProductData(id as string);
 
   if (!data) {

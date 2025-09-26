@@ -49,9 +49,9 @@ export const Header = React.memo(function Header() {
     if (userRole === 'admin') {
       return (
         <>
-          <Button asChild>
+          <Button asChild variant="ghost" className="rounded-full px-4">
             <Link href="/admin">
-              <LayoutDashboard className="mr-2" /> Admin Dashboard
+              <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
             </Link>
           </Button>
           <ThemeToggle />
@@ -61,9 +61,9 @@ export const Header = React.memo(function Header() {
     if (userRole === 'seller' && userId) {
       return (
         <>
-          <Button asChild>
+          <Button asChild variant="ghost" className="rounded-full px-4">
             <Link href={`/dashboard/${userId}`}>
-              <LayoutDashboard className="mr-2" /> Seller Dashboard
+              <LayoutDashboard className="mr-2 h-4 w-4" /> Seller Dashboard
             </Link>
           </Button>
           <ThemeToggle />
@@ -73,30 +73,27 @@ export const Header = React.memo(function Header() {
     // Default for buyers or guests
     return (
       <>
-        <Button variant="ghost" asChild>
+        <Button variant="ghost" asChild className="rounded-full px-4">
           <Link href="/blogs">Stories</Link>
         </Button>
-         <Button variant="ghost" asChild>
+         <Button variant="ghost" asChild className="rounded-full px-4">
           <Link href="/discover">Discover</Link>
         </Button>
-        <Button variant="ghost" asChild>
-          <Link href="/demo">Demo</Link>
-        </Button>
-        <Button variant="ghost" asChild>
+        <Button variant="ghost" asChild className="rounded-full px-4">
           <Link href="/login/admin">Sell on Loki</Link>
         </Button>
         <div className="flex items-center space-x-1">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" asChild>
+          <Button variant="ghost" size="icon" asChild className="rounded-full">
             <Link href="/profile">
               <User className="h-5 w-5" />
               <span className="sr-only">Profile</span>
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/cart" className="relative">
+          <Button variant="ghost" size="icon" asChild className="rounded-full relative">
+            <Link href="/cart">
               {cartItemCount > 0 && (
-                <Badge variant="destructive" className="absolute -right-1 -top-1 h-4 w-4 justify-center rounded-full p-0 text-[10px]">
+                <Badge className="absolute -right-1 -top-1 h-5 w-5 justify-center rounded-full p-0 text-xs bg-[#F9DD53] text-[#295398] border-0">
                   {cartItemCount}
                 </Badge>
               )}
@@ -110,26 +107,26 @@ export const Header = React.memo(function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center space-x-2">
             <Logo className="h-8 w-auto" />
           </Link>
         </div>
         
-        <div className="flex-1 flex justify-center px-8">
-            <div className="relative w-full max-w-md hidden lg:block">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="flex-1 flex justify-center px-8 max-w-2xl">
+            <div className="relative w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     type="search"
                     placeholder="Search for local products..."
-                    className="w-full rounded-full pl-10"
+                    className="w-full rounded-full pl-12 pr-4 py-3 text-sm shadow-depth-1 focus:shadow-depth-2 transition-shadow"
                 />
             </div>
         </div>
         
-        <nav className="flex items-center space-x-2">
+        <nav className="flex items-center space-x-1">
            {renderActionButtons()}
         </nav>
       </div>
