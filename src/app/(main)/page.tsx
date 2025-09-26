@@ -51,12 +51,12 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <HeroSlider />
-      <div className="container py-12 space-y-16">
-        <section className="text-center">
+      <div className="container py-12 space-y-24">
+        <section>
           <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
             Discover Local Treasures
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Explore unique, handcrafted products from local artisans and manufacturers near you.
           </p>
         </section>

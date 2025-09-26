@@ -55,12 +55,12 @@ export function Promotions() {
               sizes="(max-width: 768px) 100vw, 50vw"
               data-ai-hint={product.images[0].hint}
             />
-            <div className="absolute inset-0 bg-black/50 p-6 flex flex-col justify-end items-center text-center">
-              <h3 className="text-2xl font-bold font-headline text-white">
-                {index === 0 ? 'Featured Promotion' : 'Special Offer'}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent p-8 flex flex-col justify-center items-start text-left">
+              <h3 className="text-3xl font-bold font-headline text-white">
+                {product.name}
               </h3>
-              <p className="text-white/90 mt-2">{product.name}</p>
-              <Button variant="secondary" className="mt-4">View Product</Button>
+              <p className="text-white/90 mt-2 max-w-xs">{index === 0 ? 'Featured Promotion' : 'Special Offer'}</p>
+              <Button variant="secondary" className="mt-6">View Product</Button>
             </div>
           </Card>
         </Link>
