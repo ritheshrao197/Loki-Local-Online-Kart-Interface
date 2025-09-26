@@ -87,42 +87,21 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
 // ================== Product Functions ==================
 
 /**
- * Converts undefined fields in product data to null and ensures all objects are plain.
+ * Converts undefined fields in product data to null.
  * Firestore does not support 'undefined'.
  */
-function sanitizeProductData(data: Record<string, any>): Record<string, any> {
+function sanitizeForFirestore(data: Record<string, any>): Record<string, any> {
     const sanitizedData: Record<string, any> = {};
-
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
             const value = data[key];
-
-            if (value === undefined) {
-                sanitizedData[key] = null;
-            } else if (value instanceof Timestamp || value instanceof Date) {
-                sanitizedData[key] = value;
-            } else if (Array.isArray(value)) {
-                 // Explicitly rebuild arrays of objects to ensure they are plain
-                sanitizedData[key] = value.map(item => {
-                    if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
-                        const plainObject: Record<string, any> = {};
-                        for (const itemKey in item) {
-                             if (Object.prototype.hasOwnProperty.call(item, itemKey)) {
-                                plainObject[itemKey] = item[itemKey];
-                             }
-                        }
-                        return sanitizeProductData(plainObject); // Recurse for nested objects inside array
-                    }
-                    return item; // Primitives are fine
-                });
-            } else if (typeof value === 'object' && value !== null) {
-                sanitizedData[key] = sanitizeProductData(value);
+            if (value !== undefined) {
+                 sanitizedData[key] = value;
             } else {
-                sanitizedData[key] = value;
+                 sanitizedData[key] = null;
             }
         }
     }
-
     return sanitizedData;
 }
 
@@ -223,7 +202,7 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  */
 export async function addProduct(product: Omit<Product, 'id'>): Promise<string> {
     const productsCol = collection(db, 'products');
-    const productData = sanitizeProductData({ ...product });
+    const productData = sanitizeForFirestore({ ...product });
     const docRef = await addDoc(productsCol, productData);
     return docRef.id;
 }
@@ -236,7 +215,7 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
  */
 export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
-  const dataToUpdate = sanitizeProductData(productData);
+  const dataToUpdate = sanitizeForFirestore(productData);
   await updateDoc(productRef, dataToUpdate);
 }
 
