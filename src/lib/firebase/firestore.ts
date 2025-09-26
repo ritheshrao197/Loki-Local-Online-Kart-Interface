@@ -101,8 +101,8 @@ function sanitizeProductData(productData: { [key: string]: any }) {
                 sanitizedData[key] = null;
             } else if (value === null) {
                 sanitizedData[key] = null;
-            } else if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Timestamp)) {
-                // Recursively sanitize nested objects (like 'dimensions')
+            } else if (typeof value === 'object' && !Array.isArray(value) && !(value instanceof Timestamp) && value !== serverTimestamp()) {
+                // Recursively sanitize nested objects (like 'dimensions'), but not Timestamps or serverTimestamp sentinels
                 sanitizedData[key] = sanitizeProductData(value);
             } else {
                 sanitizedData[key] = value;
@@ -232,18 +232,9 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
  */
 export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
-  const productSnap = await getDoc(productRef);
-  if (!productSnap.exists()) {
-    throw new Error('Product to update does not exist.');
-  }
-
-  // Merge incoming changes with existing data to prevent accidental field deletion
-  const existingData = productSnap.data();
-  const mergedData = { ...existingData, ...productData };
-
-  const dataToUpdate = sanitizeProductData(mergedData);
+  const dataToUpdate = sanitizeProductData(productData);
   
-  await setDoc(productRef, dataToUpdate);
+  await updateDoc(productRef, dataToUpdate);
 }
 
 /**
