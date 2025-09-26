@@ -43,14 +43,14 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
     status = 'rejected';
   }
 
-  const discountPrice = index % 3 === 0 ? detail.price * 0.8 : undefined;
+  const discountPriceRaw = index % 3 === 0 ? detail.price * 0.8 : undefined;
 
   return {
     id: img.id,
     name: detail.name,
     description: img.description,
     price: detail.price,
-    discountPrice: discountPrice ? Math.floor(discountPrice) : undefined,
+    discountPrice: discountPriceRaw ? Math.floor(discountPriceRaw) : null,
     images: [{ url: img.imageUrl, hint: img.imageHint }],
     category: detail.category,
     keywords: detail.keywords,
@@ -60,7 +60,7 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
     unitOfMeasure: detail.unit,
     isPromoted: detail.isPromoted,
     isFeatured: detail.isFeatured,
-  };
+  } as Product;
 });
 
 const simplifiedProducts = mockProducts.map(p => ({ id: p.id, name: p.name, images: p.images, price: p.price }));
@@ -80,7 +80,7 @@ const rawOrders: Omit<Order, 'id' | 'orderDate'>[] = [
     sellerId: 'seller_5',
     quantity: 1,
     total: 1200,
-    status: 'dispatched',
+    status: 'shipped',
   },
   {
     product: simplifiedProducts[8],

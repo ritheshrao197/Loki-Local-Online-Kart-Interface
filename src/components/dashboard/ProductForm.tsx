@@ -33,8 +33,8 @@ const formSchema = z.object({
   category: z.string().min(1, 'Please select a category.'),
   subcategory: z.string().optional(),
   price: z.coerce.number().positive('Price must be a positive number.'),
-  discountPrice: z.coerce.number().optional().refine(
-    (data) => data === undefined || data > 0, { message: 'Discount must be positive' }
+  discountPrice: z.coerce.number().optional().nullable().refine(
+    (data) => data === undefined || data === null || data > 0, { message: 'Discount must be positive' }
   ).refine(
     (data, ctx) => (data && data > 0) ? data < ctx.parent.price : true,
     { message: 'Discount price must be less than the original price.', path: ['discountPrice'] }
@@ -89,7 +89,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     category: product.category,
     subcategory: product.subcategory || '',
     price: product.price,
-    discountPrice: product.discountPrice || undefined,
+    discountPrice: product.discountPrice || null,
     stock: product.stock,
     unitOfMeasure: product.unitOfMeasure,
     stockAlert: product.stockAlert || undefined,
@@ -112,7 +112,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     category: '',
     subcategory: '',
     price: 0,
-    discountPrice: undefined,
+    discountPrice: null,
     stock: 0,
     stockAlert: undefined,
     unitOfMeasure: 'piece' as const,

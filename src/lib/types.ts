@@ -5,7 +5,7 @@ export type Product = {
   name: string;
   description: string;
   price: number;
-  discountPrice?: number;
+  discountPrice?: number | null;
   images: {
     url: string;
     hint: string;
