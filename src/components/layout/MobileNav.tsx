@@ -23,28 +23,34 @@ type UserRole = 'admin' | 'seller' | 'buyer' | null;
 const prod101 = placeholderImages.find(p => p.id === 'prod_101');
 const prod115 = placeholderImages.find(p => p.id === 'prod_115');
 
-const cartItems = [];
+const cartItems: any[] = [];
 
 if (prod101) {
-  cartItems.push({
-    id: prod101.id,
-    name: prod101.name,
-    quantity: 1,
-    price: 499,
-    images: [{ url: prod101.url, hint: prod101.hint }],
-    seller: { name: mockSellers.find(s => s.id === 'seller_101')!.name }
-  });
+  const seller = mockSellers.find(s => s.id === 'seller_101');
+  if (seller) {
+    cartItems.push({
+      id: prod101.id,
+      name: prod101.name,
+      quantity: 1,
+      price: 499,
+      images: [{ url: prod101.url, hint: prod101.hint }],
+      seller: { name: seller.name }
+    });
+  }
 }
 
 if (prod115) {
-  cartItems.push({
-    id: prod115.id,
-    name: prod115.name,
-    quantity: 1,
-    price: 399,
-    images: [{ url: prod115.url, hint: prod115.hint }],
-    seller: { name: mockSellers.find(s => s.id === 'seller_103')!.name }
-  });
+  const seller = mockSellers.find(s => s.id === 'seller_103');
+  if (seller) {
+    cartItems.push({
+      id: prod115.id,
+      name: prod115.name,
+      quantity: 1,
+      price: 399,
+      images: [{ url: prod115.url, hint: prod115.hint }],
+      seller: { name: seller.name }
+    });
+  }
 }
   
 const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
