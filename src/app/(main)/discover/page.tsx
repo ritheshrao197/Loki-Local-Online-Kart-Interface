@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -10,6 +11,11 @@ import { Search, MapPin, Store } from 'lucide-react';
 import { getSellers } from '@/lib/firebase/firestore';
 import type { Seller } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+
+const DiscoverMap = dynamic(() => import('@/components/discover/DiscoverMap'), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full bg-muted" />,
+});
 
 export default function DiscoverPage() {
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -20,7 +26,7 @@ export default function DiscoverPage() {
     const fetchSellersData = async () => {
       setLoading(true);
       try {
-        const approvedSellers = (await getSellers()).filter(s => s.status === 'approved');
+        const approvedSellers = (await getSellers()).filter(s => s.status === 'approved' && s.location);
         setSellers(approvedSellers);
         if (approvedSellers.length > 0) {
           setSelectedSeller(approvedSellers[0]);
@@ -83,19 +89,12 @@ export default function DiscoverPage() {
       </div>
 
       {/* Map Area */}
-      <div className="flex-1 relative bg-muted">
-        {/* Placeholder Map Image */}
-        <Image
-          src="/images/map-placeholder.png"
-          alt="Map of sellers"
-          fill
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+      <div className="flex-1 relative">
+        <DiscoverMap sellers={sellers} selectedSeller={selectedSeller} />
 
         {/* Selected Seller Card */}
         {selectedSeller && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[1000]">
             <Card>
               <CardContent className="p-4 flex items-center gap-4">
                 <div className="w-24 h-24 relative rounded-md overflow-hidden bg-secondary">
@@ -118,9 +117,6 @@ export default function DiscoverPage() {
             </Card>
           </div>
         )}
-         <div className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm p-2 rounded-lg text-xs text-muted-foreground shadow-lg">
-            Map functionality coming soon.
-        </div>
       </div>
     </div>
   );
