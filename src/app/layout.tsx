@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { Poppins, Montserrat } from 'next/font/google';
+import { Poppins, PT_Sans } from 'next/font/google';
 import { cn } from '@/lib/utils';
 
-const fontSans = Poppins({
+const fontSans = PT_Sans({
   subsets: ['latin'],
   weight: ['400', '700'],
   variable: '--font-sans',
 });
 
-const fontHeadline = Montserrat({
+const fontHeadline = Poppins({
   subsets: ['latin'],
   weight: ['700'],
   variable: '--font-headline',
