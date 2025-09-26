@@ -27,7 +27,7 @@ import {
   Settings,
   Newspaper,
 } from 'lucide-react';
-import { useParams, useRouter, notFound, usePathname } from 'next/navigation';
+import { useParams, useRouter, notFound } from 'next/navigation';
 import { getSellerById } from '@/lib/firebase/firestore';
 import { useEffect, useState } from 'react';
 import type { Seller } from '@/lib/types';
