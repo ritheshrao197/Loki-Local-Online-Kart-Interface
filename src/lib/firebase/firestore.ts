@@ -87,51 +87,43 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
 // ================== Product Functions ==================
 
 /**
- * Converts undefined fields in product data to null.
- * Firestore does not support 'undefined'. It also ensures nested objects are plain.
+ * Converts undefined fields in product data to null and ensures all objects are plain.
+ * Firestore does not support 'undefined'.
  */
-function sanitizeProductData(data: { [key: string]: any }): { [key: string]: any } {
-    const sanitized: { [key: string]: any } = {};
+function sanitizeProductData(data: Record<string, any>): Record<string, any> {
+    const sanitizedData: Record<string, any> = {};
 
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
             const value = data[key];
 
             if (value === undefined) {
-                sanitized[key] = null;
+                sanitizedData[key] = null;
+            } else if (value instanceof Timestamp || value instanceof Date) {
+                sanitizedData[key] = value;
             } else if (Array.isArray(value)) {
-                // Recursively sanitize elements in an array
-                sanitized[key] = value.map(item => {
+                 // Explicitly rebuild arrays of objects to ensure they are plain
+                sanitizedData[key] = value.map(item => {
                     if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
-                        // Ensure each object in the array is a plain object
-                         const plainObject: { [key: string]: any } = {};
-                         for (const itemKey in item) {
+                        const plainObject: Record<string, any> = {};
+                        for (const itemKey in item) {
                              if (Object.prototype.hasOwnProperty.call(item, itemKey)) {
-                                 plainObject[itemKey] = item[itemKey];
+                                plainObject[itemKey] = item[itemKey];
                              }
-                         }
-                         return sanitizeProductData(plainObject);
+                        }
+                        return sanitizeProductData(plainObject); // Recurse for nested objects inside array
                     }
-                    return item;
+                    return item; // Primitives are fine
                 });
-            } else if (typeof value === 'object' && value !== null && !(value instanceof Timestamp) && value.constructor === Object) {
-                sanitized[key] = sanitizeProductData(value);
+            } else if (typeof value === 'object' && value !== null) {
+                sanitizedData[key] = sanitizeProductData(value);
             } else {
-                sanitized[key] = value;
+                sanitizedData[key] = value;
             }
         }
     }
-    
-    // Convert date strings to Timestamps
-    if (data.manufacturingDate && typeof data.manufacturingDate === 'string') {
-        sanitized.manufacturingDate = Timestamp.fromDate(new Date(data.manufacturingDate));
-    }
-    
-    if (data.expiryDate && typeof data.expiryDate === 'string') {
-        sanitized.expiryDate = Timestamp.fromDate(new Date(data.expiryDate));
-    }
-    
-    return sanitized;
+
+    return sanitizedData;
 }
 
 
