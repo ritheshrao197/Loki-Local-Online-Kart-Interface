@@ -4,69 +4,69 @@
 
 @layer base {
   :root {
-    --background: 30 50% 95%; /* light-peach: #FFEEDD */
-    --foreground: 24 9.8% 10%;
-    --card: 30 50% 93%; /* Slightly darker peach for cards */
-    --card-foreground: 24 9.8% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 24 9.8% 10%;
-    --primary: 15 100% 64%; /* vibrant-orange: #FF7849 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 30% 90%;
-    --secondary-foreground: 24 9.8% 10%;
-    --muted: 30 30% 90%;
-    --muted-foreground: 24 9.8% 40%;
-    --accent: 36 59% 65%; /* earthy-yellow: #D4A373 */
-    --accent-foreground: 24 9.8% 10%;
+    --background: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --card: 0 0% 100%; /* White (#FFFFFF) */
+    --card-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --popover: 0 0% 100%; /* White (#FFFFFF) */
+    --popover-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --primary: 220 59% 38%; /* Deep Blue (#295399) */
+    --primary-foreground: 0 0% 100%; /* White for contrast */
+    --secondary: 53 94% 65%; /* Bright Yellow (#F9DD53) */
+    --secondary-foreground: 0 0% 20%; /* Charcoal Gray (#333333) for contrast */
+    --muted: 0 0% 94%; /* Same as background */
+    --muted-foreground: 220 30% 50%; /* Lighter Deep Blue */
+    --accent: 218 80% 80%; /* Light Blue (#A4C3F0) - Hover State */
+    --accent-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
-    --border: 30 30% 85%;
-    --input: 30 30% 85%;
-    --ring: 15 100% 64%;
+    --border: 0 0% 87%; /* Neutral Gray (#DDDDDD) */
+    --input: 0 0% 87%; /* Neutral Gray (#DDDDDD) */
+    --ring: 220 59% 38%; /* Deep Blue (#295399) */
     --radius: 1.25rem;
-    --chart-1: 15 100% 64%;
-    --chart-2: 36 59% 65%;
+    --chart-1: 220 59% 38%;
+    --chart-2: 53 94% 65%;
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 30 50% 93%;
-    --sidebar-foreground: 24 9.8% 10%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 40% 88%;
-    --sidebar-accent-foreground: 24 9.8% 10%;
-    --sidebar-border: 30 30% 85%;
-    --sidebar-ring: 15 100% 64%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 59% 38%;
+    --sidebar-primary: 53 94% 65%;
+    --sidebar-primary-foreground: 0 0% 20%;
+    --sidebar-accent: 218 80% 90%;
+    --sidebar-accent-foreground: 220 59% 38%;
+    --sidebar-border: 0 0% 87%;
+    --sidebar-ring: 220 59% 38%;
   }
 
   .dark {
-    --background: 24 9.8% 10%;
-    --foreground: 30 50% 95%;
-    --card: 24 9.8% 12%;
-    --card-foreground: 30 50% 95%;
-    --popover: 24 9.8% 10%;
-    --popover-foreground: 30 50% 95%;
-    --primary: 15 100% 64%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 24 9.8% 20%;
-    --secondary-foreground: 30 50% 95%;
-    --muted: 24 9.8% 20%;
-    --muted-foreground: 30 50% 75%;
-    --accent: 36 59% 65%;
-    --accent-foreground: 30 50% 95%;
+    --background: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --card: 0 0% 13%; /* Dark Gray (#222222) */
+    --card-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --popover: 0 0% 13%; /* Dark Gray (#222222) */
+    --popover-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
+    --primary: 220 59% 38%; /* Deep Blue (#295399) */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 53 94% 65%; /* Bright Yellow (#F9DD53) */
+    --secondary-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --muted: 0 0% 13%; /* Dark Gray (#222222) */
+    --muted-foreground: 218 80% 80%; /* Light Blue (#A4C3F0) */
+    --accent: 218 80% 90%; /* Brighter Light Blue (#C3D8F7) - Hover State */
+    --accent-foreground: 0 0% 13%; /* Dark Gray (#222222) */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 24 9.8% 20%;
-    --input: 24 9.8% 20%;
-    --ring: 15 100% 64%;
-    --sidebar-background: 24 9.8% 12%;
-    --sidebar-foreground: 30 50% 95%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 9.8% 20%;
-    --sidebar-accent-foreground: 30 50% 95%;
-    --sidebar-border: 24 9.8% 20%;
-    --sidebar-ring: 15 100% 64%;
+    --border: 0 0% 33%; /* Medium Gray (#555555) */
+    --input: 0 0% 33%; /* Medium Gray (#555555) */
+    --ring: 53 94% 65%; /* Bright Yellow (#F9DD53) */
+    --sidebar-background: 0 0% 13%;
+    --sidebar-foreground: 0 0% 94%;
+    --sidebar-primary: 53 94% 65%;
+    --sidebar-primary-foreground: 0 0% 13%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 94%;
+    --sidebar-border: 0 0% 33%;
+    --sidebar-ring: 53 94% 65%;
   }
 }
 
