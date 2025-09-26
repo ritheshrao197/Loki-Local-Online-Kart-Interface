@@ -39,10 +39,11 @@ export default function ProductDetailPage() {
         setProduct(fetchedProduct);
 
         // Add to recently viewed
-        const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
-        const updatedRecentlyViewed = [id as string, ...recentlyViewed.filter(itemId => itemId !== id)].slice(0, MAX_RECENTLY_VIEWED);
-        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updatedRecentlyViewed));
-
+        if (typeof window !== 'undefined') {
+          const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
+          const updatedRecentlyViewed = [id as string, ...recentlyViewed.filter(itemId => itemId !== id)].slice(0, MAX_RECENTLY_VIEWED);
+          localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updatedRecentlyViewed));
+        }
 
         const allApprovedProducts = await getProducts('approved');
         const filteredRelated = allApprovedProducts
@@ -69,11 +70,19 @@ export default function ProductDetailPage() {
   }
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "Link Copied!",
-      description: "Product link copied to your clipboard.",
-    });
+    if (navigator.share) {
+      navigator.share({
+        title: product?.name,
+        text: `Check out this product: ${product?.name}`,
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link Copied!",
+        description: "Product link copied to your clipboard.",
+      });
+    }
   };
   
   const handleChat = () => {
