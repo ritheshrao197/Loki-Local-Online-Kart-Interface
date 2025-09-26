@@ -53,6 +53,9 @@ export function HeroSlider() {
                   fill
                   priority={index === 0}
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  placeholder="blur"
+                  blurDataURL={`/_next/image?url=${slide.imageUrl}&w=16&q=1`}
                 />
                 <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center text-white p-4">
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-headline">

@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -272,6 +270,9 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
           images: data.images.map(img => ({ url: img.url, hint: img.hint })), // Ensure plain objects
           seller: product.seller, // Preserve original seller info
           status: isAdmin ? product.status : 'pending',
+          // Convert Date objects to ISO strings
+          manufacturingDate: data.manufacturingDate ? data.manufacturingDate.toISOString() : undefined,
+          expiryDate: data.expiryDate ? data.expiryDate.toISOString() : undefined,
         };
         
         await updateProduct(product.id, updatedProductData);
@@ -290,9 +291,31 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             throw new Error("Could not find seller details.");
         }
         const newProduct: Omit<Product, 'id'> = {
-          ...data,
+          name: data.name,
+          description: data.description || '',
+          price: data.price,
+          discountPrice: data.discountPrice,
+          images: data.images.map(img => ({ url: img.url, hint: img.hint })),
+          category: data.category,
+          subcategory: data.subcategory,
           seller: { id: sellerId, name: seller.name },
           status: isAdmin ? 'approved' : 'pending',
+          keywords: data.keywords,
+          stock: data.stock,
+          unitOfMeasure: data.unitOfMeasure,
+          stockAlert: data.stockAlert,
+          brand: data.brand,
+          weight: data.weight,
+          dimensions: data.dimensions,
+          manufacturingDate: data.manufacturingDate ? data.manufacturingDate.toISOString() : undefined,
+          expiryDate: data.expiryDate ? data.expiryDate.toISOString() : undefined,
+          isGstRegistered: data.isGstRegistered,
+          certification: data.certification,
+          shippingOptions: data.shippingOptions,
+          estimatedDelivery: data.estimatedDelivery,
+          returnPolicy: data.returnPolicy,
+          isPromoted: data.isPromoted,
+          isFeatured: data.isFeatured,
         };
         await addProduct(newProduct);
         toast({
@@ -347,7 +370,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
             status: 'draft',
             keywords: data.keywords,
             stock: data.stock || 0,
-            unitOfMeasure: data.unitOfMeasure,
+            unitOfMeasure: data.unitOfMeasure || 'piece',
             stockAlert: data.stockAlert,
             brand: data.brand,
             weight: data.weight,

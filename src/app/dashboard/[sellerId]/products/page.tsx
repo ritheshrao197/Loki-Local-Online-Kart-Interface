@@ -36,6 +36,8 @@ const statusVariant = {
   pending: 'secondary',
   approved: 'default',
   rejected: 'destructive',
+  draft: 'outline',
+  archived: 'outline',
 } as const;
 
 export default function ProductsPage() {
@@ -159,7 +161,7 @@ export default function ProductsPage() {
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell>
-                  <Badge variant={product.status as keyof typeof statusVariant}>
+                  <Badge variant={statusVariant[product.status] || 'outline'}>
                     {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
                   </Badge>
                 </TableCell>

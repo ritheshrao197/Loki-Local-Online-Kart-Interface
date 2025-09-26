@@ -8,16 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import type { Metadata } from 'next';
-
-// This page uses 'use client', so we cannot export metadata directly.
-// We can set it in the parent layout or use a different approach if needed.
-/*
-export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with the Loki team. We are here to help with any questions or feedback you may have.',
-};
-*/
 
 export default function ContactPage() {
     const { toast } = useToast();

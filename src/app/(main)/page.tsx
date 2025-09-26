@@ -1,14 +1,16 @@
 
-import { HeroSlider } from '@/components/home/HeroSlider';
 import { Suspense } from 'react';
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FeaturedCategories } from '@/components/home/FeaturedCategories';
-import { Promotions } from '@/components/home/Promotions';
-import { PopularProducts } from '@/components/home/PopularProducts';
-import { BannerAds } from '@/components/home/BannerAds';
 import { ProductGrid } from '@/components/products/ProductGrid';
-import { RecentlyViewedProducts } from '@/components/home/RecentlyViewedProducts';
+import dynamic from 'next/dynamic';
+
+const HeroSlider = dynamic(() => import('@/components/home/HeroSlider').then(mod => mod.HeroSlider));
+const FeaturedCategories = dynamic(() => import('@/components/home/FeaturedCategories').then(mod => mod.FeaturedCategories));
+const Promotions = dynamic(() => import('@/components/home/Promotions').then(mod => mod.Promotions));
+const PopularProducts = dynamic(() => import('@/components/home/PopularProducts').then(mod => mod.PopularProducts));
+const BannerAds = dynamic(() => import('@/components/home/BannerAds').then(mod => mod.BannerAds));
+const RecentlyViewedProducts = dynamic(() => import('@/components/home/RecentlyViewedProducts').then(mod => mod.RecentlyViewedProducts));
 
 export default function HomePage() {
   return (
