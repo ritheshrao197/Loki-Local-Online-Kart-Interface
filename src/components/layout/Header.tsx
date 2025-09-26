@@ -22,25 +22,26 @@ export function Header() {
     <MobileNav />
   ) : (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
+      <div className="container flex h-16 items-center justify-between gap-6">
+        {/* Logo */}
+        <Link href="/" className="flex items-center space-x-2">
           <Logo className="h-8 w-auto" />
         </Link>
         
-        {/* Search Bar */}
-        <div className="flex-1">
-          <div className="relative">
+        {/* Search Bar (Centered) */}
+        <div className="flex-1 flex justify-center">
+          <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search for local products..."
-              className="w-full max-w-sm rounded-full pl-10"
+              className="w-full rounded-full pl-10"
             />
           </div>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="ml-auto flex items-center space-x-2">
+        {/* Desktop Navigation & Actions */}
+        <nav className="flex items-center space-x-4">
            <Button variant="ghost" asChild>
               <Link href="/blogs">Blogs</Link>
           </Button>
@@ -48,7 +49,7 @@ export function Header() {
             <Link href="/login/admin">Sell on Loki</Link>
           </Button>
 
-          <div className="flex items-center space-x-1 pl-4">
+          <div className="flex items-center space-x-1">
              <Button variant="ghost" size="icon" asChild>
                 <Link href="/profile">
                   <User className="h-5 w-5" />
