@@ -4,69 +4,85 @@
 
 @layer base {
   :root {
-    --background: 30 50% 95%; /* light-peach: #FFEEDD */
-    --foreground: 24 9.8% 10%;
-    --card: 30 50% 93%; /* Slightly darker peach for cards */
-    --card-foreground: 24 9.8% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 24 9.8% 10%;
-    --primary: 15 100% 64%; /* vibrant-orange: #FF7849 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 30% 90%;
-    --secondary-foreground: 24 9.8% 10%;
-    --muted: 30 30% 90%;
-    --muted-foreground: 24 9.8% 40%;
-    --accent: 36 59% 65%; /* earthy-yellow: #D4A373 */
-    --accent-foreground: 24 9.8% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 30 30% 85%;
-    --input: 30 30% 85%;
-    --ring: 15 100% 64%;
-    --radius: 1.25rem;
-    --chart-1: 15 100% 64%;
-    --chart-2: 36 59% 65%;
-    --chart-3: 154 55% 48%;
-    --chart-4: 0 84% 60%;
-    --chart-5: 27 87% 67%;
-    --sidebar-background: 30 50% 93%;
-    --sidebar-foreground: 24 9.8% 10%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 40% 88%;
-    --sidebar-accent-foreground: 24 9.8% 10%;
-    --sidebar-border: 30 30% 85%;
-    --sidebar-ring: 15 100% 64%;
+    /* Grayscale/Background */
+    --background: #FFFFFF;        /* 0 0% 100% (White) */
+    --foreground: #295398;        /* 210 50% 39% (Deep Blue) */
+    --card: #FFFFFF;              /* 0 0% 100% (White) / 0.8 transparency is handled separately */
+    --card-foreground: #295398;   /* 210 50% 39% (Deep Blue) */
+    --popover: #FFFFFF;           /* 0 0% 100% (White) */
+    --popover-foreground: #295398;/* 210 50% 39% (Deep Blue) */
+    
+    /* Primary & Accent */
+    --primary: #F9DD53;           /* 45 100% 67% (Bright Yellow) */
+    --primary-foreground: #26211C; /* 24 9.8% 10% (Dark Brown/Black) */
+    --secondary: #D9E4EF;         /* 210 30% 90% (Light Blue/Gray) */
+    --secondary-foreground: #295398; /* 210 50% 39% (Deep Blue) */
+    --muted: #D9E4EF;             /* 210 30% 90% (Light Blue/Gray) */
+    --muted-foreground: #6683A3;  /* 210 30% 50% (Medium Blue/Gray) */
+    --accent: #E0BA79;            /* 36 59% 65% (Tan/Gold Accent) */
+    --accent-foreground: #26211C; /* 24 9.8% 10% (Dark Brown/Black) */
+    
+    /* Utility & Border */
+    --destructive: #E54848;       /* 0 84.2% 60.2% (Vibrant Red) */
+    --destructive-foreground: #FFFFFF; /* 0 0% 100% (White) */
+    --border: #C8D1DB;            /* 210 30% 85% (Light Border Gray) */
+    --input: #C8D1DB;             /* 210 30% 85% (Light Input Gray) */
+    --ring: #F9DD53;              /* 45 100% 67% (Bright Yellow) */
+    --radius: 1.25rem;            /* Radius (Not a color) */
+
+    /* Chart Colors (Examples) */
+    --chart-1: #F9DD53;           /* 45 100% 67% (Bright Yellow) */
+    --chart-2: #E0BA79;           /* 36 59% 65% (Tan/Gold Accent) */
+    --chart-3: #49B07D;           /* 154 55% 48% (Medium Green) */
+    --chart-4: #E54848;           /* 0 84% 60% (Vibrant Red) */
+    --chart-5: #ED8A4F;           /* 27 87% 67% (Orange) */
+
+    /* Sidebar Colors */
+    --sidebar-background: #EAF0F6; /* 210 50% 93% (Very Light Blue) */
+    --sidebar-foreground: #50719D; /* 210 50% 20% (Darker Blue) */
+    --sidebar-primary: #F9DD53;    /* 45 100% 67% (Bright Yellow) */
+    --sidebar-primary-foreground: #26211C; /* 24 9.8% 10% (Dark Brown/Black) */
+    --sidebar-accent: #CCD6E0;     /* 210 40% 88% (Light Accent Blue) */
+    --sidebar-accent-foreground: #50719D; /* 210 50% 20% (Darker Blue) */
+    --sidebar-border: #C8D1DB;     /* 210 30% 85% (Light Border Gray) */
+    --sidebar-ring: #F9DD53;       /* 45 100% 67% (Bright Yellow) */
   }
 
   .dark {
-    --background: 24 9.8% 10%;
-    --foreground: 210 50% 39%;
-    --card: 24 9.8% 12%;
-    --card-foreground: 210 50% 39%;
-    --popover: 24 9.8% 10%;
-    --popover-foreground: 210 50% 39%;
-    --primary: 15 100% 64%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 24 9.8% 20%;
-    --secondary-foreground: 210 50% 39%;
-    --muted: 24 9.8% 20%;
-    --muted-foreground: 30 50% 75%;
-    --accent: 36 59% 65%;
-    --accent-foreground: 210 50% 39%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 24 9.8% 20%;
-    --input: 24 9.8% 20%;
-    --ring: 15 100% 64%;
-    --sidebar-background: 24 9.8% 12%;
-    --sidebar-foreground: 210 50% 39%;
-    --sidebar-primary: 15 100% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 9.8% 20%;
-    --sidebar-accent-foreground: 210 50% 39%;
-    --sidebar-border: 24 9.8% 20%;
-    --sidebar-ring: 15 100% 64%;
+    /* Grayscale/Background */
+    --background: #000000;        /* 0 0% 0% (Black) */
+    --foreground: #295398;        /* 210 50% 39% (Deep Blue) */
+    --card: #2B2621;              /* 24 9.8% 12% (Dark Gray/Brown) / 0.8 transparency */
+    --card-foreground: #295398;   /* 210 50% 39% (Deep Blue) */
+    --popover: #26211C;           /* 24 9.8% 10% (Dark Brown/Black) */
+    --popover-foreground: #295398;/* 210 50% 39% (Deep Blue) */
+    
+    /* Primary & Accent */
+    --primary: #F9DD53;           /* 45 100% 67% (Bright Yellow) */
+    --primary-foreground: #26211C; /* 24 9.8% 10% (Dark Brown/Black) */
+    --secondary: #35302C;         /* 24 9.8% 20% (Dark Secondary) */
+    --secondary-foreground: #295398; /* 210 50% 39% (Deep Blue) */
+    --muted: #35302C;             /* 24 9.8% 20% (Dark Muted) */
+    --muted-foreground: #799ABF;  /* 210 50% 60% (Medium Blue/Gray) */
+    --accent: #F9DD53;            /* 36 59% 65% (Tan/Gold Accent) */
+    --accent-foreground: #295398; /* 210 50% 39% (Deep Blue) */
+    
+    /* Utility & Border */
+    --destructive: #9A2C2C;       /* 0 62.8% 30.6% (Muted Dark Red) */
+    --destructive-foreground: #FFFFFF; /* 0 0% 100% (White) */
+    --border: #35302C;            /* 24 9.8% 20% (Dark Border) */
+    --input: #35302C;             /* 24 9.8% 20% (Dark Input) */
+    --ring: #F9DD53;              /* 45 100% 67% (Bright Yellow) */
+
+    /* Sidebar Colors */
+    --sidebar-background: #2B2621; /* 24 9.8% 12% (Dark Gray/Brown) */
+    --sidebar-foreground: #295398; /* 210 50% 39% (Deep Blue) */
+    --sidebar-primary: #F9DD53;    /* 45 100% 67% (Bright Yellow) */
+    --sidebar-primary-foreground: #26211C; /* 24 9.8% 10% (Dark Brown/Black) */
+    --sidebar-accent: #35302C;     /* 24 9.8% 20% (Dark Accent) */
+    --sidebar-accent-foreground: #295398; /* 210 50% 39% (Deep Blue) */
+    --sidebar-border: #35302C;     /* 24 9.8% 20% (Dark Border) */
+    --sidebar-ring: #F9DD53;       /* 45 100% 67% (Bright Yellow) */
   }
 }
 
