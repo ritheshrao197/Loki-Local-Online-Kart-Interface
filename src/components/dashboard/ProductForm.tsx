@@ -33,9 +33,7 @@ const formSchema = z.object({
   category: z.string().min(1, 'Please select a category.'),
   subcategory: z.string().optional(),
   price: z.coerce.number().positive('Price must be a positive number.'),
-  discountPrice: z.coerce.number().optional().nullable().refine(
-    (data) => data === undefined || data === null || data > 0, { message: 'Discount must be positive' }
-  ),
+  discountPrice: z.coerce.number().optional().nullable(),
   stock: z.coerce.number().int().min(0, 'Stock cannot be negative.'),
   unitOfMeasure: z.enum(['piece', 'kg', 'dozen', 'litre']),
   stockAlert: z.coerce.number().int().min(0, 'Stock alert must be a non-negative number.').optional(),
@@ -60,7 +58,12 @@ const formSchema = z.object({
   // Admin-specific field
   sellerId: z.string().optional(),
 }).refine(
-    (data) => (data.discountPrice && data.discountPrice > 0) ? data.discountPrice <= data.price : true,
+    (data) => {
+        if (data.discountPrice && data.price) {
+            return data.discountPrice <= data.price;
+        }
+        return true;
+    },
     { message: 'Discount price cannot be greater than the original price.', path: ['discountPrice'] }
 );
 
@@ -266,6 +269,7 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
         const updatedProductData: Partial<Product> = {
           ...data,
           status: isAdmin ? product.status : 'pending',
+          seller: { id: product.seller.id, name: product.seller.name },
         };
 
         await updateProduct(product.id, updatedProductData);
