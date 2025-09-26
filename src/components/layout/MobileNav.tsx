@@ -34,24 +34,6 @@ export function MobileNav() {
 
   const isDashboard = pathname.startsWith('/dashboard');
 
-  const buyerNavItems = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/discover', label: 'Discover', icon: Compass },
-    { href: '/blogs', label: 'Stories', icon: Newspaper },
-    { href: '/profile', label: 'Profile', icon: User },
-    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
-  ];
-  
-  const sellerNavItems = [
-    { href: `/dashboard/${userId}`, label: 'Dashboard', icon: LayoutDashboard },
-    { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
-    { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
-    { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: `#`, label: 'Seller', icon: User, isAction: true, isProfile: true },
-  ];
-  
-  const navItems = isDashboard ? sellerNavItems : buyerNavItems;
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const role = sessionStorage.getItem('userRole') as UserRole;
@@ -83,6 +65,24 @@ export function MobileNav() {
       ]);
     }
   }, []);
+
+  const buyerNavItems = [
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/discover', label: 'Discover', icon: Compass },
+    { href: '/blogs', label: 'Stories', icon: Newspaper },
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
+  ];
+  
+  const sellerNavItems = [
+    { href: `/dashboard/${userId}`, label: 'Dashboard', icon: LayoutDashboard },
+    { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
+    { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
+    { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
+    { href: `#`, label: 'Seller', icon: User, isAction: true, isProfile: true },
+  ];
+  
+  const navItems = isDashboard ? sellerNavItems : buyerNavItems;
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 50;

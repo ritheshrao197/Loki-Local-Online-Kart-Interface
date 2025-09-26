@@ -19,20 +19,7 @@ export default function MainLayout({
 
   useEffect(() => {
     setIsClient(true);
-    if (typeof window !== 'undefined') {
-      const userRole = sessionStorage.getItem('userRole');
-      const userId = sessionStorage.getItem('userId');
-
-      // Only redirect if they are NOT on the homepage
-      if (pathname !== '/') {
-        if (userRole === 'admin') {
-          router.replace('/admin');
-        } else if (userRole === 'seller' && userId) {
-          router.replace(`/dashboard/${userId}`);
-        }
-      }
-    }
-  }, [router, pathname]);
+  }, []);
 
   if (!isClient) {
     // Render a placeholder or null on the server
