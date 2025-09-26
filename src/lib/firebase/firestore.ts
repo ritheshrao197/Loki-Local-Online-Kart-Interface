@@ -88,9 +88,9 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
 
 /**
  * Converts undefined fields in product data to null.
- * Firestore does not support 'undefined'.
+ * Firestore does not support 'undefined'. It also ensures nested objects are plain.
  */
-function sanitizeProductData(productData: { [key: string]: any }) {
+function sanitizeProductData(productData: { [key: string]: any }): { [key: string]: any } {
     const sanitizedData: { [key: string]: any } = {};
 
     for (const key in productData) {
@@ -99,20 +99,24 @@ function sanitizeProductData(productData: { [key: string]: any }) {
 
             if (value === undefined) {
                 sanitizedData[key] = null;
+            } else if (key === 'images' && Array.isArray(value)) {
+                // Explicitly handle the 'images' array to ensure plain objects
+                sanitizedData[key] = value.map(img => ({ url: img.url, hint: img.hint }));
             } else if (Array.isArray(value)) {
-                // If the value is an array, map over it and sanitize each item if it's an object
                  sanitizedData[key] = value.map(item =>
-                    (typeof item === 'object' && item !== null && !Array.isArray(item)) ? sanitizeProductData(item) : item
+                    (typeof item === 'object' && item !== null && !Array.isArray(item)) 
+                        ? sanitizeProductData(item) 
+                        : item
                 );
-            } else if (typeof value === 'object' && value !== null && !(value instanceof Timestamp) && value !== serverTimestamp()) {
-                // Recursively sanitize nested objects (like 'dimensions' or 'seller')
+            } else if (typeof value === 'object' && value !== null && !(value instanceof Timestamp) && value.constructor === Object) {
                 sanitizedData[key] = sanitizeProductData(value);
             } else {
                 sanitizedData[key] = value;
             }
         }
     }
-
+    
+    // Convert date strings to Timestamps
     if (productData.manufacturingDate && typeof productData.manufacturingDate === 'string') {
         sanitizedData.manufacturingDate = Timestamp.fromDate(new Date(productData.manufacturingDate));
     }
@@ -221,12 +225,11 @@ export async function updateProductStatus(productId: string, status: 'approved' 
  */
 export async function addProduct(product: Omit<Product, 'id'>): Promise<string> {
     const productsCol = collection(db, 'products');
-    
     const productData = sanitizeProductData({ ...product });
-
     const docRef = await addDoc(productsCol, productData);
     return docRef.id;
 }
+
 
 /**
  * Updates an existing product in Firestore.
@@ -236,7 +239,6 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
 export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
   const dataToUpdate = sanitizeProductData(productData);
-  
   await updateDoc(productRef, dataToUpdate);
 }
 
