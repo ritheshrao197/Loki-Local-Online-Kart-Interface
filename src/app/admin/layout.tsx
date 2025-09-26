@@ -22,7 +22,6 @@ import {
   Package,
   Users,
   LogOut,
-  Store,
   ShieldCheck,
   Landmark,
   BarChart3,
@@ -40,6 +39,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function AdminDashboardSkeleton() {
   return (
@@ -48,8 +48,7 @@ function AdminDashboardSkeleton() {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 font-headline text-lg font-semibold">
-                <Skeleton className="h-7 w-7" />
-                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-7 w-20" />
             </div>
             <SidebarTrigger className="ml-auto" />
           </div>
