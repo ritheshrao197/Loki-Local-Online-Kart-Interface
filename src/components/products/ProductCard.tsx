@@ -29,13 +29,13 @@ export function ProductCard({ product }: ProductCardProps) {
     <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 flex flex-col group">
         <CardContent className="p-0 flex flex-col flex-grow">
         <Link href={`/products/${product.id}`} className="block flex flex-col flex-grow">
-          <div className="relative aspect-square w-full">
+          <div className="relative aspect-square w-full overflow-hidden">
             <Image
               src={product.images[0].url}
               alt={product.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               data-ai-hint={product.images[0].hint}
             />
             {product.status === 'pending' && (
