@@ -4,7 +4,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ListOrdered, MapPin, User, Mail, LogOut } from "lucide-react";
+import { ListOrdered, MapPin, User, Mail, LogOut, Medal, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { getAuth, signOut } from "firebase/auth";
@@ -42,6 +42,12 @@ export default function ProfilePage() {
       description: "You'll be able to edit your profile in a future update.",
     });
   }
+  
+  const badges = [
+    { icon: Sparkles, title: 'First Purchase', description: 'Made your first order!' },
+    { icon: Medal, title: 'Top Reviewer', description: 'Wrote 5 approved reviews' },
+    { icon: ShieldCheck, title: 'Verified Buyer', description: 'Completed 3 successful orders' },
+  ]
 
   return (
     <div className="container py-12">
@@ -83,7 +89,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 space-y-8">
             <Card>
                 <CardHeader>
                     <CardTitle>My Orders</CardTitle>
@@ -96,6 +102,38 @@ export default function ProfilePage() {
                     <Button asChild className="mt-4">
                         <Link href="/">Start Shopping</Link>
                     </Button>
+                </CardContent>
+            </Card>
+            
+            <Card>
+                <CardHeader>
+                    <CardTitle>My Rewards</CardTitle>
+                    <CardDescription>Earn points and badges by shopping and engaging.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center justify-between p-4 bg-secondary rounded-lg mb-6">
+                        <div>
+                            <h3 className="font-semibold">Your Points</h3>
+                            <p className="text-sm text-muted-foreground">Keep shopping to earn more!</p>
+                        </div>
+                        <div className="text-3xl font-bold text-primary">
+                            1,250
+                        </div>
+                    </div>
+                    <h4 className="font-semibold text-md mb-4">Your Badges</h4>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {badges.map((badge) => (
+                        <div key={badge.title} className="flex items-start gap-4 rounded-lg border p-3">
+                            <div className="p-2 bg-primary/10 rounded-full">
+                                <badge.icon className="h-6 w-6 text-primary" />
+                            </div>
+                            <div>
+                                <p className="font-semibold">{badge.title}</p>
+                                <p className="text-xs text-muted-foreground">{badge.description}</p>
+                            </div>
+                        </div>
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
         </div>
