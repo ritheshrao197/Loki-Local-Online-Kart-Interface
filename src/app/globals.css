@@ -10,20 +10,19 @@
     --card-foreground: 24 9.8% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 24 9.8% 10%;
-    --primary: 45 100% 67%; /* #ffde59 */
+    --primary: 45 100% 67%;
     --primary-foreground: 24 9.8% 10%;
     --secondary: 30 30% 90%;
     --secondary-foreground: 24 9.8% 10%;
     --muted: 30 30% 90%;
     --muted-foreground: 24 9.8% 40%;
-    --accent: 36 59% 65%; /* earthy-yellow: #D4A373 */
+    --accent: 36 59% 65%;
     --accent-foreground: 24 9.8% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     --border: 30 30% 85%;
     --input: 30 30% 85%;
     --ring: 45 100% 67%;
-    --radius: 0.5rem;
     --chart-1: 45 100% 67%;
     --chart-2: 36 59% 65%;
     --chart-3: 154 55% 48%;
@@ -78,22 +77,11 @@
     @apply bg-background text-foreground;
     background-image: url('/images/wave-pattern.svg');
     background-attachment: fixed;
-    background-size: 200%;
-    color: hsl(var(--foreground) / 0.1);
+    background-size: cover;
+    background-position: center;
   }
 
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: hsl(var(--background));
-    z-index: -10;
-  }
-  
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-muted-foreground to-primary;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground to-primary;
   }
 }
