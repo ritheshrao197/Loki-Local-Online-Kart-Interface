@@ -27,20 +27,20 @@ interface StoryFormProps {
   sellerId: string;
 }
 
-export function StoryForm({ story: blog, sellerId }: StoryFormProps) {
+export function StoryForm({ story, sellerId }: StoryFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const isEditMode = !!blog;
+  const isEditMode = !!story;
 
   const form = useForm<StoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: isEditMode
       ? {
-          title: blog.title,
-          content: blog.content,
-          featuredImageUrl: blog.featuredImage?.url || '',
+          title: story.title,
+          content: story.content,
+          featuredImageUrl: story.featuredImage?.url || '',
         }
       : {
           title: '',
@@ -65,7 +65,7 @@ export function StoryForm({ story: blog, sellerId }: StoryFormProps) {
       };
 
       if (isEditMode) {
-        await updateBlog(blog.id, storyData);
+        await updateBlog(story.id, storyData);
         toast({ title: 'Seller Story Updated', description: 'Your changes are pending re-approval.' });
       } else {
         await addBlog({ ...storyData, status: 'pending' });

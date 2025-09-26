@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, notFound, useRouter } from 'next/navigation';
 import { getBlogById } from '@/lib/firebase/firestore';
 import type { Blog } from '@/lib/types';
-import { BlogForm } from '@/components/dashboard/BlogForm';
+import { StoryForm } from '@/components/dashboard/StoryForm';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -53,7 +53,7 @@ export default function EditStoryPage() {
         </Button>
         <h1 className="text-3xl font-bold font-headline">Edit Story</h1>
       </div>
-      <BlogForm blog={blog} sellerId={sellerId} />
+      <StoryForm story={blog} sellerId={sellerId} />
     </div>
   );
 }

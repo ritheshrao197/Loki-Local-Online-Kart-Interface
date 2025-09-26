@@ -1,7 +1,7 @@
 
 'use client';
 import { useParams } from 'next/navigation';
-import { BlogForm } from '@/components/dashboard/BlogForm';
+import { StoryForm } from '@/components/dashboard/StoryForm';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ export default function NewStoryPage() {
         </Button>
         <h1 className="text-3xl font-bold font-headline">Create New Story</h1>
       </div>
-      <BlogForm sellerId={sellerId} />
+      <StoryForm sellerId={sellerId} />
     </div>
   );
 }
