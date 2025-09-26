@@ -11,9 +11,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 type ProductStatus = 'pending' | 'approved' | 'rejected';
 
-async function ProductList({ status }: { status: ProductStatus }) {
+async function ProductList({ status, searchParams }: { status: ProductStatus, searchParams: { tab?: string } }) {
   const products = await getProducts(status);
-  return <ProductModerationClient initialProducts={products} status={status} />;
+  return <ProductModerationClient initialProducts={products} searchParams={searchParams} />;
 }
 
 const ProductListSkeleton = () => (
@@ -22,8 +22,8 @@ const ProductListSkeleton = () => (
     </div>
 );
 
-export default async function AdminProductsPage({ searchParams }: { searchParams: { tab: string } }) {
-  const currentTab = (searchParams.tab || 'pending') as ProductStatus;
+export default async function AdminProductsPage({ searchParams }: { searchParams: { tab?: string } }) {
+  const currentTab = (searchParams?.tab || 'pending') as ProductStatus;
 
   return (
     <div className="md:col-span-2 lg:col-span-3">
@@ -39,7 +39,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             </Button>
         </div>
         <Suspense fallback={<ProductListSkeleton />}>
-            <ProductList status={currentTab} />
+            <ProductList status={currentTab} searchParams={searchParams}/>
         </Suspense>
     </div>
   )

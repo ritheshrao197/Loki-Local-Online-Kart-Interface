@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ProductModerationCard } from "@/components/admin/ProductModerationCard";
 import type { Product } from '@/lib/types';
 import { updateProductStatus, deleteProduct } from '@/lib/firebase/firestore';
@@ -13,22 +13,23 @@ type ProductStatus = 'pending' | 'approved' | 'rejected';
 
 interface ProductModerationClientProps {
   initialProducts: Product[];
-  status: ProductStatus;
+  searchParams: { tab?: string };
 }
 
-export function ProductModerationClient({ initialProducts, status }: ProductModerationClientProps) {
+export function ProductModerationClient({ initialProducts, searchParams }: ProductModerationClientProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const { toast } = useToast();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+
+  const currentTab = (searchParams?.tab || 'pending') as ProductStatus;
 
   useEffect(() => {
     setProducts(initialProducts);
   }, [initialProducts]);
 
   const handleTabChange = (value: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(window.location.search);
     params.set('tab', value);
     startTransition(() => {
       router.replace(`/admin/products?${params.toString()}`);
@@ -91,19 +92,19 @@ export function ProductModerationClient({ initialProducts, status }: ProductMode
     return (
       <div className="text-center py-12 border-2 border-dashed rounded-lg">
         <h3 className="text-lg font-semibold">All Clear!</h3>
-        <p className="text-muted-foreground mt-1">There are no {status} products to review.</p>
+        <p className="text-muted-foreground mt-1">There are no {currentTab} products to review.</p>
       </div>
     );
   };
 
   return (
-    <Tabs value={status} onValueChange={handleTabChange}>
+    <Tabs value={currentTab} onValueChange={handleTabChange}>
       <TabsList className="grid w-full grid-cols-3 md:w-[400px]">
         <TabsTrigger value="pending">Pending</TabsTrigger>
         <TabsTrigger value="approved">Approved</TabsTrigger>
         <TabsTrigger value="rejected">Rejected</TabsTrigger>
       </TabsList>
-      <TabsContent value={status} className="mt-6 space-y-6" forceMount>
+      <TabsContent value={currentTab} className="mt-6 space-y-6" forceMount>
         {isPending ? 'Loading...' : renderProductList()}
       </TabsContent>
     </Tabs>
