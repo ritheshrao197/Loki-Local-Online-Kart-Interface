@@ -22,12 +22,12 @@ type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 const cartItems = [
     { 
-        ...mockProducts.find(p => p.id === 'prod_101')!, 
+        ...mockProducts.find(p => p.id === 'prod_mock_0')!, 
         quantity: 1, 
         seller: { name: mockSellers.find(s => s.id === 'seller_101')!.name } 
     },
     { 
-        ...mockProducts.find(p => p.id === 'prod_115')!, 
+        ...mockProducts.find(p => p.id === 'prod_mock_3')!, 
         quantity: 1, 
         seller: { name: mockSellers.find(s => s.id === 'seller_103')!.name } 
     },
