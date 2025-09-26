@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -15,31 +15,10 @@ import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { placeholderImages } from '@/lib/placeholder-images';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
-const cartItems = [
-    {
-      id: 'prod_101',
-      name: 'Handwoven Cotton Scarf',
-      quantity: 1,
-      price: 499,
-      images: [{ url: "https://images.unsplash.com/photo-1640747669771-b62a6e40f534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb2xvcmZ1bCUyMHRleHRpbGV8ZW58MHx8fHwxNzU4NjYwNTc5fDA&ixlib=rb-4.1.0&q=80&w=1080", hint: "cotton scarf" }],
-      seller: { name: 'Artisan Fabrics Co.' }
-    },
-    {
-      id: 'prod_115',
-      name: 'Bamboo Toothbrush Set',
-      quantity: 1,
-      price: 399,
-      images: [{ url: "https://images.unsplash.com/photo-1629828822437-003507d4b4e7?q=80&w=870&auto=format&fit=crop", hint: "bamboo toothbrush" }],
-      seller: { name: 'GreenEarth' }
-    }
-];
-
-const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-const shipping = 50;
-const total = subtotal + shipping;
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -48,34 +27,70 @@ export function MobileNav() {
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
+  const [cartItems, setCartItems] = useState<any[]>([]);
+
+  const isDashboard = pathname.startsWith('/dashboard');
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const role = sessionStorage.getItem('userRole') as UserRole;
       const id = sessionStorage.getItem('userId');
       setUserRole(role);
       setUserId(id);
+
+      const items = [];
+      const product1 = placeholderImages.find(p => p.id === 'prod_101');
+      if (product1) {
+          items.push({
+              ...product1,
+              quantity: 1,
+              price: 499,
+              seller: { name: 'Artisan Fabrics Co.' },
+              images: [{ url: product1.url, hint: product1.hint }]
+          });
+      }
+      const product2 = placeholderImages.find(p => p.id === 'prod_115');
+      if (product2) {
+          items.push({
+              ...product2,
+              quantity: 1,
+              price: 399,
+              seller: { name: 'GreenEarth' },
+              images: [{ url: product2.url, hint: product2.hint }]
+          });
+      }
+      setCartItems(items);
     }
   }, []);
 
-  const getProfileLink = () => {
-    if (userRole === 'admin') return '/admin';
-    if (userRole === 'seller' && userId) return `/dashboard/${userId}`;
-    return '/profile';
-  };
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shipping = 50;
+  const total = subtotal + shipping;
 
-  const navItems = [
+  const buyerNavItems = [
     { href: '/', label: 'Home', icon: Home },
     { href: '/discover', label: 'Discover', icon: Compass },
     { href: '/blogs', label: 'Stories', icon: Newspaper },
-    { href: getProfileLink(), label: 'Profile', icon: (userRole === 'admin' || userRole === 'seller') ? LayoutDashboard : User },
+    { href: '/profile', label: 'Profile', icon: User },
     { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
   ];
+  
+  const sellerNavItems = [
+    { href: `/dashboard/${userId}`, label: 'Dashboard', icon: LayoutDashboard },
+    { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
+    { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
+    { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
+    { href: '/profile', label: 'Profile', icon: User },
+  ];
+
+  const navItems = isDashboard ? sellerNavItems : buyerNavItems;
+
 
   const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
-    if (item.isAction) {
+    if ('isAction' in item && item.isAction) {
         e.preventDefault();
     }
-    if (item.isCart) {
+    if ('isCart' in item && item.isCart) {
       setIsCartOpen(true);
     } else if (item.label === 'Search') {
       toast({
@@ -116,13 +131,13 @@ export function MobileNav() {
                 )}
                 onClick={(e) => handleActionClick(e, item)}
               >
-                {item.isCart && cartItems.length > 0 && (
+                {'isCart' in item && item.isCart && cartItems.length > 0 && (
                    <Badge variant="destructive" className="absolute -right-2 top-0 h-4 w-4 justify-center p-0 text-[10px] sm:right-0 md:right-1">
                         {cartItems.length}
                     </Badge>
                 )}
                 <item.icon className="h-5 w-5" />
-                <span>{item.label === 'Profile' && (userRole === 'admin' || userRole === 'seller') ? 'Dashboard' : item.label}</span>
+                <span>{item.label}</span>
               </Link>
             );
           })}

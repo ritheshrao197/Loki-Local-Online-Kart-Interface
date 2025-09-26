@@ -27,7 +27,7 @@ import {
   Settings,
   Newspaper,
 } from 'lucide-react';
-import { useParams, useRouter, notFound } from 'next/navigation';
+import { useParams, useRouter, notFound, usePathname } from 'next/navigation';
 import { getSellerById } from '@/lib/firebase/firestore';
 import { useEffect, useState } from 'react';
 import type { Seller } from '@/lib/types';
@@ -37,12 +37,17 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import Logo from '@/components/common/logo';
+import { Header } from '@/components/layout/Header';
+import { MobileNav } from '@/components/layout/MobileNav';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Footer } from '@/components/layout/Footer';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
+  const isMobile = useIsMobile();
   
   const sellerId = params.sellerId as string;
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -85,6 +90,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   if (loading) {
     return <DashboardSkeleton />;
+  }
+  
+  if (isMobile) {
+    return (
+        <div className="flex flex-col min-h-screen">
+            <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+            <MobileNav />
+        </div>
+    )
   }
 
   return (
