@@ -38,13 +38,19 @@ import Logo from '@/components/common/logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { useEffect, useState } from 'react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
   const isMobile = useIsMobile();
-  
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const handleLogout = async () => {
     try {
       if (typeof window !== 'undefined') {
@@ -58,6 +64,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
     }
   };
+
+  if (!isClient) {
+     return (
+      <div className="flex flex-col min-h-screen">
+        <div className="h-16 border-b" />
+        <main className="flex-1 p-4 sm:p-6">{children}</main>
+      </div>
+    );
+  }
 
   if (isMobile) {
     return (
