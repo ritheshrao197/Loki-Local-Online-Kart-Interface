@@ -1,111 +1,29 @@
 
-'use client';
-
-import { useState, useEffect } from 'react';
-import { ProductModerationCard } from "@/components/admin/ProductModerationCard";
+import { Suspense } from 'react';
 import type { Product } from '@/lib/types';
-import { getProducts, updateProductStatus, deleteProduct } from '@/lib/firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getProducts } from '@/lib/firebase/firestore';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlusCircle } from 'lucide-react';
+import { ProductModerationClient } from '@/components/admin/ProductModerationClient';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type ProductStatus = 'pending' | 'approved' | 'rejected';
 
-export default function AdminProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<ProductStatus>('pending');
-  const { toast } = useToast();
+async function ProductList({ status }: { status: ProductStatus }) {
+  const products = await getProducts(status);
+  return <ProductModerationClient initialProducts={products} status={status} />;
+}
 
-  const fetchProductsByStatus = async (status: ProductStatus) => {
-    setLoading(true);
-    try {
-      const fetchedProducts = await getProducts(status);
-      setProducts(fetchedProducts);
-    } catch (error) {
-      console.error(`Error fetching ${status} products:`, error);
-      toast({
-        title: "Error",
-        description: `Could not fetch ${status} products.`,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+const ProductListSkeleton = () => (
+    <div className="space-y-6">
+        {Array.from({ length: 2 }).map((_, i) => <CardSkeleton key={i} />)}
+    </div>
+);
 
-  useEffect(() => {
-    fetchProductsByStatus(currentTab);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTab]);
-
-  const handleProductUpdate = async (productId: string, newStatus: 'approved' | 'rejected') => {
-    const originalProducts = [...products];
-    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
-
-    try {
-      await updateProductStatus(productId, newStatus);
-      toast({
-        title: `Product ${newStatus}`,
-        description: `The product has been successfully ${newStatus}.`,
-      });
-    } catch (error) {
-      console.error("Error updating product status:", error);
-      toast({
-        title: 'Update Failed',
-        description: 'Could not update the product status. Please try again.',
-        variant: 'destructive',
-      });
-      setProducts(originalProducts);
-    }
-  };
-  
-  const handleProductDelete = async (productId: string) => {
-    const originalProducts = [...products];
-    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
-
-    try {
-      await deleteProduct(productId);
-      toast({
-        title: 'Product Deleted',
-        description: 'The product has been permanently removed.',
-      });
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      toast({
-        title: 'Delete Failed',
-        description: 'Could not delete the product. Please try again.',
-        variant: 'destructive',
-      });
-      setProducts(originalProducts);
-    }
-  };
-  
-  const renderProductList = () => {
-    if (loading) {
-      return Array.from({ length: 2 }).map((_, i) => <CardSkeleton key={i} />);
-    }
-    if (products.length > 0) {
-      return products.map(product => (
-        <ProductModerationCard 
-          key={product.id} 
-          product={product} 
-          onStatusChange={handleProductUpdate}
-          onDelete={handleProductDelete}
-        />
-      ));
-    }
-    return (
-      <div className="text-center py-12 border-2 border-dashed rounded-lg">
-        <h3 className="text-lg font-semibold">All Clear!</h3>
-        <p className="text-muted-foreground mt-1">There are no {currentTab} products to review.</p>
-      </div>
-    );
-  };
+export default async function AdminProductsPage({ searchParams }: { searchParams: { tab: string } }) {
+  const currentTab = (searchParams.tab || 'pending') as ProductStatus;
 
   return (
     <div className="md:col-span-2 lg:col-span-3">
@@ -120,23 +38,9 @@ export default function AdminProductsPage() {
                 </Link>
             </Button>
         </div>
-
-        <Tabs value={currentTab} onValueChange={(value) => setCurrentTab(value as ProductStatus)}>
-          <TabsList className="grid w-full grid-cols-3 md:w-[400px]">
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
-          </TabsList>
-          <TabsContent value="pending" className="mt-6 space-y-6">
-            {renderProductList()}
-          </TabsContent>
-          <TabsContent value="approved" className="mt-6 space-y-6">
-            {renderProductList()}
-          </TabsContent>
-          <TabsContent value="rejected" className="mt-6 space-y-6">
-            {renderProductList()}
-          </TabsContent>
-        </Tabs>
+        <Suspense fallback={<ProductListSkeleton />}>
+            <ProductList status={currentTab} />
+        </Suspense>
     </div>
   )
 }

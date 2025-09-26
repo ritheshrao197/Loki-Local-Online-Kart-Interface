@@ -1,6 +1,4 @@
 
-'use client';
-import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -13,35 +11,15 @@ import Link from 'next/link';
 import { Package, Users, AlertTriangle } from 'lucide-react';
 import { getProducts } from '@/lib/firebase/firestore';
 import { getSellers } from '@/lib/firebase/firestore';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Loader } from '@/components/common/Loader';
 
-export default function AdminDashboardPage() {
-  const [pendingProductsCount, setPendingProductsCount] = useState(0);
-  const [pendingSellersCount, setPendingSellersCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+export default async function AdminDashboardPage() {
+  const [pendingProducts, allSellers] = await Promise.all([
+    getProducts('pending'),
+    getSellers(),
+  ]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [pendingProducts, allSellers] = await Promise.all([
-          getProducts('pending'),
-          getSellers(),
-        ]);
-        setPendingProductsCount(pendingProducts.length);
-        setPendingSellersCount(allSellers.filter(s => s.status === 'pending').length);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <Loader />
-  }
+  const pendingProductsCount = pendingProducts.length;
+  const pendingSellersCount = allSellers.filter(s => s.status === 'pending').length;
 
   return (
     <div>
