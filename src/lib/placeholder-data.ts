@@ -19,16 +19,16 @@ export const mockSellers: Seller[] = [
 
 
 const productDetails = [
-  { name: 'Handwoven Cotton Scarf', price: 499, category: 'Handicrafts', keywords: 'scarf, cotton, handwoven', stock: 50, unit: 'piece' as const, sellerId: 'seller_1' },
-  { name: 'Organic Turmeric Powder', price: 250, category: 'Food', keywords: 'turmeric, powder, organic', stock: 120, unit: 'kg' as const, sellerId: 'seller_2' },
-  { name: 'Jute Shopping Bag', price: 299, category: 'Textiles', keywords: 'jute, bag, eco-friendly', stock: 70, unit: 'piece' as const, sellerId: 'seller_3' },
-  { name: 'Bamboo Toothbrush Set', price: 399, category: 'Personal Care', keywords: 'bamboo, toothbrush, biodegradable', stock: 200, unit: 'piece' as const, sellerId: 'seller_4' },
-  { name: 'Handmade Ceramic Vase', price: 1200, category: 'Home Decor', keywords: 'ceramic, vase, handmade', stock: 30, unit: 'piece' as const, sellerId: 'seller_5' },
-  { name: 'Herbal Hair Oil', price: 350, category: 'Beauty', keywords: 'hair oil, herbal, natural', stock: 90, unit: 'piece' as const, sellerId: 'seller_6' },
-  { name: 'Leather Wallet', price: 899, category: 'Accessories', keywords: 'leather, wallet, handcrafted', stock: 40, unit: 'piece' as const, sellerId: 'seller_7' },
-  { name: 'Traditional Khadi Shirt', price: 800, category: 'Apparel', keywords: 'khadi, shirt, cotton', stock: 60, unit: 'piece' as const, sellerId: 'seller_8' },
-  { name: 'Local Honey Jar (500g)', price: 450, category: 'Food', keywords: 'honey, organic, raw', stock: 75, unit: 'piece' as const, sellerId: 'seller_9' },
-  { name: 'Terracotta Planters', price: 600, category: 'Home Decor', keywords: 'terracotta, planters, eco-friendly', stock: 50, unit: 'piece' as const, sellerId: 'seller_10' },
+  { name: 'Handwoven Cotton Scarf', price: 499, category: 'Handicrafts', keywords: 'scarf, cotton, handwoven', stock: 50, unit: 'piece' as const, sellerId: 'seller_1', isPromoted: true, isFeatured: false },
+  { name: 'Organic Turmeric Powder', price: 250, category: 'Food & Groceries', keywords: 'turmeric, powder, organic', stock: 120, unit: 'kg' as const, sellerId: 'seller_2', isPromoted: false, isFeatured: false },
+  { name: 'Jute Shopping Bag', price: 299, category: 'Accessories', keywords: 'jute, bag, eco-friendly', stock: 70, unit: 'piece' as const, sellerId: 'seller_3', isPromoted: true, isFeatured: true },
+  { name: 'Bamboo Toothbrush Set', price: 399, category: 'Personal Care', keywords: 'bamboo, toothbrush, biodegradable', stock: 200, unit: 'piece' as const, sellerId: 'seller_4', isPromoted: false, isFeatured: false },
+  { name: 'Handmade Ceramic Vase', price: 1200, category: 'Home Decor', keywords: 'ceramic, vase, handmade', stock: 30, unit: 'piece' as const, sellerId: 'seller_5', isPromoted: false, isFeatured: false },
+  { name: 'Herbal Hair Oil', price: 350, category: 'Bath & Body', keywords: 'hair oil, herbal, natural', stock: 90, unit: 'piece' as const, sellerId: 'seller_6', isPromoted: false, isFeatured: false },
+  { name: 'Leather Wallet', price: 899, category: 'Accessories', keywords: 'leather, wallet, handcrafted', stock: 40, unit: 'piece' as const, sellerId: 'seller_7', isPromoted: false, isFeatured: false },
+  { name: 'Traditional Khadi Shirt', price: 800, category: 'Apparel', keywords: 'khadi, shirt, cotton', stock: 60, unit: 'piece' as const, sellerId: 'seller_8', isPromoted: false, isFeatured: true },
+  { name: 'Local Honey Jar (500g)', price: 450, category: 'Food & Groceries', keywords: 'honey, organic, raw', stock: 75, unit: 'piece' as const, sellerId: 'seller_9', isPromoted: false, isFeatured: false },
+  { name: 'Terracotta Planters', price: 600, category: 'Home Decor', keywords: 'terracotta, planters, eco-friendly', stock: 50, unit: 'piece' as const, sellerId: 'seller_10', isPromoted: false, isFeatured: false },
 ];
 
 
@@ -36,13 +36,21 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
   const detail = productDetails[index % productDetails.length];
   const sellerInfo = mockSellers.find(s => s.id === detail.sellerId)!;
 
-  let status: Product['status'] = (index < 2) ? 'pending' : (index === 2 || index === 3) ? 'rejected' : 'approved';
-  
+  let status: Product['status'] = 'approved';
+  if (index < 2) {
+    status = 'pending';
+  } else if (index === 2 || index === 3) {
+    status = 'rejected';
+  }
+
+  const discountPrice = index % 3 === 0 ? detail.price * 0.8 : undefined;
+
   return {
     id: img.id,
     name: detail.name,
     description: img.description,
     price: detail.price,
+    discountPrice: discountPrice ? Math.floor(discountPrice) : undefined,
     images: [{ url: img.imageUrl, hint: img.imageHint }],
     category: detail.category,
     keywords: detail.keywords,
@@ -50,6 +58,8 @@ export const mockProducts: Product[] = PlaceHolderImages.map((img, index) => {
     status: status,
     stock: detail.stock,
     unitOfMeasure: detail.unit,
+    isPromoted: detail.isPromoted,
+    isFeatured: detail.isFeatured,
   };
 });
 
@@ -98,7 +108,7 @@ const rawOrders: Omit<Order, 'id' | 'orderDate'>[] = [
   },
 ];
 
-export const mockOrders: (Omit<Order, 'id' | 'orderDate'> & { orderDate: Date })[] = [];
+export const mockOrders: (Omit<Order, 'id'> & { orderDate: Date })[] = [];
 
 rawOrders.forEach((order, index) => {
     const date = new Date();

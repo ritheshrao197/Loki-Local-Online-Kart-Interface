@@ -20,7 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const statusVariant = {
   pending: 'secondary',
   confirmed: 'default',
-  dispatched: 'outline',
+  shipped: 'outline',
   delivered: 'destructive',
 } as const;
 

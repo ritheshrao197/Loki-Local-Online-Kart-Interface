@@ -63,7 +63,7 @@ export type Order = {
   sellerId: string;
   quantity: number;
   total: number;
-  status: 'pending' | 'confirmed' | 'dispatched' | 'delivered';
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered';
   orderDate: string | Date;
 };
 

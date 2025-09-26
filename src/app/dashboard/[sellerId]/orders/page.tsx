@@ -25,7 +25,7 @@ import { useParams } from 'next/navigation';
 const statusVariant = {
   pending: 'secondary',
   confirmed: 'default',
-  dispatched: 'outline',
+  shipped: 'outline',
   delivered: 'destructive', // Using destructive for visual difference. Should be a success color.
 } as const;
 
@@ -172,7 +172,7 @@ export default function OrdersPage() {
                         <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
                         <DropdownMenuSubContent>
                             <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'confirmed')}>Confirmed</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'dispatched')}>Dispatched</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'shipped')}>Shipped</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleStatusChange(order.id, 'delivered')}>Delivered</DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuSub>

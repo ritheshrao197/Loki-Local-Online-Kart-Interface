@@ -1,11 +1,4 @@
 
-
-
-
-
-
-
-
 import {
   collection,
   doc,
@@ -235,12 +228,30 @@ export async function deleteProduct(productId: string): Promise<void> {
 // ================== Order Functions ==================
 
 /**
+ * Fetches all orders from Firestore.
+ */
+export async function getAllOrders(): Promise<Order[]> {
+    const ordersCol = collection(db, 'orders');
+    const orderSnapshot = await getDocs(ordersCol);
+    const orderList = orderSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            orderDate: (data.orderDate as Timestamp).toDate().toISOString(),
+        } as Order
+    });
+    return orderList;
+}
+
+
+/**
  * Fetches all orders for a specific seller.
  * @param sellerId The ID of the seller whose orders to fetch.
  */
 export async function getOrdersBySeller(sellerId: string): Promise<Order[]> {
   const ordersCol = collection(db, 'orders');
-  const q = query(ordersCol, where('seller.id', '==', sellerId));
+  const q = query(ordersCol, where('sellerId', '==', sellerId));
   const orderSnapshot = await getDocs(q);
   const orderList = orderSnapshot.docs.map(doc => {
     const data = doc.data();

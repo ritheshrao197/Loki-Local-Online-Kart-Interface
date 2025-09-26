@@ -30,6 +30,7 @@ export default function SeedDbPage() {
       for (const col of collectionsToDelete) {
         const collectionRef = collection(db, col);
         const snapshot = await getDocs(collectionRef);
+        if (snapshot.empty) continue;
         const deleteBatch = writeBatch(db);
         snapshot.docs.forEach(doc => {
           deleteBatch.delete(doc.ref);
