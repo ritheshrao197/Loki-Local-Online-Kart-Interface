@@ -20,22 +20,32 @@ import { placeholderImages } from '@/lib/placeholder-images';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
-const cartItems = [
-    { 
-        ...placeholderImages.find(p => p.id === 'prod_101'), 
-        quantity: 1, 
-        price: 499,
-        images: [{ url: placeholderImages.find(p => p.id === 'prod_101')?.url!, hint: placeholderImages.find(p => p.id === 'prod_101')?.hint! }],
-        seller: { name: mockSellers.find(s => s.id === 'seller_101')!.name } 
-    },
-    { 
-        ...placeholderImages.find(p => p.id === 'prod_115'), 
-        quantity: 1, 
-        price: 399,
-        images: [{ url: placeholderImages.find(p => p.id === 'prod_115')?.url!, hint: placeholderImages.find(p => p.id === 'prod_115')?.hint! }],
-        seller: { name: mockSellers.find(s => s.id === 'seller_103')!.name } 
-    },
-];
+const prod101 = placeholderImages.find(p => p.id === 'prod_101');
+const prod115 = placeholderImages.find(p => p.id === 'prod_115');
+
+const cartItems = [];
+
+if (prod101) {
+  cartItems.push({
+    id: prod101.id,
+    name: prod101.name,
+    quantity: 1,
+    price: 499,
+    images: [{ url: prod101.url, hint: prod101.hint }],
+    seller: { name: mockSellers.find(s => s.id === 'seller_101')!.name }
+  });
+}
+
+if (prod115) {
+  cartItems.push({
+    id: prod115.id,
+    name: prod115.name,
+    quantity: 1,
+    price: 399,
+    images: [{ url: prod115.url, hint: prod115.hint }],
+    seller: { name: mockSellers.find(s => s.id === 'seller_103')!.name }
+  });
+}
   
 const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 const shipping = 50;
@@ -140,7 +150,7 @@ export function MobileNav() {
                   <div key={item.id} className="flex items-start gap-4">
                     <Image
                       src={item.images[0].url}
-                      alt={item.name!}
+                      alt={item.name}
                       width={80}
                       height={80}
                       className="rounded-md object-cover aspect-square"
