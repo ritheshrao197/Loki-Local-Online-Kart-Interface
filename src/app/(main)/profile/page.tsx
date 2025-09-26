@@ -1,5 +1,7 @@
+
 'use client';
 
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,13 +13,39 @@ import { app } from "@/lib/firebase/firebase";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import type { Seller } from "@/lib/types";
+import { getSellerById } from "@/lib/firebase/firestore";
+import { Loader } from "@/components/common/Loader";
+
+type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
 export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
+  
+  const [userRole, setUserRole] = useState<UserRole>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [seller, setSeller] = useState<Seller | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const user = {
+  useEffect(() => {
+    const role = sessionStorage.getItem('userRole') as UserRole;
+    const id = sessionStorage.getItem('userId');
+    setUserRole(role);
+    setUserId(id);
+
+    if (role === 'seller' && id) {
+      getSellerById(id).then(fetchedSeller => {
+        setSeller(fetchedSeller);
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const buyerUser = {
     name: 'Anjali Sharma',
     email: 'anjali.s@example.com',
     avatarUrl: 'https://picsum.photos/seed/user-anjali/200',
@@ -28,6 +56,9 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear();
+      }
       router.push('/login');
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
     } catch (error) {
@@ -47,8 +78,49 @@ export default function ProfilePage() {
     { icon: Sparkles, title: 'First Purchase', description: 'Made your first order!' },
     { icon: Medal, title: 'Top Reviewer', description: 'Wrote 5 approved reviews' },
     { icon: ShieldCheck, title: 'Verified Buyer', description: 'Completed 3 successful orders' },
-  ]
+  ];
 
+  if (loading) {
+    return <Loader />;
+  }
+
+  // Seller Profile View
+  if (userRole === 'seller' && seller) {
+    return (
+        <div className="px-4 sm:px-6 lg:px-8 py-12">
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-6">
+                    <Avatar className="h-24 w-24">
+                        <AvatarImage src={`https://picsum.photos/seed/${seller.id}/200`} alt={seller.name} />
+                        <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h1 className="text-3xl font-bold font-headline">{seller.name}</h1>
+                        <p className="text-muted-foreground">{seller.mobile}</p>
+                    </div>
+                </div>
+                <div className="flex gap-2">
+                     <Button variant="outline" asChild>
+                        <Link href={`/sellers/${seller.id}`}>View Public Profile</Link>
+                    </Button>
+                    <Button onClick={handleEditProfile}>Edit Profile</Button>
+                </div>
+            </div>
+            {/* Seller-specific content can go here, for now it's simple */}
+             <Card>
+                <CardHeader>
+                    <CardTitle>Seller Account</CardTitle>
+                    <CardDescription>Manage your seller account and settings.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button variant="destructive" onClick={handleLogout}><LogOut className="mr-2"/> Logout</Button>
+                </CardContent>
+            </Card>
+        </div>
+    )
+  }
+
+  // Buyer Profile View
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-12">
       <motion.div 
@@ -62,8 +134,8 @@ export default function ProfilePage() {
           whileTap={{ scale: 0.95 }}
         >
           <Avatar className="h-24 w-24">
-            <AvatarImage src={user.avatarUrl} alt={user.name} />
-            <AvatarFallback>{user.fallback}</AvatarFallback>
+            <AvatarImage src={buyerUser.avatarUrl} alt={buyerUser.name} />
+            <AvatarFallback>{buyerUser.fallback}</AvatarFallback>
           </Avatar>
         </motion.div>
         <div>
@@ -73,7 +145,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {user.name}
+            {buyerUser.name}
           </motion.h1>
           <motion.p 
             className="text-muted-foreground"
@@ -81,7 +153,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            {user.email}
+            {buyerUser.email}
           </motion.p>
         </div>
       </motion.div>
@@ -105,7 +177,7 @@ export default function ProfilePage() {
                  transition={{ duration: 0.3, delay: 0.5 }}
                >
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span>{user.name}</span>
+                    <span>{buyerUser.name}</span>
                </motion.div>
                <motion.div 
                  className="flex items-center gap-3"
@@ -114,7 +186,7 @@ export default function ProfilePage() {
                  transition={{ duration: 0.3, delay: 0.6 }}
                >
                     <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span>{user.email}</span>
+                    <span>{buyerUser.email}</span>
                </motion.div>
                <motion.div 
                  className="flex items-start gap-3"
@@ -123,7 +195,7 @@ export default function ProfilePage() {
                  transition={{ duration: 0.3, delay: 0.7 }}
                >
                     <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
-                    <span>{user.address}</span>
+                    <span>{buyerUser.address}</span>
                </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}

@@ -88,7 +88,7 @@ export function MobileNav() {
         sessionStorage.clear();
       }
       setIsProfileOpen(false);
-      router.push('/login/admin');
+      router.push('/login');
       await signOut(auth);
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
     } catch (error) {
@@ -118,7 +118,7 @@ export function MobileNav() {
     { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
     { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
     { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: '#', label: 'Profile', icon: User, isAction: true, isProfile: true },
+    { href: '/profile', label: 'Profile', icon: User },
   ];
 
   const navItems = isDashboard ? sellerNavItems : buyerNavItems;

@@ -66,7 +66,7 @@ export const Header = React.memo(function Header() {
             </Link>
           </Button>
            <Button variant="ghost" size="icon" asChild className="rounded-full">
-            <Link href={`/sellers/${userId}`}>
+            <Link href="/profile">
               <User className="h-5 w-5" />
               <span className="sr-only">Profile</span>
             </Link>
