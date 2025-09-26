@@ -13,7 +13,6 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarInset,
-  SidebarMenuSkeleton,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -22,7 +21,6 @@ import {
   ListOrdered,
   MessageSquare,
   LogOut,
-  Store,
   Wallet,
   Settings,
   Newspaper,
@@ -34,10 +32,8 @@ import type { Seller } from '@/lib/types';
 import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import Logo from '@/components/common/logo';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { Header } from '@/components/layout/Header';
 import { MobileNav } from '@/components/layout/MobileNav';
 
@@ -46,7 +42,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { toast } = useToast();
   const auth = getAuth(app);
-  const isMobile = useIsMobile();
   
   const sellerId = params.sellerId as string;
   const [seller, setSeller] = useState<Seller | null>(null);
@@ -88,153 +83,115 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   };
 
   if (loading) {
-    return <DashboardSkeleton />;
+     return <div className="h-screen w-full flex items-center justify-center">Loading...</div>;
   }
 
-  // Use the full-page sidebar for desktop
-  if (!isMobile) {
-    return (
-      <SidebarProvider>
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2">
-              <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-                <Logo className="h-7" />
-              </Link>
-              <SidebarTrigger className="ml-auto" />
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Dashboard">
-                  <Link href={`/dashboard/${sellerId}`}>
-                    <LayoutDashboard />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Products">
-                  <Link href={`/dashboard/${sellerId}/products`}>
-                    <Package />
-                    <span>Products</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Stories">
-                  <Link href={`/dashboard/${sellerId}/blogs`}>
-                    <Newspaper />
-                    <span>Stories</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Orders">
-                  <Link href={`/dashboard/${sellerId}/orders`}>
-                    <ListOrdered />
-                    <span>Orders</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                  <SidebarMenuButton tooltip="Payments" disabled>
-                      <Wallet />
-                      <span>Payments</span>
-                  </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Chat" disabled>
-                  <MessageSquare />
-                  <span>Chat</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarContent>
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                  <SidebarMenuButton tooltip="Settings" disabled>
-                      <Settings />
-                      <span>Settings</span>
-                  </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem className="flex justify-between items-center">
-                <ThemeToggle />
-                <SidebarMenuButton onClick={handleLogout}>
-                  <LogOut />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/profile">
-                    <Avatar className="size-7">
-                      <AvatarImage src={`https://picsum.photos/seed/${sellerId}/100/100`} />
-                      <AvatarFallback>{seller?.name.charAt(0) || 'S'}</AvatarFallback>
-                    </Avatar>
-                    <span className="truncate">{seller?.name || 'Seller'}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
-        <SidebarInset>
-          <div className="p-4 sm:p-6 lg:p-8">{children}</div>
-        </SidebarInset>
-      </SidebarProvider>
-    );
-  }
-
-  // Use Header + MobileNav for mobile dashboard view
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 p-4 sm:p-6">{children}</main>
-      <div className="h-16" /> {/* Spacer for the bottom nav */}
-      <MobileNav />
-    </div>
-  );
-}
-
-
-function DashboardSkeleton() {
-  return (
-     <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center gap-2">
-             <Store className="size-6 text-primary" />
-             <Skeleton className="h-6 w-20" />
-            <SidebarTrigger className="ml-auto" />
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {Array.from({length: 6}).map((_, i) => <SidebarMenuSkeleton key={i} showIcon />)}
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuSkeleton showIcon/>
-            <SidebarMenuSkeleton showIcon/>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <Skeleton className="size-7 rounded-full" />
-                <Skeleton className="h-5 w-24" />
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <div className="p-4 sm:p-6 lg:p-8">
-            <Skeleton className="h-8 w-1/4 mb-6" />
-            <Skeleton className="h-64 w-full" />
+    <>
+      {/* Mobile View */}
+      <div className="md:hidden">
+        <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1 p-4 sm:p-6">{children}</main>
+            <div className="h-16" /> {/* Spacer for the bottom nav */}
+            <MobileNav />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+      </div>
+
+      {/* Desktop View */}
+      <div className="hidden md:block">
+        <SidebarProvider>
+            <Sidebar>
+            <SidebarHeader>
+                <div className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
+                    <Logo className="h-7" />
+                </Link>
+                <SidebarTrigger className="ml-auto" />
+                </div>
+            </SidebarHeader>
+            <SidebarContent>
+                <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Dashboard">
+                    <Link href={`/dashboard/${sellerId}`}>
+                        <LayoutDashboard />
+                        <span>Dashboard</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Products">
+                    <Link href={`/dashboard/${sellerId}/products`}>
+                        <Package />
+                        <span>Products</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Stories">
+                    <Link href={`/dashboard/${sellerId}/blogs`}>
+                        <Newspaper />
+                        <span>Stories</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip="Orders">
+                    <Link href={`/dashboard/${sellerId}/orders`}>
+                        <ListOrdered />
+                        <span>Orders</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Payments" disabled>
+                        <Wallet />
+                        <span>Payments</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Chat" disabled>
+                    <MessageSquare />
+                    <span>Chat</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarContent>
+            <SidebarFooter>
+                <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Settings" disabled>
+                        <Settings />
+                        <span>Settings</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem className="flex justify-between items-center">
+                    <ThemeToggle />
+                    <SidebarMenuButton onClick={handleLogout}>
+                    <LogOut />
+                    <span>Logout</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                    <Link href="/profile">
+                        <Avatar className="size-7">
+                        <AvatarImage src={`https://picsum.photos/seed/${sellerId}/100/100`} />
+                        <AvatarFallback>{seller?.name.charAt(0) || 'S'}</AvatarFallback>
+                        </Avatar>
+                        <span className="truncate">{seller?.name || 'Seller'}</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarFooter>
+            </Sidebar>
+            <SidebarInset>
+            <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+            </SidebarInset>
+        </SidebarProvider>
+      </div>
+    </>
+  );
 }
