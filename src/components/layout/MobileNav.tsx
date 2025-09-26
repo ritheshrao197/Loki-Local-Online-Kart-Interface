@@ -15,6 +15,7 @@ import { mockProducts } from '@/lib/placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import Logo from '../common/logo';
 import { Trash2 } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -78,10 +79,13 @@ export function MobileNav() {
            <Link href="/" className="flex items-center space-x-2">
                 <Logo className="h-7 w-auto" />
             </Link>
-            <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-                <span className="sr-only">Search</span>
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon">
+                  <Search className="h-5 w-5" />
+                  <span className="sr-only">Search</span>
+              </Button>
+              <ThemeToggle />
+            </div>
         </div>
       </header>
 
