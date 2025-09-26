@@ -1,4 +1,5 @@
 
+
 import {
   collection,
   doc,
@@ -91,28 +92,26 @@ export async function updateSellerCommission(sellerId: string, commissionRate: n
  */
 function sanitizeProductData(productData: { [key: string]: any }) {
     const sanitizedData = { ...productData };
-    const fieldsToSanitize = [
-        'subcategory', 'discountPrice', 'stockAlert', 'keywords', 'brand',
-        'weight', 'dimensions', 'manufacturingDate', 'expiryDate',
-        'certification', 'estimatedDelivery', 'returnPolicy',
-    ];
-
-    fieldsToSanitize.forEach(field => {
-        if (sanitizedData[field] === undefined) {
-            sanitizedData[field] = null;
+    // Get all keys and check for undefined
+    for (const key in sanitizedData) {
+        if (sanitizedData[key] === undefined) {
+            sanitizedData[key] = null;
         }
-    });
-
+    }
+    
+    // Handle nested objects like dimensions
     if (sanitizedData.dimensions) {
-        if (sanitizedData.dimensions.length === undefined) sanitizedData.dimensions.length = null;
-        if (sanitizedData.dimensions.width === undefined) sanitizedData.dimensions.width = null;
-        if (sanitizedData.dimensions.height === undefined) sanitizedData.dimensions.height = null;
+        for (const key in sanitizedData.dimensions) {
+             if (sanitizedData.dimensions[key] === undefined) {
+                sanitizedData.dimensions[key] = null;
+            }
+        }
     }
 
-    if (productData.manufacturingDate) {
+    if (productData.manufacturingDate && typeof productData.manufacturingDate === 'string') {
         sanitizedData.manufacturingDate = Timestamp.fromDate(new Date(productData.manufacturingDate));
     }
-    if (productData.expiryDate) {
+    if (productData.expiryDate && typeof productData.expiryDate === 'string') {
         sanitizedData.expiryDate = Timestamp.fromDate(new Date(productData.expiryDate));
     }
     
@@ -228,10 +227,22 @@ export async function addProduct(product: Omit<Product, 'id'>): Promise<string> 
  * @param productId - The ID of the product to update.
  * @param productData - The partial product data to update.
  */
-export async function updateProduct(productId: string, productData: Partial<Omit<Product, 'id'>>): Promise<void> {
+export async function updateProduct(productId: string, productData: Partial<Product>): Promise<void> {
   const productRef = doc(db, 'products', productId);
   
-  const dataToUpdate = sanitizeProductData({ ...productData });
+  // Create a mutable copy to avoid modifying the original object
+  const dataWithSeller: Partial<Product> = { ...productData };
+  
+  // If the productData includes sellerId (from admin form), reconstruct the seller object
+  if ('sellerId' in productData && productData.sellerId) {
+    const seller = await getSellerById(productData.sellerId);
+    if (seller) {
+      dataWithSeller.seller = { id: seller.id, name: seller.name };
+    }
+    delete (dataWithSeller as any).sellerId; // Remove the temporary sellerId field
+  }
+  
+  const dataToUpdate = sanitizeProductData(dataWithSeller);
 
   await updateDoc(productRef, dataToUpdate);
 }
