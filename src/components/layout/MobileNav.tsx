@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, Settings, Wallet, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,7 @@ import { Trash2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import type { Seller } from '@/lib/types';
 import { getSellerById } from '@/lib/firebase/firestore';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
@@ -32,6 +33,24 @@ export function MobileNav() {
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   const isDashboard = pathname.startsWith('/dashboard');
+
+  const buyerNavItems = [
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/discover', label: 'Discover', icon: Compass },
+    { href: '/blogs', label: 'Stories', icon: Newspaper },
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
+  ];
+  
+  const sellerNavItems = [
+    { href: `/dashboard/${userId}`, label: 'Dashboard', icon: LayoutDashboard },
+    { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
+    { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
+    { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
+    { href: `#`, label: 'Seller', icon: User, isAction: true, isProfile: true },
+  ];
+  
+  const navItems = isDashboard ? sellerNavItems : buyerNavItems;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -77,23 +96,6 @@ export function MobileNav() {
       window.location.href = '/login/admin'; // Force reload
   };
 
-  const buyerNavItems = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/discover', label: 'Discover', icon: Compass },
-    { href: '/blogs', label: 'Stories', icon: Newspaper },
-    { href: '/profile', label: 'Profile', icon: User },
-    { href: '#', label: 'Cart', icon: ShoppingCart, isAction: true, isCart: true },
-  ];
-  
-  const sellerNavItems = [
-    { href: `/dashboard/${userId}`, label: 'Dashboard', icon: LayoutDashboard },
-    { href: `/dashboard/${userId}/products`, label: 'Products', icon: Package },
-    { href: `/dashboard/${userId}/blogs`, label: 'Stories', icon: Newspaper },
-    { href: `/dashboard/${userId}/orders`, label: 'Orders', icon: ListOrdered },
-    { href: '#', label: 'Profile', icon: User, isAction: true, isProfile: true },
-  ];
-
-  const navItems = isDashboard ? sellerNavItems : buyerNavItems;
 
   const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
     if ('isAction' in item && item.isAction) {
@@ -215,18 +217,26 @@ export function MobileNav() {
       {/* Profile Sheet for Seller */}
       <Sheet open={isProfileOpen} onOpenChange={setIsProfileOpen}>
         <SheetContent side="bottom" className="flex w-full flex-col p-4 rounded-t-lg">
-          <SheetHeader className="px-2 text-left">
-            <SheetTitle>Seller Account</SheetTitle>
-            <SheetDescription>Manage your seller account</SheetDescription>
+          <SheetHeader className="px-2 pb-2">
+             <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={`https://picsum.photos/seed/${userId}/100`} />
+                  <AvatarFallback>{seller?.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                    <SheetTitle>{seller?.name}</SheetTitle>
+                    <SheetDescription>Manage your seller account</SheetDescription>
+                </div>
+             </div>
           </SheetHeader>
-          <div className="flex-1 py-4 space-y-2">
+          <div className="flex-1 py-2 space-y-1">
              <Button asChild variant="ghost" className="w-full justify-start">
-                 <Link href={`/profile`} onClick={() => setIsProfileOpen(false)}>
+                 <Link href={`/sellers/${userId}`} onClick={() => setIsProfileOpen(false)}>
                     <User className="mr-2" />
                     View Public Profile
                 </Link>
             </Button>
-            <Button variant="ghost" className="w-full justify-start">
+            <Button variant="ghost" className="w-full justify-start text-muted-foreground" disabled>
                 <Settings className="mr-2" />
                 Settings
             </Button>
