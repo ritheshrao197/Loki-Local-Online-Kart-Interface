@@ -1,7 +1,7 @@
 
 'use client';
 import { useState, useEffect } from 'react';
-import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, LogOut } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User, LayoutDashboard, Compass, Package, ListOrdered, LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,9 @@ import { getAuth, signOut } from 'firebase/auth';
 import { app } from '@/lib/firebase/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { placeholderImages } from '@/lib/placeholder-images';
+import type { Seller } from '@/lib/types';
+import { getSellerById } from '@/lib/firebase/firestore';
+
 
 type UserRole = 'admin' | 'seller' | 'buyer' | null;
 
@@ -31,6 +34,8 @@ export function MobileNav() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [seller, setSeller] = useState<Seller | null>(null);
+
 
   const [cartItems, setCartItems] = useState<any[]>([]);
 
@@ -42,6 +47,10 @@ export function MobileNav() {
       const id = sessionStorage.getItem('userId');
       setUserRole(role);
       setUserId(id);
+
+      if (role === 'seller' && id) {
+        getSellerById(id).then(setSeller);
+      }
 
       const items = [];
       const item1Data = placeholderImages.find(p => p.id === 'prod_101');
@@ -87,6 +96,10 @@ export function MobileNav() {
       toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
     }
   };
+
+  const handleSettingsClick = () => {
+    toast({ title: "Coming Soon!", description: "Settings page is under development." });
+  }
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 50;
@@ -239,9 +252,9 @@ export function MobileNav() {
               <div className="flex items-center gap-3">
                  <Avatar className="size-9">
                   <AvatarImage src={`https://picsum.photos/seed/${userId}/100/100`} />
-                  <AvatarFallback>{'S'}</AvatarFallback>
+                  <AvatarFallback>{seller?.name.charAt(0) || 'S'}</AvatarFallback>
                 </Avatar>
-                <span>Seller Menu</span>
+                <span className='truncate'>{seller?.name || 'Seller Menu'}</span>
               </div>
             </SheetTitle>
           </SheetHeader>
@@ -252,6 +265,11 @@ export function MobileNav() {
                     View Public Profile
                 </Link>
             </Button>
+            <Button variant="ghost" className="w-full justify-start" onClick={handleSettingsClick}>
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+            </Button>
+             <Separator />
             <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4"/>
               Logout
