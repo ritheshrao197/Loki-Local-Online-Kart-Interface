@@ -14,6 +14,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { getProductById, getProducts } from '@/lib/firebase/firestore';
 
+const RECENTLY_VIEWED_KEY = 'recentlyViewed';
+const MAX_RECENTLY_VIEWED = 8;
+
 export default function ProductDetailPage() {
   const params = useParams();
   const { id } = params;
@@ -34,6 +37,12 @@ export default function ProductDetailPage() {
           return;
         }
         setProduct(fetchedProduct);
+
+        // Add to recently viewed
+        const recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]') as string[];
+        const updatedRecentlyViewed = [id as string, ...recentlyViewed.filter(itemId => itemId !== id)].slice(0, MAX_RECENTLY_VIEWED);
+        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updatedRecentlyViewed));
+
 
         const allApprovedProducts = await getProducts('approved');
         const filteredRelated = allApprovedProducts

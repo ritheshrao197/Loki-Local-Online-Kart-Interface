@@ -8,6 +8,7 @@ import { BannerAds } from '@/components/home/BannerAds';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
+import { RecentlyViewedProducts } from '@/components/home/RecentlyViewedProducts';
 
 const ProductGrid = dynamic(() => import('@/components/products/ProductGrid').then(mod => mod.ProductGrid), {
   loading: () => <ProductGridSkeleton />,
@@ -56,7 +57,9 @@ export default function HomePage() {
           </p>
         </section>
 
-        <BannerAds placement="homepage_top" />
+        <section>
+          <BannerAds placement="homepage_top" />
+        </section>
 
         <section>
           <FeaturedCategories />
@@ -64,6 +67,10 @@ export default function HomePage() {
 
         <section>
           <Promotions />
+        </section>
+
+        <section>
+          <RecentlyViewedProducts />
         </section>
         
         <section>
