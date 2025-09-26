@@ -45,7 +45,7 @@ export function FeaturedCategories() {
   if (loading) {
     return (
         <div>
-            <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">Featured Categories</h2>
+            <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {Array.from({length: 4}).map((_, i) => <Skeleton key={i} className="aspect-square"/>)}
             </div>
@@ -59,7 +59,7 @@ export function FeaturedCategories() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">Featured Categories</h2>
+      <h2 className="text-2xl font-bold font-headline mb-6">Featured Categories</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {categories.map((category) => (
           <Link href="/" key={category.name} className="group">

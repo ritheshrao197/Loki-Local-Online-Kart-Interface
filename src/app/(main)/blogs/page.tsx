@@ -26,7 +26,7 @@ export default async function StoriesPage() {
   return (
     <div className="container py-12">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl text-gradient">
+        <h1 className="text-4xl font-bold font-headline tracking-tight lg:text-5xl">
           Stories from Our Sellers
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">

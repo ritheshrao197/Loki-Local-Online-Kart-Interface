@@ -43,7 +43,7 @@ export function RecentlyViewedProducts() {
   if (loading) {
     return (
       <div>
-        <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">Recently Viewed</h2>
+        <h2 className="text-2xl font-bold font-headline mb-6">Recently Viewed</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {Array.from({length: 4}).map((_, i) => (
              <div key={i} className="space-y-2">
@@ -63,7 +63,7 @@ export function RecentlyViewedProducts() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">Recently Viewed</h2>
+      <h2 className="text-2xl font-bold font-headline mb-6">Recently Viewed</h2>
       <Carousel
         opts={{
           align: 'start',

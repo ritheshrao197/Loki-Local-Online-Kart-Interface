@@ -55,7 +55,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
             <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-4xl font-bold font-headline text-gradient">{seller.name}</h1>
+            <h1 className="text-4xl font-bold font-headline">{seller.name}</h1>
             {seller.location && (
               <p className="mt-2 text-muted-foreground flex items-center justify-center md:justify-start gap-2">
                 <MapPin className="h-4 w-4" />
@@ -69,7 +69,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
       <div className="grid lg:grid-cols-3 gap-12">
         <main className="lg:col-span-2 space-y-12">
           <section>
-            <h2 className="text-2xl font-bold font-headline mb-6 flex items-center gap-3 text-gradient">
+            <h2 className="text-2xl font-bold font-headline mb-6 flex items-center gap-3">
               <Package className="h-6 w-6 text-primary" />
               Products by {seller.name}
             </h2>
@@ -89,7 +89,7 @@ export default async function MakerPage({ params }: MakerPageProps) {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold font-headline mb-6 flex items-center gap-3 text-gradient">
+            <h2 className="text-2xl font-bold font-headline mb-6 flex items-center gap-3">
                 <Newspaper className="h-6 w-6 text-primary" />
                 Stories from the Maker
             </h2>

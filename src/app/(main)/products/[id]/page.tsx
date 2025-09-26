@@ -130,7 +130,7 @@ export default function ProductDetailPage() {
         <div className="flex flex-col gap-6">
             <div>
                 <Badge variant="secondary">{product.category}</Badge>
-                <h1 className="mt-2 text-3xl font-bold font-headline lg:text-4xl text-gradient">{product.name}</h1>
+                <h1 className="mt-2 text-3xl font-bold font-headline lg:text-4xl">{product.name}</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                     Sold by{' '}
                     <Link href={`/sellers/${product.seller.id}`} className="text-accent-foreground font-medium hover:underline">
@@ -199,7 +199,7 @@ export default function ProductDetailPage() {
       
       {relatedProducts.length > 0 && (
         <div className="mt-20">
-          <h2 className="text-2xl font-bold font-headline mb-6 text-gradient">Related Products</h2>
+          <h2 className="text-2xl font-bold font-headline mb-6">Related Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
           </div>

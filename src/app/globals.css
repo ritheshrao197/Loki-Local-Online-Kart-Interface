@@ -75,13 +75,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: url('/images/wave-pattern.svg');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground to-primary;
   }
 }
