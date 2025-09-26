@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { getOrdersBySeller, getProductsBySeller } from '@/lib/firebase/firestore';
 import type { Order, Product } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Loader } from '@/components/common/Loader';
 
 const statusVariant = {
   pending: 'secondary',
@@ -66,23 +66,7 @@ export default function DashboardPage() {
   const uniqueCustomersCount = new Set(orders.map(o => o.buyer.id)).size;
 
   if (loading) {
-    return (
-      <div>
-        <h1 className="text-3xl font-bold font-headline mb-6">Dashboard</h1>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
-          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
-          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
-          <Card><CardHeader><Skeleton className="h-5 w-3/4"/></CardHeader><CardContent><Skeleton className="h-8 w-1/2"/></CardContent></Card>
-        </div>
-        <div className="mt-8">
-          <Card>
-            <CardHeader><CardTitle>Recent Orders</CardTitle><CardDescription>A list of your 5 most recent orders.</CardDescription></CardHeader>
-            <CardContent><Skeleton className="h-40 w-full" /></CardContent>
-          </Card>
-        </div>
-      </div>
-    )
+    return <Loader />
   }
 
   return (

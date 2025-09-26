@@ -14,7 +14,7 @@ import { Package, Users, AlertTriangle } from 'lucide-react';
 import { getProducts } from '@/lib/firebase/firestore';
 import { getSellers } from '@/lib/firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Product, Seller } from '@/lib/types';
+import { Loader } from '@/components/common/Loader';
 
 export default function AdminDashboardPage() {
   const [pendingProductsCount, setPendingProductsCount] = useState(0);
@@ -39,6 +39,10 @@ export default function AdminDashboardPage() {
     fetchData();
   }, []);
 
+  if (loading) {
+    return <Loader />
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-bold font-headline mb-6">Admin Overview</h1>
@@ -49,7 +53,7 @@ export default function AdminDashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{pendingProductsCount}</div>}
+            <div className="text-2xl font-bold">{pendingProductsCount}</div>
             <p className="text-xs text-muted-foreground">
               Awaiting review and approval
             </p>
@@ -61,7 +65,7 @@ export default function AdminDashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {loading ? <Skeleton className="h-8 w-1/4" /> : <div className="text-2xl font-bold">{pendingSellersCount}</div>}
+            <div className="text-2xl font-bold">{pendingSellersCount}</div>
             <p className="text-xs text-muted-foreground">
               New sellers to be onboarded
             </p>
