@@ -99,8 +99,8 @@ export default function ReportsPage() {
                       <TableRow key={seller.id}>
                         <TableCell className="font-medium">{seller.name}</TableCell>
                         <TableCell>12</TableCell> {/* This would require counting products */}
-                        <TableCell>&#8377;{Number(totalSales).toLocaleString('en-IN')}</TableCell>
-                        <TableCell>&#8377;{Number(commission).toLocaleString('en-IN')}</TableCell>
+                        <TableCell>₹{Number(totalSales).toLocaleString('en-IN')}</TableCell>
+                        <TableCell>₹{Number(commission).toLocaleString('en-IN')}</TableCell>
                       </TableRow>
                     );
                   })

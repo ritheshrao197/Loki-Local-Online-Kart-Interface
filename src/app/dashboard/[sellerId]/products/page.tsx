@@ -163,7 +163,7 @@ export default function ProductsPage() {
                     {product.status.charAt(0).toUpperCase() + product.status.slice(1)}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">&#8377;{product.price.toLocaleString('en-IN')}</TableCell>
+                <TableCell className="hidden md:table-cell">₹{product.price.toLocaleString('en-IN')}</TableCell>
                 <TableCell className="hidden md:table-cell">{product.category}</TableCell>
                 <TableCell>
                   <DropdownMenu>

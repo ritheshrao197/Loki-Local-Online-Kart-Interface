@@ -72,7 +72,7 @@ export function ProductFilters({
                 onValueChange={(value) => setPriceRange(value[0])}
             />
             <span className="text-sm text-muted-foreground font-medium w-24 text-right">
-              Up to &#8377;{priceRange.toLocaleString('en-IN')}
+              Up to ₹{priceRange.toLocaleString('en-IN')}
             </span>
         </div>
       </div>
