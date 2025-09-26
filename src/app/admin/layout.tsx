@@ -42,11 +42,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      router.push('/login/admin');
       if (typeof window !== 'undefined') {
         sessionStorage.clear();
       }
       toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
-      router.push('/login/admin');
     } catch (error) {
       console.error("Logout error:", error);
       toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
