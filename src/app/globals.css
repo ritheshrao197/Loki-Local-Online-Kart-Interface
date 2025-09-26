@@ -10,10 +10,10 @@
     --card-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
     --popover: 0 0% 100%; /* White (#FFFFFF) */
     --popover-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
-    --primary: 220 59% 38%; /* Deep Blue (#295399) */
-    --primary-foreground: 0 0% 100%; /* White for contrast */
-    --secondary: 53 94% 65%; /* Bright Yellow (#F9DD53) */
-    --secondary-foreground: 0 0% 20%; /* Charcoal Gray (#333333) for contrast */
+    --primary: 53 94% 65%; /* Bright Yellow (#F9DD53) */
+    --primary-foreground: 0 0% 20%; /* Charcoal Gray (#333333) for contrast */
+    --secondary: 220 59% 38%; /* Deep Blue (#295399) */
+    --secondary-foreground: 0 0% 100%; /* White for contrast */
     --muted: 0 0% 94%; /* Same as background */
     --muted-foreground: 220 30% 50%; /* Lighter Deep Blue */
     --accent: 218 80% 80%; /* Light Blue (#A4C3F0) - Hover State */
@@ -22,10 +22,10 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 87%; /* Neutral Gray (#DDDDDD) */
     --input: 0 0% 87%; /* Neutral Gray (#DDDDDD) */
-    --ring: 220 59% 38%; /* Deep Blue (#295399) */
+    --ring: 53 94% 65%; /* Bright Yellow (#F9DD53) */
     --radius: 1.25rem;
-    --chart-1: 220 59% 38%;
-    --chart-2: 53 94% 65%;
+    --chart-1: 53 94% 65%;
+    --chart-2: 220 59% 38%;
     --chart-3: 154 55% 48%;
     --chart-4: 0 84% 60%;
     --chart-5: 27 87% 67%;
@@ -36,7 +36,7 @@
     --sidebar-accent: 218 80% 90%;
     --sidebar-accent-foreground: 220 59% 38%;
     --sidebar-border: 0 0% 87%;
-    --sidebar-ring: 220 59% 38%;
+    --sidebar-ring: 53 94% 65%;
   }
 
   .dark {
@@ -46,10 +46,10 @@
     --card-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
     --popover: 0 0% 13%; /* Dark Gray (#222222) */
     --popover-foreground: 0 0% 94%; /* Light Gray (#EFEFEF) */
-    --primary: 220 59% 38%; /* Deep Blue (#295399) */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 53 94% 65%; /* Bright Yellow (#F9DD53) */
-    --secondary-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --primary: 53 94% 65%; /* Bright Yellow (#F9DD53) */
+    --primary-foreground: 0 0% 20%; /* Charcoal Gray (#333333) */
+    --secondary: 220 59% 38%; /* Deep Blue (#295399) */
+    --secondary-foreground: 0 0% 100%; /* White */
     --muted: 0 0% 13%; /* Dark Gray (#222222) */
     --muted-foreground: 218 80% 80%; /* Light Blue (#A4C3F0) */
     --accent: 218 80% 90%; /* Brighter Light Blue (#C3D8F7) - Hover State */
