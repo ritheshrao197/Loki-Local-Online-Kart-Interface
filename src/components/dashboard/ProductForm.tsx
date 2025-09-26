@@ -139,8 +139,8 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
   });
 
   const handleGenerateDescription = async () => {
-    const { name, keywords } = form.getValues();
-    if (!name || !keywords) {
+    const isValid = await form.trigger(['name', 'keywords']);
+    if (!isValid) {
       toast({
         title: 'Missing Information',
         description: 'Please enter a product name and keywords first.',
@@ -148,9 +148,11 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
       });
       return;
     }
+    
+    const { name, keywords } = form.getValues();
     setIsGeneratingDesc(true);
     try {
-      const result = await generateProductDescription({ title: name, keywords });
+      const result = await generateProductDescription({ title: name, keywords: keywords || '' });
       form.setValue('description', result.description, { shouldValidate: true });
       toast({
         title: 'Description Generated!',
@@ -721,3 +723,5 @@ export function ProductForm({ product, isAdmin = false }: ProductFormProps) {
     </Form>
   );
 }
+
+    
