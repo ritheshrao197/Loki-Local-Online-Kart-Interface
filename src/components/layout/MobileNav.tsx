@@ -1,7 +1,7 @@
 
 'use client';
 import { useState } from 'react';
-import { Home, LayoutGrid, Newspaper, Search, ShoppingCart, User } from 'lucide-react';
+import { Home, Newspaper, Search, ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,7 @@ const navItems = [
   { href: '/blogs', label: 'Blogs', icon: Newspaper },
   { href: '#', label: 'Search', icon: Search },
   { href: '/profile', label: 'Profile', icon: User },
+  { href: '#', label: 'Cart', icon: ShoppingCart, isCart: true },
 ];
 
 const cartItems = [
@@ -45,31 +46,30 @@ export function MobileNav() {
     }
   };
 
+  const handleNavClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
+    if (item.href === '#') {
+      e.preventDefault();
+    }
+    if (item.isCart) {
+      setIsCartOpen(true);
+    } else {
+      handleComingSoon(item.label);
+    }
+  }
+
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
-           <Link href="/" className="mr-6 flex items-center space-x-2">
+        <div className="container flex h-14 items-center justify-center">
+           <Link href="/" className="flex items-center space-x-2">
                 <Logo className="h-7 w-auto" />
             </Link>
-             <div className="flex items-center gap-2">
-                 <Button variant="ghost" size="icon" onClick={() => handleComingSoon('Search')}>
-                    <Search className="h-5 w-5"/>
-                    <span className="sr-only">Search</span>
-                 </Button>
-                <Button variant="ghost" size="icon" className="relative" onClick={() => setIsCartOpen(true)}>
-                    <ShoppingCart className="h-5 w-5" />
-                    <Badge variant="destructive" className="absolute -right-1 -top-1 h-4 w-4 justify-center p-0 text-[10px]">
-                        {cartItems.length}
-                    </Badge>
-                    <span className="sr-only">Shopping Cart</span>
-                </Button>
-            </div>
         </div>
       </header>
 
       <div className="fixed bottom-0 left-0 z-40 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <nav className="grid h-16 grid-cols-4 items-center text-xs">
+        <nav className="grid h-16 grid-cols-5 items-center text-xs">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -77,11 +77,16 @@ export function MobileNav() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  'flex flex-col items-center justify-center gap-1 transition-colors',
+                  'flex flex-col items-center justify-center gap-1 transition-colors relative',
                   isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 )}
-                onClick={() => handleComingSoon(item.label)}
+                onClick={(e) => handleNavClick(e, item)}
               >
+                {item.isCart && cartItems.length > 0 && (
+                   <Badge variant="destructive" className="absolute -right-2 top-0 h-4 w-4 justify-center p-0 text-[10px] sm:right-0 md:right-1">
+                        {cartItems.length}
+                    </Badge>
+                )}
                 <item.icon className="h-5 w-5" />
                 <span>{item.label}</span>
               </Link>
