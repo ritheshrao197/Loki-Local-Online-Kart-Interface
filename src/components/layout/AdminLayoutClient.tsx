@@ -56,118 +56,117 @@ export function AdminLayoutClient({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="hidden md:block">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2">
-              <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
-                <Logo className="h-7" />
-              </Link>
-              <SidebarTrigger className="ml-auto" />
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Overview">
-                  <Link href="/admin">
-                    <LayoutDashboard />
-                    <span>Overview</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Products">
-                  <Link href="/admin/products">
-                    <Package />
-                    <span>Products</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Stories">
-                  <Link href="/admin/blogs">
-                    <Newspaper />
-                    <span>Stories</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Sellers">
-                  <Link href="/admin/sellers">
-                    <Users />
-                    <span>Sellers</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Commissions">
-                  <Link href="/admin/commissions">
-                    <Landmark />
-                    <span>Commissions</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Content">
-                  <Link href="/admin/content">
-                    <LayoutTemplate />
-                    <span>Content</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Reports">
-                  <Link href="/admin/reports">
-                    <BarChart3 />
-                    <span>Reports</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Disputes">
-                  <Link href="/admin/disputes">
-                    <Gavel />
-                    <span>Disputes</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarContent>
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem className="flex justify-between items-center">
-                <ThemeToggle />
-                <SidebarMenuButton onClick={handleLogout}>
-                  <LogOut />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/profile">
-                    <Avatar className="size-7">
-                      <AvatarImage src="https://picsum.photos/seed/avatarAdmin/100/100" />
-                      <AvatarFallback>AD</AvatarFallback>
-                    </Avatar>
-                    <span className="truncate">Admin User</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
-      </div>
-
-      <div className="flex flex-col flex-1">
-        <div className="md:hidden">
-          <Header />
+      <div className="flex min-h-screen">
+        <div className="hidden md:block">
+          <Sidebar>
+            <SidebarHeader>
+              <div className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold">
+                  <Logo className="h-7" />
+                </Link>
+                <SidebarTrigger className="ml-auto" />
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Overview">
+                    <Link href="/admin">
+                      <LayoutDashboard />
+                      <span>Overview</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Products">
+                    <Link href="/admin/products">
+                      <Package />
+                      <span>Products</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Stories">
+                    <Link href="/admin/blogs">
+                      <Newspaper />
+                      <span>Stories</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Sellers">
+                    <Link href="/admin/sellers">
+                      <Users />
+                      <span>Sellers</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Commissions">
+                    <Link href="/admin/commissions">
+                      <Landmark />
+                      <span>Commissions</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Content">
+                    <Link href="/admin/content">
+                      <LayoutTemplate />
+                      <span>Content</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Reports">
+                    <Link href="/admin/reports">
+                      <BarChart3 />
+                      <span>Reports</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Disputes">
+                    <Link href="/admin/disputes">
+                      <Gavel />
+                      <span>Disputes</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarContent>
+            <SidebarFooter>
+              <SidebarMenu>
+                <SidebarMenuItem className="flex justify-between items-center">
+                  <ThemeToggle />
+                  <SidebarMenuButton onClick={handleLogout}>
+                    <LogOut />
+                    <span>Logout</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link href="/profile">
+                      <Avatar className="size-7">
+                        <AvatarImage src="https://picsum.photos/seed/avatarAdmin/100/100" />
+                        <AvatarFallback>AD</AvatarFallback>
+                      </Avatar>
+                      <span className="truncate">Admin User</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarFooter>
+          </Sidebar>
         </div>
-        <SidebarInset>
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
-        </SidebarInset>
-      </div>
 
+        <div className="flex flex-col flex-1">
+          <div className="md:hidden">
+            <Header />
+          </div>
+          <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        </div>
+      </div>
       <div className="md:hidden">
         <MobileNav />
       </div>
