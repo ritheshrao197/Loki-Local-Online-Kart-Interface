@@ -118,6 +118,12 @@ export function MobileNav() {
   const handleActionClick = (e: React.MouseEvent, item: typeof navItems[0]) => {
     if (item.href === '#' && 'action' in item && item.action) {
       e.preventDefault();
+      // Check if user is trying to access seller or admin profile without being logged in
+      if ((item.label === 'Seller' || item.label === 'Admin') && !userRole) {
+        // Redirect to login page
+        window.location.href = '/login/admin';
+        return;
+      }
       item.action();
     }
   }
@@ -222,29 +228,58 @@ export function MobileNav() {
                   <AvatarFallback>{userRole === 'seller' ? seller?.name.charAt(0) : 'A'}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <SheetTitle>{userRole === 'seller' ? seller?.name : 'Admin'}</SheetTitle>
-                    <SheetDescription>Manage your account</SheetDescription>
+                    <SheetTitle>{userRole === 'seller' ? seller?.name : userRole === 'admin' ? 'Admin' : 'Profile'}</SheetTitle>
+                    <SheetDescription>{userRole ? 'Manage your account' : 'Login required'}</SheetDescription>
                 </div>
              </div>
           </SheetHeader>
           <div className="flex-1 py-2 space-y-1">
-            {userRole === 'seller' && (
+            {!userRole ? (
+              // If user is not logged in, show login option
               <Button asChild variant="ghost" className="w-full justify-start">
-                  <Link href={`/sellers/${userId}`} onClick={() => setIsProfileOpen(false)}>
-                      <User className="mr-2" />
-                      View Public Profile
-                  </Link>
+                <Link href="/login/admin" onClick={() => setIsProfileOpen(false)}>
+                  <User className="mr-2" />
+                  Login
+                </Link>
               </Button>
+            ) : (
+              // If user is logged in, show appropriate options
+              <>
+                {userRole === 'seller' && (
+                  <>
+                    <Button asChild variant="ghost" className="w-full justify-start">
+                      <Link href={`/sellers/${userId}`} onClick={() => setIsProfileOpen(false)}>
+                        <User className="mr-2" />
+                        View Public Profile
+                      </Link>
+                    </Button>
+                    <Button asChild variant="ghost" className="w-full justify-start">
+                      <Link href={`/dashboard/${userId}/profile`} onClick={() => setIsProfileOpen(false)}>
+                        <User className="mr-2" />
+                        Edit Profile
+                      </Link>
+                    </Button>
+                  </>
+                )}
+                {userRole === 'admin' && (
+                  <Button asChild variant="ghost" className="w-full justify-start">
+                    <Link href="/admin/profile" onClick={() => setIsProfileOpen(false)}>
+                      <User className="mr-2" />
+                      View Profile
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="ghost" className="w-full justify-start text-muted-foreground" disabled>
+                    <Settings className="mr-2" />
+                    Settings
+                </Button>
+                <Separator />
+                <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
+                    <LogOut className="mr-2" />
+                    Logout
+                </Button>
+              </>
             )}
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground" disabled>
-                <Settings className="mr-2" />
-                Settings
-            </Button>
-             <Separator />
-             <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive" onClick={handleLogout}>
-                <LogOut className="mr-2" />
-                Logout
-            </Button>
           </div>
         </SheetContent>
       </Sheet>

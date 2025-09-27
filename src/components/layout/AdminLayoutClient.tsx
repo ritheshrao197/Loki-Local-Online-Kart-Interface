@@ -146,7 +146,7 @@ export function AdminLayoutClient({ children }: { children: ReactNode }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/profile">
+                    <Link href="/admin/profile">
                       <Avatar className="size-7">
                         <AvatarImage src="https://picsum.photos/seed/avatarAdmin/100/100" />
                         <AvatarFallback>AD</AvatarFallback>

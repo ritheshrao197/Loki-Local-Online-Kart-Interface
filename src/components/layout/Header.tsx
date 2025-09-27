@@ -50,6 +50,12 @@ export const Header = React.memo(function Header() {
               <LayoutDashboard className="mr-2 h-4 w-4" /> Admin Dashboard
             </Link>
           </Button>
+          <Button variant="ghost" size="icon" asChild className="rounded-full">
+            <Link href="/admin/profile">
+              <User className="h-5 w-5" />
+              <span className="sr-only">Admin Profile</span>
+            </Link>
+          </Button>
           <ThemeToggle />
         </>
       );
@@ -64,7 +70,7 @@ export const Header = React.memo(function Header() {
             </Link>
           </Button>
            <Button variant="ghost" size="icon" asChild className="rounded-full">
-            <Link href="/profile">
+            <Link href={`/dashboard/${userId}/profile`}>
               <User className="h-5 w-5" />
               <span className="sr-only">Profile</span>
             </Link>

@@ -160,7 +160,7 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                    <Link href="/profile">
+                    <Link href={`/dashboard/${sellerId}/profile`}>
                         <Avatar className="size-7">
                         <AvatarImage src={`https://picsum.photos/seed/${sellerId}/100/100`} />
                         <AvatarFallback>{seller?.name.charAt(0) || 'S'}</AvatarFallback>
