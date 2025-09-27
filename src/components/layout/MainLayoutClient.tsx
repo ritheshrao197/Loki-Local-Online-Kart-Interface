@@ -11,7 +11,9 @@ export function MainLayoutClient({ children }: { children: ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      <MobileNav />
+      <div className="md:hidden">
+        <MobileNav />
+      </div>
     </div>
   );
 }
