@@ -15,19 +15,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // This code runs only on the client, after the component has mounted.
     const role = sessionStorage.getItem('userRole') as UserRole;
     setUserRole(role);
     setIsMounted(true);
-  }, [pathname]); // Re-check on path change
+  }, [pathname]);
 
   if (!isMounted) {
-    // On the server and during initial client render, show a loader.
-    // This ensures the initial render matches on both sides.
     return <Loader />;
   }
 
-  // After mounting, render the correct layout based on the user role.
   if (userRole === 'admin') {
     return <AdminLayoutClient>{children}</AdminLayoutClient>;
   }
@@ -36,6 +32,5 @@ export function AppShell({ children }: { children: ReactNode }) {
     return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
   }
 
-  // Default to the main/buyer layout.
   return <MainLayoutClient>{children}</MainLayoutClient>;
 }

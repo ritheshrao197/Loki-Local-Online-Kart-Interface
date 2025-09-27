@@ -125,7 +125,7 @@ export function MobileNav() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 z-40 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="fixed bottom-0 left-0 z-40 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
         <nav className="grid h-16 grid-cols-5 items-center text-xs">
           {navItems.map((item) => {
             const isActive = item.href === '/' ? pathname === item.href : (item.href !== '#' && pathname.startsWith(item.href));
