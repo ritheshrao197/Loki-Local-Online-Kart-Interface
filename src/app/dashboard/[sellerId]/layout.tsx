@@ -46,10 +46,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const sellerId = params.sellerId as string;
   const [seller, setSeller] = useState<Seller | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
     if (sellerId) {
       setLoading(true);
       getSellerById(sellerId)
@@ -83,15 +81,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       toast({ title: 'Logout Failed', description: 'Could not log you out. Please try again.', variant: 'destructive' });
     }
   };
-
-  if (!isMounted || loading) {
-     return (
-        <div className="flex flex-col min-h-screen">
-            <div className="h-16 border-b" />
-            <main className="flex-1 p-4 sm:p-6" />
-        </div>
-    );
-  }
 
   return (
     <>
