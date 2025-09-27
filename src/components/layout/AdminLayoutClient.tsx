@@ -56,12 +56,14 @@ export function AdminLayoutClient({ children }: { children: ReactNode }) {
 
   return (
     <>
+      {/* Mobile View: Visible on small screens, hidden on medium and up */}
       <div className="md:hidden">
         <Header />
         <main className="flex-1 p-4 sm:p-6">{children}</main>
         <MobileNav />
       </div>
 
+      {/* Desktop View: Hidden on small screens, visible on medium and up */}
       <div className="hidden md:block">
         <SidebarProvider>
           <Sidebar>
