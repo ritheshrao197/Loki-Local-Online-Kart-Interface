@@ -84,7 +84,6 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider>
-      {/* Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar>
         <SidebarHeader>
@@ -175,18 +174,15 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
       </div>
 
       <div className="flex flex-col flex-1">
-        {/* Mobile Header */}
         <div className="md:hidden">
             <Header />
         </div>
         
-        {/* Main Content Area */}
         <SidebarInset>
             <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
         </SidebarInset>
       </div>
 
-      {/* Mobile Bottom Nav */}
       <div className="md:hidden">
         <MobileNav />
       </div>

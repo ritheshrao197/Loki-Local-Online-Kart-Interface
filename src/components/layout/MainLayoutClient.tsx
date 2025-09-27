@@ -1,3 +1,4 @@
+
 'use client';
 import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/Footer';
@@ -10,7 +11,6 @@ export function MainLayoutClient({ children }: { children: ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      {/* Mobile Bottom Nav */}
       <div className="md:hidden">
         <MobileNav />
       </div>
