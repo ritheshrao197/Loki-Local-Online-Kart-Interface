@@ -8,14 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Trash2, ShoppingCart } from "lucide-react";
 import { placeholderImages } from "@/lib/placeholder-images";
-import type { Metadata } from "next";
 import { useState } from "react";
 import { motion } from "framer-motion";
-
-export const metadata: Metadata = {
-  title: 'Shopping Cart',
-  description: 'Review items in your shopping cart and proceed to checkout.',
-};
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([
