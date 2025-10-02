@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils';
-import { ThemeProvider } from '@/components/providers/theme-provider';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from '@/lib/theme';
 import React, { Suspense } from 'react';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
-
-const Toaster = React.lazy(() => import('@/components/ui/toaster').then(module => ({ default: module.Toaster })));
-
-
-const fontInter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  weight: ['400', '500', '600', '700', '800'],
-  display: 'swap',
-});
+import { SnackbarProvider } from 'notistack';
 
 export const metadata: Metadata = {
   title: 'Loki',
@@ -28,25 +19,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          fontInter.variable
-        )}
-        suppressHydrationWarning
-      >
+      <body suppressHydrationWarning>
         <ErrorBoundary>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Suspense fallback={null}>
-              <Toaster />
-            </Suspense>
-          </ThemeProvider>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <SnackbarProvider maxSnack={3}>
+                {children}
+              </SnackbarProvider>
+            </ThemeProvider>
+          </AppRouterCacheProvider>
         </ErrorBoundary>
       </body>
     </html>
